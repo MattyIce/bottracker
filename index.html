@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <!-- Global Site Tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107512713-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)};
+    gtag('js', new Date());
+
+    gtag('config', 'UA-107512713-1');
+  </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Steem Post Promoter</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/postpromoter.js"></script>
+
+    <style type="text/css">
+      body { padding-top: 70px; }
+      .progress-bar { color: black; }
+
+    </style>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          <img alt="Steem Post Promoter" src="img/logo.png" height="20" width="20">
+        </a>
+        <a class="navbar-brand" href="#">Steem Post Promoter</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li ><a href="#bid">Bid-Based Voting Bots</a></li>
+          <li><a href="#paid">Paid Upvote Services</a></li>
+          <li><a href="#free">Free Services</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Steem Post Promoter</h1>
+      <p>Welcome to the Steem Post Promoter, the #1 place for information on voting bots and other options to <strong style="color: green;">profitably</strong> promote your posts on Steem!</p>
+      <p>If you like what you see here, you can find more great info by following me on SteemIt at <a href="http://www.steemit.com/@yabapmatt">@yabapmatt</a>.
+      </p>
+      <p>Happy posting!
+      <p>
+        <a class="btn btn-primary btn-lg" href="#bid" role="button">Bid-Based Voting Bots</a>
+        <a class="btn btn-primary btn-lg" href="#paid" role="button">Paid Upvote Services</a>
+        <a class="btn btn-primary btn-lg" href="#free" role="button">Free Upvote Services</a>
+      </p>
+    </div>
+
+    <div class="panel panel-info">
+      <!-- Default panel contents -->
+      <div class="panel-heading" style="font-size: 1.5em;"><a name="bid"></a>Bid-Based Voting Bots</div>
+      <div class="panel-body">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  How Bid-Based Voting Bots Work
+                </a>
+              </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+                <p>
+                  Bid-based voting bots work on a bidding system. You can send any amount of SBD above the minimum (minimums vary for each bot) and once the bot account reaches 100% voting power it splits a 100% upvote between all of the bids based on each bid's % of the total amount bid during that period.
+                </p>
+                <p>
+                  It takes 2.4 hours for voting power to return to 100% after a 100% upvote so each bidding period typically lasts roughly 2.4 hours. Recently some bots have switched to giving out a 50% upvote every 1.2 hours instead. You can see this indicated next to the "Vote Value" in the table below.
+                </p>
+                <p>
+                  Take the following example: With a 2.4 hour bidding period user A sends $1 to a voting bot and user B sends $3. The total bid is $4 so that means that user A will get a 25% upvote on their post and user B will get a 75% upvote. If the bot's 100% upvote is worth more than $4 then both user A and B will receive an upvote worth more than they have spent.
+                </p>
+                <p>
+                  Please note that vote values are based on the current value of STEEM. As STEEM prices rise or fall the value of votes will too. Additionally 25% of the value of votes cast more than 30 minutes after a post has been made go to the curation rewards, so for a $0.75 payment you would need at least a $1.00 upvote to be profitable if you are taking curation rewards into account.
+                </p>
+                <p>
+                  Each voting bot has their own quirks and rules and those can change at any time. I do the best I can to keep this site up to date however <strong>it is your responsibility to check each voting bot before you use it</strong>. You can click on the links in the table below to go to the SteemIt profile page for each bot.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingTwo">
+              <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  How To Make Profitable Bids Using The Data Below
+                </a>
+              </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+              <div class="panel-body">
+                <p>The table below provides the following information to help you make profitable bids. Please note that the data in this table is not always 100% accurate. Bots may make changes, go down, or any number of other unexpected things. This information is only intended to help you make a more informed decision but <strong>it is your responsibility to check each bot's profile page before making a bid!</strong></p>
+
+                <dl class="dl-horizontal">
+                  <dt>Bot Name</dt>
+                  <dd>This is the name of the bot account and includes a link to the bot's profile page on SteemIt.</dd>
+                  <dt>Vote Value</dt>
+                  <dd>This is the total value of the bot's vote that will be divided up amongst all of the bidders each period. Next to the value is an indicator of the total vote weight used each period.</dd>
+                  <dt>Total Bids</dt>
+                  <dd>This is the total amount of bids placed during the current bidding period. This is the key piece of information necessary to use voting bots profitably by comparing it to the Vote Value.</dd>
+                  <dt>Max Profitable Bid</dt>
+                  <dd>
+                    This is a calculation of the max bid that will be profitable (including 25% curation rewards) based on the current Vote Value and Total Bids. This value will decrease as new bids come in so it's advisable to wait to as close to the Next Vote time as possible before bidding.
+                    Additionally, it is always the case that the lower you bid, the more profitable it will be. So if the Max Profitable Bid says $2.00 then if you bid exactly $2.00 you will break even. If you bid $1 you will have more profit. <strong>I typically try to bid around 50% of the Max Profitable Bid amount right before the Next Vote time.</strong>
+                  </dd>
+                  <dt>Voting Power</dt>
+                  <dd>This is the current voting power of the bot. The current bidding period will end and the bot will start making upvotes when this reaches 100%.</dd>
+                  <dt>Last Vote</dt>
+                  <dd>This is the amount of time that has passed since the last round of upvotes made by the bot. This is good to check because if a bot hasn't made an upvote in a long time then it may be down.</dd>
+                  <dt>Next Vote</dt>
+                  <dd>This is the amount of time left until the bot's voting power regenerates to 100% and the current bidding period ends and the bot starts to make upvotes. You should try to submit your bid as close to before the Next Vote time as possible since that is when the most information is available.</dd>
+                </dl>
+
+                <div class="alert alert-success" role="alert">When there is a profitable bidding opportunity within 10 minutes of a bot's Next Vote time, the bot will be highlighted in green in the table below.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <table id="bots_table" class="table table-striped">
+          <thead>
+            <tr>
+              <th>Bot Name</th>
+              <th>Vote Value</th>
+              <th>Total Bids</th>
+              <th>Max Profitable Bid</th>
+              <th>Voting Power</th>
+              <th>Last Vote</th>
+              <th>Next Vote</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Loading...</td>
+              <td>Loading...</td>
+              <td>Loading...</td>
+              <td>Loading...</td>
+              <td>Loading...</td>
+              <td>Loading...</td>
+              <td>Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel panel-info">
+      <!-- Default panel contents -->
+      <div class="panel-heading" style="font-size: 1.5em;"><a name="paid"></a>Paid Upvote Services</div>
+      <div class="panel-body">
+
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="http://www.steemit.com/@minnowbooster">@minnowbooster</a></h3>
+          </div>
+          <div class="panel-body">
+            <div class="well">
+              <p>
+                <a href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> is an always-availble upvoting service. You can currently send it a minimum of $2 SBD to receive a 1% upvote on your post. It currently has a daily max per user of $6 and a weekly max of $20. The minimum payment and daily/weekly maximums are subject to change at any time so please make sure to check their profile or <a href="http://www.minnowbooster.net">http://www.minnowbooster.net</a> for the latest.
+              </p>
+              <p>
+                Using the data below you can see what the value of a $2 (1%) upvote is currently as well as the bot's current voting power. The size weight of the upvote increases proportionally to the payment so if you send $4 SBD you should receive a 2% upvote and so on.
+              </p>
+            </div>
+
+            <dl class="dl-horizontal" style="font-size: 1.5em;">
+              <dt>Vote Value:</dt>
+              <dd><span id="minnowbooster-vote">Loading...</span> (1%)</dd>
+              <dt>Voting Power:</dt>
+              <dd>
+                <div class="progress" id="minnowbooster-progress" style="margin-top: 7px;">
+                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    Loading...
+                  </div>
+                </div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+
+        <div id="randowhale-panel" class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
+          </div>
+          <div class="panel-body">
+            <div class="well">
+              <p>
+                <a href="http://www.steemit.com/@randowhale">@randowhale</a> "wakes up" and accepts bids of exactly $0.5 SBD when it reaches 100% voting power. Each $0.5 SBD payment currently receives a 1.6% upvote however it sometimes randomly gives larger upvotes as a surprise! Once its voting power goes down below around 98% it goes back to sleep and stops accepting bids until it hits 100% again.
+              </p>
+              <p>
+                Using the data below you can see the current status of @randowhale, the current value of its 1.6% upvote, and the time remaining until it wakes up.
+              </p>
+              <p>
+                For more information please see <a href="https://steemit.com/steemit/@randowhale/randowhale-101-everything-you-need-to-know-about-randowhale">@randowhale 101 - Everything You Need to Know About @randowhale!</a>. Additionally they provide a Google Chrome browser extension to notify you whenever @randowhale wakes up! You can get that here: <a href="https://bit.ly/randoawake">RandoAwake Google Chrome Extension</a>
+              </p>
+            </div>
+
+            <dl class="dl-horizontal" style="font-size: 1.5em;">
+              <dt>Status:</dt>
+              <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
+              <dt>Vote Value:</dt>
+              <dd><span id="randowhale-vote">Loading...</span> (1.6%)</dd>
+              <dt>Next Wake-Up:</dt>
+              <dd><span class="timer " id="randowhale-time">Loading...</span></dd>
+              <dt>Voting Power:</dt>
+              <dd>
+                <div class="progress" id="randowhale-progress" style="margin-top: 7px;">
+                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    Loading...
+                  </div>
+                </div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-info">
+      <!-- Default panel contents -->
+      <div class="panel-heading" style="font-size: 1.5em;"><a name="free"></a>Free Services</div>
+      <div class="panel-body">
+        Coming soon!
+      </div>
+    </div>
+  </div>
+</body>
+</html>
