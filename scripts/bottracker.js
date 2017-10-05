@@ -56,7 +56,11 @@ $(function () {
         bar.attr('aria-valuenow', power);
         bar.css('width', power + '%');
         bar.text(power + '%');
-        $('#minnowbooster-vote').text('$' + getVoteValue(1, account).formatMoney());
+        var vote = getVoteValue(100, account);
+        var weight = 3 / vote;
+        console.log('vote: ' + vote + ', weight: ' + weight + ', power: ' + power + ', value: ' + getVoteValue(weight, account));
+        $('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
+        $('#minnowbooster-vote').text('$' + getVoteValue(weight, account).formatMoney());
       });
     }
 
