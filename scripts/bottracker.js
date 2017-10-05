@@ -1,5 +1,5 @@
 $(function () {
-    var RETURN = 1.25;
+    var RETURN = 1;
     var AUTHOR_REWARDS = 0.75;
     var bots = [
       { name: 'booster', interval: 1.2 },
