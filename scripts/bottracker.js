@@ -28,9 +28,16 @@ $(function () {
         var time = timeTilFullPower(account) * 1000;
         $('#randowhale-time').attr('time', time);
         $('#randowhale-time').text(toTimer(time));
-        $('#randowhale-vote').text('$' + getVoteValue(1.6, account).formatMoney());
 
         var metadata = JSON.parse(account.json_metadata);
+        console.log(metadata);
+        var vote = metadata.config.min_vote;
+        $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
+        $('#randowhale-vote').text((vote / 100).formatMoney() + '%');
+        $('#randowhale-value').text('$' + getVoteValue(vote / 100, account).formatMoney());
+
+        
+          
         var status = $('#randowhale-status');
         status.removeClass('label-default');
         status.removeClass('label-success');

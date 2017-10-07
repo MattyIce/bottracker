@@ -22,8 +22,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
-    <script src="scripts/utils.js"></script>
-    <script src="scripts/bottracker.js"></script>
+    <script src="scripts/utils.js?v=1"></script>
+    <script src="scripts/bottracker.js?v=1"></script>
 
     <style type="text/css">
       body { padding-top: 70px; }
@@ -248,23 +248,35 @@
             <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
           </div>
           <div class="panel-body">
-            <div class="well">
-              <p>
-                <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> "wakes up" and accepts bids of exactly $0.5 SBD when it reaches 100% voting power. Each $0.5 SBD payment currently receives a 1.6% upvote however it sometimes randomly gives larger upvotes as a surprise! Once its voting power goes down below around 98% it goes back to sleep and stops accepting bids until it hits 100% again.
-              </p>
-              <p>
-                Using the data below you can see the current status of @randowhale, the current value of its 1.6% upvote, and the time remaining until it wakes up.
-              </p>
-              <p>
-                For more information please see <a target="_blank" href="https://steemit.com/steemit/@randowhale/randowhale-101-everything-you-need-to-know-about-randowhale">@randowhale 101 - Everything You Need to Know About @randowhale!</a>. Additionally they provide a Google Chrome browser extension to notify you whenever @randowhale wakes up! You can get that here: <a target="_blank" href="https://bit.ly/randoawake">RandoAwake Google Chrome Extension</a>
-              </p>
-            </div>
+              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                  <div class="panel panel-default">
+                      <div class="panel-heading" role="tab" id="headingOne">
+                          <h4 class="panel-title">
+                              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#rw-howto" aria-expanded="true" aria-controls="collapseOne">
+                                  How To Use
+                              </a>
+                          </h4>
+                      </div>
+                      <div id="rw-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                          <div class="panel-body">
+                              <ul>
+                                  <li>Check the Status below to see if <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> is sleeping or awake. It "wakes up" when it gets to 100% vote power.</li>
+                                  <li>Send <strong>EXACTLY</strong> the Fee amount specified below to <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> with your post URL as the memo.</li>
+                                  <li>You will receive an upvote worth the Vote Value shown below - sometimes you can randomly receive a larger vote as a surprise! I once received a $10 upvote for $0.5 SBD!</li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
             <dl class="dl-horizontal" style="font-size: 1.5em;">
               <dt>Status:</dt>
               <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
-              <dt>Vote Value:</dt>
-              <dd><span id="randowhale-vote">Loading...</span> (1.6%)</dd>
+              
+                <dt>Fee:</dt>
+                <dd><span id="randowhale-fee">Loading...</span></dd>
+                <dt>Vote Value:</dt>
+              <dd><span id="randowhale-value">Loading...</span> (<span id="randowhale-vote">Loading...</span>)</dd>
               <dt>Next Wake-Up:</dt>
               <dd><span class="timer " id="randowhale-time">Loading...</span></dd>
               <dt>Voting Power:</dt>
@@ -286,6 +298,7 @@
       <div class="panel-heading" style="font-size: 1.5em;"><a name="free"></a>Other Bots</div>
       <div class="panel-body">
         Coming soon!
+          <!-- @minnowpond, @resteembot, @originalworks-->
       </div>
     </div>
   </div>
