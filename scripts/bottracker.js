@@ -58,7 +58,7 @@ $(function () {
         bar.text(power + '%');
         var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
         var weight = 3 / vote;        
-        $('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
+        //$('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
         $('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
       });
 
