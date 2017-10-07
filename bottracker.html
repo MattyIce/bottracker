@@ -61,7 +61,7 @@
     <div class="jumbotron">
       <h1>Steem Upvote Bot Tracker</h1>
       <p>Welcome to the Steem Upvote Bot Tracker, the #1 place for information on voting bots and other options to <strong style="color: green;">profitably</strong> promote your posts on Steem!</p>
-      <p>If you like what you see here, you can find more great info by following me on SteemIt at <a href="http://www.steemit.com/@yabapmatt">@yabapmatt</a>.
+      <p>If you like what you see here, you can find more great info by following me on SteemIt at <a target="_blank" href="http://www.steemit.com/@yabapmatt">@yabapmatt</a>.
       </p>
       <p>Happy posting!
       <p>
@@ -176,19 +176,60 @@
 
         <div class="panel panel-success">
           <div class="panel-heading">
-            <h3 class="panel-title"><a href="http://www.steemit.com/@minnowbooster">@minnowbooster</a></h3>
+            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a></h3>
           </div>
           <div class="panel-body">
-            <div class="well">
-              <p>
-                <a href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> is an always-availble upvoting service. You can currently send it a minimum of $1 SBD to receive an upvote on your post. It currently has a daily max per user of $6 and a weekly max of $20. The minimum payment and daily/weekly maximums are subject to change at any time so please make sure to check their profile or <a href="http://www.minnowbooster.net">http://www.minnowbooster.net</a> for the latest.
-              </p>
-              <p>
-                Using the data below you can see what the value of a $1 upvote is currently as well as the bot's current voting power. The size weight of the upvote increases proportionally to the payment so if you send $2 SBD you should receive double the upvote from a $1 SBD payment and so on.
-              </p>
+                  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                      <div class="panel panel-default">
+                          <div class="panel-heading" role="tab" id="headingOne">
+                              <h4 class="panel-title">
+                                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#mb-howto" aria-expanded="true" aria-controls="collapseOne">
+                                      How To Use
+                                  </a>
+                              </h4>
+                          </div>
+                          <div id="mb-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                              <div class="panel-body">
+                                  <ul>
+                                      <li><a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> is always available and can be used at any time.</li>
+                                      <li>Send at least the Min Payment amount specified below to <a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> with your post URL as the memo.</li>
+                                      <li>Be sure not to go over the Daily or Weekly Limits!</li>
+                                      <li>You will receive an upvote worth the Vote Value shown below multiplied by the amount of your payment.</li>
+                                      <li>See <a target="_blank" href="http://minnowbooster.net">http://minnowbooster.net</a> for more details!</li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="panel panel-default">
+                          <div class="panel-heading" role="tab" id="headingOne">
+                              <h4 class="panel-title">
+                                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#mb-votes" aria-expanded="true" aria-controls="collapseOne">
+                                      Recent MinnowBooster Upvotes
+                                  </a>
+                              </h4>
+                          </div>
+                          <div id="mb-votes" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                              <div class="panel-body">
+                                  <ol>
+                                      <li id="mb-upvote-0"></li>
+                                      <li id="mb-upvote-1"></li>
+                                      <li id="mb-upvote-2"></li>
+                                      <li id="mb-upvote-3"></li>
+                                      <li id="mb-upvote-4"></li>                                      
+                                  </ol>
+                              </div>
+                          </div>
+                      </div>
+                   </div>
             </div>
 
             <dl class="dl-horizontal" style="font-size: 1.5em;">
+                <dt>Min Payment:</dt>
+                <dd><span id="minnowbooster-min">Loading...</span></dd>
+                <dt>Daily Limit:</dt>
+                <dd><span id="minnowbooster-day">Loading...</span></dd>
+                <dt>Weekly Limit:</dt>
+                <dd><span id="minnowbooster-week">Loading...</span></dd>
               <dt>Vote Value ($1):</dt>
               <dd><span id="minnowbooster-vote">Loading...</span> (<span id="minnowbooster-weight"></span>)</dd>
               <dt>Voting Power:</dt>
@@ -205,18 +246,18 @@
 
         <div id="randowhale-panel" class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title"><a href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
+            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
           </div>
           <div class="panel-body">
             <div class="well">
               <p>
-                <a href="http://www.steemit.com/@randowhale">@randowhale</a> "wakes up" and accepts bids of exactly $0.5 SBD when it reaches 100% voting power. Each $0.5 SBD payment currently receives a 1.6% upvote however it sometimes randomly gives larger upvotes as a surprise! Once its voting power goes down below around 98% it goes back to sleep and stops accepting bids until it hits 100% again.
+                <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> "wakes up" and accepts bids of exactly $0.5 SBD when it reaches 100% voting power. Each $0.5 SBD payment currently receives a 1.6% upvote however it sometimes randomly gives larger upvotes as a surprise! Once its voting power goes down below around 98% it goes back to sleep and stops accepting bids until it hits 100% again.
               </p>
               <p>
                 Using the data below you can see the current status of @randowhale, the current value of its 1.6% upvote, and the time remaining until it wakes up.
               </p>
               <p>
-                For more information please see <a href="https://steemit.com/steemit/@randowhale/randowhale-101-everything-you-need-to-know-about-randowhale">@randowhale 101 - Everything You Need to Know About @randowhale!</a>. Additionally they provide a Google Chrome browser extension to notify you whenever @randowhale wakes up! You can get that here: <a href="https://bit.ly/randoawake">RandoAwake Google Chrome Extension</a>
+                For more information please see <a target="_blank" href="https://steemit.com/steemit/@randowhale/randowhale-101-everything-you-need-to-know-about-randowhale">@randowhale 101 - Everything You Need to Know About @randowhale!</a>. Additionally they provide a Google Chrome browser extension to notify you whenever @randowhale wakes up! You can get that here: <a target="_blank" href="https://bit.ly/randoawake">RandoAwake Google Chrome Extension</a>
               </p>
             </div>
 

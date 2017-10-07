@@ -56,11 +56,24 @@ $(function () {
         bar.attr('aria-valuenow', power);
         bar.css('width', power + '%');
         bar.text(power + '%');
-        var vote = getVoteValue(100, account);
-        var weight = 3 / vote;
-        console.log('vote: ' + vote + ', weight: ' + weight + ', power: ' + power + ', value: ' + getVoteValue(weight, account));
+        var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
+        var weight = 3 / vote;        
         $('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
-        $('#minnowbooster-vote').text('$' + getVoteValue(weight, account).formatMoney());
+        $('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
+      });
+
+      $.get('https://www.minnowbooster.net/api/global', function (data) {
+          //console.log(data);
+          $('#minnowbooster-min').text('$' + data.min_upvote + ' SBD');
+          $('#minnowbooster-day').text('$' + data.daily_limit + ' SBD');
+          $('#minnowbooster-week').text('$' + data.weekly_limit + ' SBD');
+      });
+
+      $.get('https://www.minnowbooster.net/upvotes.json', function (data) {
+          for (var i = 0; i < 5; i++) {
+              var vote = data[i];
+              $('#mb-upvote-' + i).html('<a href="http://steemit.com/@' + vote.sender_name + '">' + vote.sender_name + '</a> received a <strong>$' + parseFloat(vote.value).formatMoney() + ' upvote for $' + vote.sbd + ' SBD</strong> on <a href="' + vote.url + '">' + vote.url + '</a> at ' + new Date(vote.created_at).toLocaleDateString() + ' ' + new Date(vote.created_at).toLocaleTimeString());
+          }
       });
     }
 

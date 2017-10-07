@@ -81,7 +81,7 @@ var n = this,
      return current_power;
  }
 
- function getVoteValue(voteWeight, account) {
+ function getVoteValue(voteWeight, account, power) {
      if (!account) {
          return;
      }
@@ -95,7 +95,7 @@ var n = this,
 
          var elapsed_seconds = (new Date() - last_vote_time) / 1000;
          var regenerated_power = Math.round((STEEMIT_100_PERCENT * elapsed_seconds) / STEEMIT_VOTE_REGENERATION_SECONDS);
-         var current_power = Math.min(voting_power + regenerated_power, STEEMIT_100_PERCENT);
+         var current_power = power || Math.min(voting_power + regenerated_power, STEEMIT_100_PERCENT);
          var max_vote_denom = votePowerReserveRate * STEEMIT_VOTE_REGENERATION_SECONDS / (60 * 60 * 24);
          var used_power = Math.round((current_power * weight) / STEEMIT_100_PERCENT);
          used_power = Math.round((used_power + max_vote_denom - 1) / max_vote_denom);
