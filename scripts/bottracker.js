@@ -6,15 +6,33 @@ $(function () {
       { name: 'bellyrub', interval: 2.4 },
       { name: 'buildawhale', interval: 2.4 },
       { name: 'boomerang', interval: 2.4 },
-      { name: 'minnowhelper', interval: 2.4 }
+      { name: 'minnowhelper', interval: 2.4 },
+      { name: 'discordia', interval: 2.4 },
+      { name: 'lovejuice', interval: 2.4 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
-      { name: 'discordia', interval: 2.4 },
-      { name: 'lovejuice', interval: 2.4 },
-      { name: 'drotto', interval: 2.4 },*/
+      { name: 'drotto', interval: 2.4 }*/
     ];
     var bot_names = [];
-    bots.forEach(function(bot) { bot_names.push(bot.name); });
+    bots.forEach(function (bot) { bot_names.push(bot.name); });
+
+    if (Notification && Notification.permission !== "granted")
+        Notification.requestPermission();
+
+    function sendNotification(bot, bid) {
+        if (Notification.permission !== "granted")
+            Notification.requestPermission();
+        else {
+            var notification = new Notification('Profitable Bidding Opportunity!', {
+                icon: 'https://i.imgur.com/SEm0LBl.jpg',
+                body: "@" + bot + ' is currently showing a profitable bidding opportunity! Max profitable bid is $' + bid.formatMoney() + ' SBD.',
+            });
+
+            notification.onclick = function () {
+                window.open("https://steemit.com/@" + bot);
+            };
+        }
+    }
 
     function loadAccountInfo() {
       steem.api.getAccounts(['randowhale'], function (err, result) {
@@ -30,7 +48,6 @@ $(function () {
         $('#randowhale-time').text(toTimer(time));
 
         var metadata = JSON.parse(account.json_metadata);
-        console.log(metadata);
         var vote = metadata.config.min_vote;
         $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
         $('#randowhale-vote').text((vote / 100).formatMoney() + '%');
@@ -70,7 +87,6 @@ $(function () {
       });
 
       $.get('https://www.minnowbooster.net/api/global', function (data) {
-          //console.log(data);
           $('#minnowbooster-min').text('$' + data.min_upvote + ' SBD');
           $('#minnowbooster-day').text('$' + data.daily_limit + ' SBD');
           $('#minnowbooster-week').text('$' + data.weekly_limit + ' SBD');
@@ -82,6 +98,18 @@ $(function () {
               $('#mb-upvote-' + i).html('<a href="http://steemit.com/@' + vote.sender_name + '">' + vote.sender_name + '</a> received a <strong>$' + parseFloat(vote.value).formatMoney() + ' upvote for $' + vote.sbd + ' SBD</strong> on <a href="' + vote.url + '">' + vote.url + '</a> at ' + new Date(vote.created_at).toLocaleDateString() + ' ' + new Date(vote.created_at).toLocaleTimeString());
           }
       });
+
+      steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter'], function (err, result) {
+          result.forEach(function (account) {              
+              $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
+
+              var metadata = JSON.parse(account.json_metadata);
+              $('#' + account.name + '-desc').text(metadata.profile.about ? metadata.profile.about : '');
+              $('#' + account.name + '-site').html(metadata.profile.website ? '<a target="_blank" href="' + metadata.profile.website + '">' + metadata.profile.website + '</a>' : '');
+          });
+      });
+
+      setTimeout(loadAccountInfo, 60 * 1000);
     }
 
     function loadBotInfo() {
@@ -187,8 +215,15 @@ $(function () {
         td.text(toTimer(bot.next));
         row.append(td);
 
-        if (bot.bid > 0 && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS)
-          row.css('background-color', '#aaffaa');
+        if (bot.bid > 0 && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
+            row.css('background-color', '#aaffaa');
+
+            if (!bot.notif) {
+                sendNotification(bot.name, bot.bid);
+                bot.notif = true;
+            }
+        } else
+            bot.notif = false;
 
         if(bot.power == 100 && bot.last > 5 * HOURS || bot.power < 90)
           row.css('background-color', '#ffaaaa');

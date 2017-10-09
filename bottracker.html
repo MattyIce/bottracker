@@ -22,8 +22,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
-    <script src="scripts/utils.js?v=1"></script>
-    <script src="scripts/bottracker.js?v=1"></script>
+    <script src="scripts/utils.js?v=3"></script>
+    <script src="scripts/bottracker.js?v=5"></script>
 
     <style type="text/css">
       body { padding-top: 70px; }
@@ -297,7 +297,66 @@
       <!-- Default panel contents -->
       <div class="panel-heading" style="font-size: 1.5em;"><a name="free"></a>Other Bots</div>
       <div class="panel-body">
-        Coming soon!
+          <table id="other_table" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>Bot Name</th>
+                      <th>Vote Value</th>
+                      <th>Description</th>
+                      <th>Website</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@minnowpond">@minnowpond</a></td>
+                      <td id="minnowpond-vote">Loading...</td>
+                      <td id="minnowpond-desc">Loading...</td>
+                      <td id="minnowpond-site">Loading...</td>
+                  </tr>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@resteembot">@resteembot</td>
+                      <td id="resteembot-vote">Loading...</td>
+                      <td id="resteembot-desc">Loading...</td>
+                      <td id="resteembot-site">Loading...</td>
+                  </tr>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@originalworks">@originalworks</td>
+                      <td id="originalworks-vote">Loading...</td>
+                      <td id="originalworks-desc">Loading...</td>
+                      <td id="originalworks-site">Loading...</td>
+                  </tr>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@treeplanter">@treeplanter</td>
+                      <td id="treeplanter-vote">Loading...</td>
+                      <td id="treeplanter-desc">Loading...</td>
+                      <td id="treeplanter-site">Loading...</td>
+                  </tr>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@followforupvotes">@followforupvotes</td>
+                      <td id="followforupvotes-vote">Loading...</td>
+                      <td id="followforupvotes-desc">Loading...</td>
+                      <td id="followforupvotes-site">Loading...</td>
+                  </tr>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@steemthat">@steemthat</td>
+                      <td id="steemthat-vote">Loading...</td>
+                      <td id="steemthat-desc">Loading...</td>
+                      <td id="steemthat-site">Loading...</td>
+                  </tr>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@frontrunner">@frontrunner</td>
+                      <td id="frontrunner-vote">Loading...</td>
+                      <td id="frontrunner-desc">Loading...</td>
+                      <td id="frontrunner-site">Loading...</td>
+                  </tr>
+                  <tr>
+                      <td><a target="_blank" href="https://steemit.com/@steemvoter">@steemvoter</td>
+                      <td id="steemvoter-vote">Loading...</td>
+                      <td id="steemvoter-desc">Loading...</td>
+                      <td id="steemvoter-site">Loading...</td>
+                  </tr>
+              </tbody>
+          </table>
           <!-- @minnowpond, @resteembot, @originalworks-->
       </div>
     </div>
