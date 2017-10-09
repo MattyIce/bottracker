@@ -16,22 +16,43 @@ $(function () {
     var bot_names = [];
     bots.forEach(function (bot) { bot_names.push(bot.name); });
 
-    if (Notification && Notification.permission !== "granted")
-        Notification.requestPermission();
+    try {
+        if (Notification && Notification.permission !== "granted")
+            Notification.requestPermission();
+    } catch (err) { }
 
     function sendNotification(bot, bid) {
-        if (Notification.permission !== "granted")
-            Notification.requestPermission();
-        else {
-            var notification = new Notification('Profitable Bidding Opportunity!', {
-                icon: 'https://i.imgur.com/SEm0LBl.jpg',
-                body: "@" + bot + ' is currently showing a profitable bidding opportunity! Max profitable bid is $' + bid.formatMoney() + ' SBD.',
-            });
+        try {
+            if (Notification.permission !== "granted")
+                Notification.requestPermission();
+            else {
+                var notification = new Notification('Profitable Bidding Opportunity!', {
+                    icon: 'https://i.imgur.com/SEm0LBl.jpg',
+                    body: "@" + bot + ' is currently showing a profitable bidding opportunity! Max profitable bid is $' + bid.formatMoney() + ' SBD.'
+                });
 
-            notification.onclick = function () {
-                window.open("https://steemit.com/@" + bot);
-            };
-        }
+                notification.onclick = function () {
+                    window.open("https://steemit.com/@" + bot);
+                };
+            }
+        } catch (err) { }
+    }
+
+    function sendRandoWhaleNotification() {
+        try {
+            if (Notification.permission !== "granted")
+                Notification.requestPermission();
+            else {
+                var notification = new Notification('Randowhale is Awake!', {
+                    icon: 'https://i.imgur.com/SEm0LBl.jpg',
+                    body: '@randowhale is awake! Send your payment quickly before it goes to sleep again!'
+                });
+
+                notification.onclick = function () {
+                    window.open("https://steemit.com/@randowhale");
+                };
+            }
+        } catch (err) { }
     }
 
     function loadAccountInfo() {
@@ -52,8 +73,6 @@ $(function () {
         $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
         $('#randowhale-vote').text((vote / 100).formatMoney() + '%');
         $('#randowhale-value').text('$' + getVoteValue(vote / 100, account).formatMoney());
-
-        
           
         var status = $('#randowhale-status');
         status.removeClass('label-default');
@@ -65,6 +84,7 @@ $(function () {
         } else {
           status.text('Awake!');
           status.addClass('label-success');
+          sendRandoWhaleNotification();
         }
 
         var panel = $('#randowhale-panel');
