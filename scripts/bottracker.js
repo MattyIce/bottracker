@@ -8,7 +8,10 @@ $(function () {
       { name: 'boomerang', interval: 2.4 },
       { name: 'minnowhelper', interval: 2.4 },
       { name: 'discordia', interval: 2.4 },
-      { name: 'lovejuice', interval: 2.4 }
+      { name: 'lovejuice', interval: 2.4 },
+      { name: 'sneaky-ninja', interval: 2.4 },
+      { name: 'upgoater', interval: 2.4 },
+      { name: 'voter', interval: 2.4 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -73,7 +76,7 @@ $(function () {
         $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
         $('#randowhale-vote').text((vote / 100).formatMoney() + '%');
         $('#randowhale-value').text('$' + getVoteValue(vote / 100, account).formatMoney());
-          
+
         var status = $('#randowhale-status');
         status.removeClass('label-default');
         status.removeClass('label-success');
@@ -101,7 +104,7 @@ $(function () {
         bar.css('width', power + '%');
         bar.text(power + '%');
         var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
-        var weight = 3 / vote;        
+        var weight = 3 / vote;
         //$('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
         $('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
       });
@@ -119,8 +122,8 @@ $(function () {
           }
       });
 
-      steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter'], function (err, result) {
-          result.forEach(function (account) {              
+      steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale'], function (err, result) {
+          result.forEach(function (account) {
               $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
 
               var metadata = JSON.parse(account.json_metadata);
