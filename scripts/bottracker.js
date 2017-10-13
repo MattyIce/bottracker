@@ -58,6 +58,7 @@ $(function () {
         } catch (err) { }
     }
 
+    var rw_last = false;
     function loadAccountInfo() {
       steem.api.getAccounts(['randowhale'], function (err, result) {
         var account = result[0];
@@ -84,10 +85,15 @@ $(function () {
         if(metadata.config.sleep) {
           status.text('Sleeping');
           status.addClass('label-default');
+          rw_last = false;
         } else {
           status.text('Awake!');
           status.addClass('label-success');
-          sendRandoWhaleNotification();
+
+          if(!rw_last) {
+            sendRandoWhaleNotification();
+            rw_last = true;
+          }
         }
 
         var panel = $('#randowhale-panel');
@@ -191,6 +197,7 @@ $(function () {
         var td = $(document.createElement('td'));
         var link = $(document.createElement('a'));
         link.attr('href', 'http://www.steemit.com/@' + bot.name);
+        link.attr('target', '_blank');
 
         if(bot.power == 100 && bot.last > 5 * HOURS || bot.power < 90)
           link.text('@' + bot.name + ' (DOWN)');
