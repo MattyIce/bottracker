@@ -2,7 +2,7 @@ $(function () {
     var RETURN = 1;
     var AUTHOR_REWARDS = 0.75;
     var bots = [
-      { name: 'booster', interval: 1.2 },
+      { name: 'booster', interval: 2.4 },
       { name: 'bellyrub', interval: 2.4 },
       { name: 'buildawhale', interval: 2.4 },
       { name: 'boomerang', interval: 2.4 },
