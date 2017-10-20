@@ -1,23 +1,28 @@
 $(function () {
     var RETURN = 1;
     var AUTHOR_REWARDS = 0.75;
+    var MIN_VOTE = 0;
+
     var bots = [
-      { name: 'booster', interval: 2.4 },
-      { name: 'bellyrub', interval: 2.4 },
-      { name: 'buildawhale', interval: 2.4 },
-      { name: 'boomerang', interval: 2.4 },
-      { name: 'minnowhelper', interval: 2.4 },
-      { name: 'discordia', interval: 2.4 },
-      { name: 'lovejuice', interval: 2.4 },
-      { name: 'sneaky-ninja', interval: 2.4 },
-      { name: 'upgoater', interval: 2.4 },
-      { name: 'voter', interval: 2.4 }
+      { name: 'booster', interval: 2.4, comments: true },
+      { name: 'bellyrub', interval: 2.4, comments: true },
+      { name: 'buildawhale', interval: 2.4, comments: true },
+      { name: 'boomerang', interval: 2.4, comments: true },
+      { name: 'minnowhelper', interval: 2.4, comments: true },
+      { name: 'discordia', interval: 2.4, comments: true },
+      { name: 'lovejuice', interval: 2.4, comments: true },
+      { name: 'sneaky-ninja', interval: 2.4, comments: true },
+      { name: 'upgoater', interval: 2.4, comments: true },
+      { name: 'voter', interval: 2.4, comments: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
     ];
     var bot_names = [];
-    bots.forEach(function (bot) { bot_names.push(bot.name); });
+    bots.forEach(function (bot) {
+      bot_names.push(bot.name);
+      $('#bot_list').append('<option value="' + bot.name + '">' + bot.name + '</option>');
+    });
 
     try {
         if (Notification && Notification.permission !== "granted")
@@ -75,8 +80,8 @@ $(function () {
         var metadata = JSON.parse(account.json_metadata);
         var vote = metadata.config.min_vote;
         $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
-        $('#randowhale-vote').text((vote / 100).formatMoney() + '%');
-        $('#randowhale-value').text('$' + getVoteValue(vote / 100, account).formatMoney());
+        $('#randowhale-vote').text((vote * 2 / 100).formatMoney() + '%');
+        $('#randowhale-value').text('$' + getVoteValue(vote * 2 / 100, account).formatMoney());
 
         var status = $('#randowhale-status');
         status.removeClass('label-default');
@@ -162,7 +167,7 @@ $(function () {
                     var bot = bots.filter(function(b) { return b.name == account.name; })[0];
                     bot.vote = vote * bot.interval / 2.4;
                     bot.total = total;
-                    bot.bid = (AUTHOR_REWARDS * bot.vote - RETURN * total) / RETURN;
+                    bot.bid = (bot.vote - RETURN * total) / RETURN;
                     bot.power = getVotingPower(account) / 100;
                     bot.last = (new Date() - last_vote_time);
                     bot.next = timeTilFullPower(account) * 1000;
@@ -192,6 +197,11 @@ $(function () {
       });
 
       bots.forEach(function(bot) {
+        if(bot.vote < MIN_VOTE)
+          return;
+
+        bid = (AUTHOR_REWARDS * bot.vote - RETURN * bot.total);
+
         var row = $(document.createElement('tr'));
 
         var td = $(document.createElement('td'));
@@ -205,6 +215,12 @@ $(function () {
           link.text('@' + bot.name);
 
         td.append(link);
+
+        if(bot.comments) {
+            var icon = $('<span class="glyphicon glyphicon-comment" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
+            td.append(icon);
+        }
+
         row.append(td);
 
         td = $(document.createElement('td'));
@@ -216,7 +232,7 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
-        td.text('$' + Math.max(bot.bid, 0).formatMoney());
+        td.text('$' + Math.max(bid, 0).formatMoney());
         row.append(td);
 
         td = $(document.createElement('td'));
@@ -245,11 +261,11 @@ $(function () {
         td.text(toTimer(bot.next));
         row.append(td);
 
-        if (bot.bid > 0 && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
+        if (bid > 0 && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
             row.css('background-color', '#aaffaa');
 
             if (!bot.notif) {
-                sendNotification(bot.name, bot.bid);
+                sendNotification(bot.name, bid);
                 bot.notif = true;
             }
         } else
@@ -259,10 +275,55 @@ $(function () {
           row.css('background-color', '#ffaaaa');
 
         $('#bots_table tbody').append(row);
+        $('[data-toggle="tooltip"]').tooltip();
       });
     }
 
     setTimeout(loadBotInfo, 5 * 1000);
     setTimeout(loadAccountInfo, 5 * 1000);
     setInterval(updateTimers, 1000);
+
+    $('#curation_option').bootstrapSwitch();
+    $('#curation_option').on('switchChange.bootstrapSwitch', function(event, state) {
+      console.log(state); // true | false
+      AUTHOR_REWARDS = state ? 0.75 : 1;
+      showBotInfo();
+    });
+
+    $('[data-switch-get]').on('click', function () {
+      var type = $(this).data('switch-get')
+      window.alert($('#switch-' + type).bootstrapSwitch(type))
+    })
+
+    $('#min_vote_slider').slider({});
+    $('#min_vote_slider').on("slide", function(e) {
+      if(e.value != MIN_VOTE) {
+        MIN_VOTE = e.value;
+        console.log(MIN_VOTE);
+        showBotInfo();
+      }
+    });
+
+    $('#calculate_vote').click(function() {
+      var bot = null;
+      var name = $('#bot_list').val();
+
+      bots.forEach(function(b) {
+        if(b.name == name)
+          {
+            bot = b;
+            return;
+          }
+      });
+
+      var bid = parseFloat($('#bid_amount').val());
+      var value = bid / (bid + bot.total) * bot.vote;
+      $('#vote_value').text('$' + value.formatMoney());
+      $('#vote_value_net').text('$' + (value * 0.75).formatMoney());
+
+      $('#vote_value').css('color', (value >= bid) ? '#008800' : '#FF0000');
+      $('#vote_value_net').css('color', ((value * 0.75) >= bid) ? '#008800' : '#FF0000');
+
+      return false;
+    });
 });

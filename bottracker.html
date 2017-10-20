@@ -14,12 +14,17 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon3.ico" type="image/x-icon">
     <title>Steem Bot Tracker</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="scripts/bootstrap-slider.min.css">
+    <script src="scripts/bootstrap-slider.min.js"></script>
+    <link href="https://unpkg.com/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-switch"></script>
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=3"></script>
@@ -28,7 +33,10 @@
     <style type="text/css">
       body { padding-top: 70px; }
       .progress-bar { color: black; }
-
+      .glyphicon-comment { margin-left: 5px; }
+      h3 { margin-top: 0; }
+      .value { font-weight: bold; }
+      dl.values { margin-top: 10px; margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -142,6 +150,40 @@
           </div>
         </div>
 
+        <div class="well">
+          <h3>Vote Calculator</h3>
+          <p>
+            Calculate how much of an upvote you could receive*
+            <form class="form-inline">
+              <div class="form-group">
+                <select id="bot_list" class="form-control"><option value="">Choose a bot</option></select>
+              </div>
+              <div class="form-group">
+                <input id="bid_amount" type="text" class="form-control" placeholder="Bid Amount">
+              </div>
+              <button id="calculate_vote" class="btn btn-default">Calculate</button>
+              <div class="form-group">
+                <dl class="dl-horizontal values">
+                  <dt>Total Vote Value:</dt>
+                  <dd><span class="value" id="vote_value">$0.00</span></dd>
+                  <dt>After 25% Curation:</dt>
+                  <dd><span class="value" id="vote_value_net">$0.00</span></dd>
+                </dl>
+              </div>
+            </form>
+
+
+            <br/>
+            *NOTE: actual vote value may differ substantially from what is shown here! This is an informational tool, use at your own risk.
+          </p>
+        </div>
+
+        <div class="well">
+          <h3>Settings</h3>
+          <p>Include 25% curation rewards in Max Profitable Bid calculation: <input id="curation_option" type="checkbox" checked></p>
+          <p>Only show bots with vote value greater than: <b>$0&nbsp;&nbsp;</b> <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="0"/> <b>&nbsp;&nbsp;$10</b></p>
+        </div>
+
         <table id="bots_table" class="table table-striped">
           <thead>
             <tr>
@@ -222,13 +264,15 @@
                 </div>
             </div>
 
-            <dl class="dl-horizontal" style="font-size: 1.5em;">
+            <dl class="dl-horizontal" style="font-size: 1.3em;">
                 <dt>Min Payment:</dt>
                 <dd><span id="minnowbooster-min">Loading...</span></dd>
                 <dt>Daily Limit:</dt>
                 <dd><span id="minnowbooster-day">Loading...</span></dd>
                 <dt>Weekly Limit:</dt>
                 <dd><span id="minnowbooster-week">Loading...</span></dd>
+                <dt>Comment Voting:</dt>
+                <dd>Disabled</dd>
               <dt>Vote Value ($1):</dt>
               <dd><span id="minnowbooster-vote">Loading...</span></dd>
               <dt>Voting Power:</dt>
@@ -269,7 +313,7 @@
                   </div>
               </div>
 
-            <dl class="dl-horizontal" style="font-size: 1.5em;">
+            <dl class="dl-horizontal" style="font-size: 1.3em;">
               <dt>Status:</dt>
               <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
 
@@ -279,6 +323,8 @@
               <dd><span id="randowhale-value">Loading...</span> (<span id="randowhale-vote">Loading...</span>)</dd>
               <dt>Next Wake-Up:</dt>
               <dd><span class="timer " id="randowhale-time">Loading...</span></dd>
+              <dt>Comment Voting:</dt>
+              <dd>Disabled</dd>
               <dt>Voting Power:</dt>
               <dd>
                 <div class="progress" id="randowhale-progress" style="margin-top: 7px;">
