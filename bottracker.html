@@ -28,7 +28,11 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=3"></script>
-    <script src="scripts/bottracker.js?v=10"></script>
+    <script src="scripts/bottracker.js?v=12"></script>
+
+    <script type="text/javascript">
+        steem.api.setOptions({ url: 'https://rpc.buildteam.io' });
+    </script>
 
     <style type="text/css">
       body { padding-top: 70px; }
@@ -184,6 +188,10 @@
           <p>Only show bots with vote value greater than: <b>$0&nbsp;&nbsp;</b> <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="0"/> <b>&nbsp;&nbsp;$10</b></p>
         </div>
 
+          <div id="bid_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+              There was an error loading bot info. Please try again in a little bit.
+          </div>
+
         <table id="bots_table" class="table table-striped">
           <thead>
             <tr>
@@ -264,6 +272,10 @@
                 </div>
             </div>
 
+              <div id="mb_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+                  There was an error loading bot info. Please try again in a little bit.
+              </div>
+
             <dl class="dl-horizontal" style="font-size: 1.3em;">
                 <dt>Min Payment:</dt>
                 <dd><span id="minnowbooster-min">Loading...</span></dd>
@@ -313,6 +325,10 @@
                   </div>
               </div>
 
+              <div id="rw_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+                  There was an error loading bot info. Please try again in a little bit.
+              </div>
+
             <dl class="dl-horizontal" style="font-size: 1.3em;">
               <dt>Status:</dt>
               <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
@@ -343,6 +359,10 @@
       <!-- Default panel contents -->
       <div class="panel-heading" style="font-size: 1.5em;"><a name="free"></a>Other Bots</div>
       <div class="panel-body">
+          <div id="other_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+              There was an error loading bot info. Please try again in a little bit.
+          </div>
+
           <table id="other_table" class="table table-striped">
               <thead>
                   <tr>

@@ -65,114 +65,132 @@ $(function () {
 
     var rw_last = false;
     function loadAccountInfo() {
-      steem.api.getAccounts(['randowhale'], function (err, result) {
-        var account = result[0];
-        var bar = $('#randowhale-progress div');
-        var power = getVotingPower(account) / 100;
-        bar.attr('aria-valuenow', power);
-        bar.css('width', power + '%');
-        bar.text(power + '%');
+        steem.api.getAccounts(['randowhale'], function (err, result) {
+            try {
+                var account = result[0];
+                var bar = $('#randowhale-progress div');
+                var power = getVotingPower(account) / 100;
+                bar.attr('aria-valuenow', power);
+                bar.css('width', power + '%');
+                bar.text(power + '%');
 
-        var time = timeTilFullPower(account) * 1000;
-        $('#randowhale-time').attr('time', time);
-        $('#randowhale-time').text(toTimer(time));
+                var time = timeTilFullPower(account) * 1000;
+                $('#randowhale-time').attr('time', time);
+                $('#randowhale-time').text(toTimer(time));
 
-        var metadata = JSON.parse(account.json_metadata);
-        var vote = metadata.config.min_vote;
-        $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
-        $('#randowhale-vote').text((vote * 2 / 100).formatMoney() + '%');
-        $('#randowhale-value').text('$' + getVoteValue(vote * 2 / 100, account).formatMoney());
+                var metadata = JSON.parse(account.json_metadata);
+                var vote = metadata.config.min_vote;
+                $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
+                $('#randowhale-vote').text((vote * 2 / 100).formatMoney() + '%');
+                $('#randowhale-value').text('$' + getVoteValue(vote * 2 / 100, account).formatMoney());
 
-        var status = $('#randowhale-status');
-        status.removeClass('label-default');
-        status.removeClass('label-success');
+                var status = $('#randowhale-status');
+                status.removeClass('label-default');
+                status.removeClass('label-success');
 
-        if(metadata.config.sleep) {
-          status.text('Sleeping');
-          status.addClass('label-default');
-          rw_last = false;
-        } else {
-          status.text('Awake!');
-          status.addClass('label-success');
+                if(metadata.config.sleep) {
+                    status.text('Sleeping');
+                    status.addClass('label-default');
+                    rw_last = false;
+                } else {
+                    status.text('Awake!');
+                    status.addClass('label-success');
 
-          if(!rw_last) {
-            sendRandoWhaleNotification();
-            rw_last = true;
-          }
-        }
+                    if(!rw_last) {
+                        sendRandoWhaleNotification();
+                        rw_last = true;
+                    }
+                }
 
-        var panel = $('#randowhale-panel');
-        panel.removeClass('panel-default');
-        panel.removeClass('panel-success');
-        panel.addClass('panel-' + (metadata.config.sleep ? 'default' : 'success'));
-      });
+                var panel = $('#randowhale-panel');
+                panel.removeClass('panel-default');
+                panel.removeClass('panel-success');
+                panel.addClass('panel-' + (metadata.config.sleep ? 'default' : 'success'));
+                $('#rw_bot_error').css('display', 'none');
+            } catch (err) {
+                $('#rw_bot_error').css('display', 'block');
+            }
+        });
 
-      steem.api.getAccounts(['minnowbooster'], function (err, result) {
-        var account = result[0];
-        var bar = $('#minnowbooster-progress div');
-        var power = getVotingPower(account) / 100;
-        bar.attr('aria-valuenow', power);
-        bar.css('width', power + '%');
-        bar.text(power + '%');
-        var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
-        var weight = 3 / vote;
-        //$('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
-        $('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
-      });
+        steem.api.getAccounts(['minnowbooster'], function (err, result) {
+            try {
+                var account = result[0];
+                var bar = $('#minnowbooster-progress div');
+                var power = getVotingPower(account) / 100;
+                bar.attr('aria-valuenow', power);
+                bar.css('width', power + '%');
+                bar.text(power + '%');
+                var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
+                var weight = 3 / vote;
+                //$('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
+                $('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
+                $('#mb_bot_error').css('display', 'none');
+            } catch (err) {
+                $('#mb_bot_error').css('display', 'block');
+            }
+        });
 
-      $.get('https://www.minnowbooster.net/api/global', function (data) {
-          $('#minnowbooster-min').text('$' + data.min_upvote + ' SBD');
-          $('#minnowbooster-day').text('$' + data.daily_limit + ' SBD');
-          $('#minnowbooster-week').text('$' + data.weekly_limit + ' SBD');
-      });
+        $.get('https://www.minnowbooster.net/api/global', function (data) {
+            $('#minnowbooster-min').text('$' + data.min_upvote + ' SBD');
+            $('#minnowbooster-day').text('$' + data.daily_limit + ' SBD');
+            $('#minnowbooster-week').text('$' + data.weekly_limit + ' SBD');
+        });
 
-      $.get('https://www.minnowbooster.net/upvotes.json', function (data) {
-          for (var i = 0; i < 5; i++) {
-              var vote = data[i];
-              $('#mb-upvote-' + i).html('<a href="http://steemit.com/@' + vote.sender_name + '">' + vote.sender_name + '</a> received a <strong>$' + parseFloat(vote.value).formatMoney() + ' upvote for $' + vote.sbd + ' SBD</strong> on <a href="' + vote.url + '">' + vote.url + '</a> at ' + new Date(vote.created_at).toLocaleDateString() + ' ' + new Date(vote.created_at).toLocaleTimeString());
-          }
-      });
+        $.get('https://www.minnowbooster.net/upvotes.json', function (data) {
+            for (var i = 0; i < 5; i++) {
+                var vote = data[i];
+                $('#mb-upvote-' + i).html('<a href="http://steemit.com/@' + vote.sender_name + '">' + vote.sender_name + '</a> received a <strong>$' + parseFloat(vote.value).formatMoney() + ' upvote for $' + vote.sbd + ' SBD</strong> on <a href="' + vote.url + '">' + vote.url + '</a> at ' + new Date(vote.created_at).toLocaleDateString() + ' ' + new Date(vote.created_at).toLocaleTimeString());
+            }
+        });
 
-      steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale'], function (err, result) {
-          result.forEach(function (account) {
-              $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
+        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale'], function (err, result) {
+            try {
+                result.forEach(function (account) {
+                    $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
 
-              var metadata = JSON.parse(account.json_metadata);
-              $('#' + account.name + '-desc').text(metadata.profile.about ? metadata.profile.about : '');
-              $('#' + account.name + '-site').html(metadata.profile.website ? '<a target="_blank" href="' + metadata.profile.website + '">' + metadata.profile.website + '</a>' : '');
-          });
-      });
+                    var metadata = JSON.parse(account.json_metadata);
+                    $('#' + account.name + '-desc').text(metadata.profile.about ? metadata.profile.about : '');
+                    $('#' + account.name + '-site').html(metadata.profile.website ? '<a target="_blank" href="' + metadata.profile.website + '">' + metadata.profile.website + '</a>' : '');
+                });
+                $('#other_bot_error').css('display', 'none');
+            } catch (err) {
+                $('#other_bot_error').css('display', 'block');
+            }
+        });
 
       setTimeout(loadAccountInfo, 60 * 1000);
     }
 
     function loadBotInfo() {
         steem.api.getAccounts(bot_names, function (err, result) {
-            //for(var i = 0; i < result.length; i++) {
-            //    var account = result[i];
-            result.forEach(function (account) {
-                var vote = getVoteValue(100, account);
-                var last_vote_time = new Date((account.last_vote_time) + 'Z');
+            try {
+                result.forEach(function (account) {
+                    var vote = getVoteValue(100, account);
+                    var last_vote_time = new Date((account.last_vote_time) + 'Z');
 
-                steem.api.getAccountHistory(account.name, -1, (account.name == 'booster') ? 1000 : 200, function (err, result) {
-                    var total = 0, last_date = 0;
-                    result.forEach(function(trans) {
-                      var op = trans[1].op;
-                      var ts = new Date((trans[1].timestamp) + 'Z');
+                    steem.api.getAccountHistory(account.name, -1, (account.name == 'booster') ? 1000 : 200, function (err, result) {
+                        var total = 0, last_date = 0;
+                        result.forEach(function(trans) {
+                            var op = trans[1].op;
+                            var ts = new Date((trans[1].timestamp) + 'Z');
 
-                      if(op[0] == 'transfer' && op[1].to == account.name && ts > last_vote_time)
-                        total += parseFloat(op[1].amount.replace(" SBD", ""));
+                            if(op[0] == 'transfer' && op[1].to == account.name && ts > last_vote_time)
+                                total += parseFloat(op[1].amount.replace(" SBD", ""));
+                        });
+
+                        var bot = bots.filter(function(b) { return b.name == account.name; })[0];
+                        bot.vote = vote * bot.interval / 2.4;
+                        bot.total = total;
+                        bot.bid = (bot.vote - RETURN * total) / RETURN;
+                        bot.power = getVotingPower(account) / 100;
+                        bot.last = (new Date() - last_vote_time);
+                        bot.next = timeTilFullPower(account) * 1000;
                     });
-
-                    var bot = bots.filter(function(b) { return b.name == account.name; })[0];
-                    bot.vote = vote * bot.interval / 2.4;
-                    bot.total = total;
-                    bot.bid = (bot.vote - RETURN * total) / RETURN;
-                    bot.power = getVotingPower(account) / 100;
-                    bot.last = (new Date() - last_vote_time);
-                    bot.next = timeTilFullPower(account) * 1000;
                 });
-            });
+                $('#bid_bot_error').css('display', 'none');
+            } catch (err) {
+                $('#bid_bot_error').css('display', 'block');
+            }
 
             setTimeout(showBotInfo, 5 * 1000);
             setTimeout(loadBotInfo, 30 * 1000);
