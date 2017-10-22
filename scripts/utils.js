@@ -102,18 +102,6 @@ var n = this,
 
          var rshares = Math.round((effective_vesting_shares * used_power) / (STEEMIT_100_PERCENT))
 
-         if (power == 10000) {
-             console.log('effective_vesting_shares: ' + effective_vesting_shares);
-             console.log('current_power: ' + current_power);
-             console.log('used_power: ' + used_power);
-             console.log('weight: ' + weight);
-             console.log('max_vote_denom: ' + max_vote_denom);
-             console.log('rshares: ' + rshares);
-             console.log('rewardBalance: ' + rewardBalance);
-             console.log('recentClaims: ' + recentClaims);
-             console.log('steemPrice: ' + steemPrice);
-         }
-
          var voteValue = rshares
            * rewardBalance / recentClaims
            * steemPrice;

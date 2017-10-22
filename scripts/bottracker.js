@@ -303,7 +303,6 @@ $(function () {
 
     $('#curation_option').bootstrapSwitch();
     $('#curation_option').on('switchChange.bootstrapSwitch', function(event, state) {
-      console.log(state); // true | false
       AUTHOR_REWARDS = state ? 0.75 : 1;
       showBotInfo();
     });
@@ -317,7 +316,6 @@ $(function () {
     $('#min_vote_slider').on("slide", function(e) {
       if(e.value != MIN_VOTE) {
         MIN_VOTE = e.value;
-        console.log(MIN_VOTE);
         showBotInfo();
       }
     });
