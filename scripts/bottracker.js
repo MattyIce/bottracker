@@ -13,7 +13,8 @@ $(function () {
       { name: 'lovejuice', interval: 2.4, comments: true },
       { name: 'sneaky-ninja', interval: 2.4, comments: true },
       { name: 'upgoater', interval: 2.4, comments: true },
-      { name: 'voter', interval: 2.4, comments: true }
+      { name: 'voter', interval: 2.4, comments: true },
+      { name: 'appreciator', interval: 2.4, comments: false }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
