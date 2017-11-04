@@ -5,7 +5,7 @@ $(function () {
 
     var bots = [
       { name: 'booster', interval: 2.4, comments: true },
-      { name: 'bellyrub', interval: 2.4, comments: true },
+      { name: 'bellyrub', interval: 1.2, comments: true },
       { name: 'buildawhale', interval: 2.4, comments: true },
       { name: 'boomerang', interval: 2.4, comments: true },
       { name: 'minnowhelper', interval: 2.4, comments: true },
