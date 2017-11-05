@@ -305,6 +305,12 @@ $(function () {
         td.text(toTimer(bot.next));
         row.append(td);
 
+        td = $(document.createElement('td'));
+        var link = $('<a href="javascript:void(0);">Details</a>');
+        link.click(function (e) { showBotDetails(bot); });
+        td.append(link);
+        row.append(td);
+
         if (bid > 0 && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
             row.css('background-color', '#aaffaa');
 
@@ -321,6 +327,80 @@ $(function () {
         $('#bots_table tbody').append(row);
         $('[data-toggle="tooltip"]').tooltip();
       });
+    }
+
+    function showBotDetails(bot) {
+        $('#bid_details_bot').text(bot.name);
+
+        var cur_table = $('#bid_details_table_cur tbody');
+        cur_table.empty();
+        var last_table = $('#bid_details_table_last tbody');
+        last_table.empty();
+
+        if (bot.rounds && bot.rounds.length > 0)
+            populateRoundDetailTable(cur_table, bot, bot.rounds[bot.rounds.length - 1]);
+
+        if (bot.rounds && bot.rounds.length > 1)
+            populateRoundDetailTable(last_table, bot, bot.rounds[bot.rounds.length - 2]);
+
+        $('#cur_round_show').click(function (e) {
+            $('#cur_round').show();
+            $('#cur_round_show').parent().addClass('active');
+            $('#last_round').hide();
+            $('#last_round_show').parent().removeClass('active');
+        });
+
+        $('#last_round_show').click(function (e) {
+            $('#cur_round').hide();
+            $('#cur_round_show').parent().removeClass('active');
+            $('#last_round').show();
+            $('#last_round_show').parent().addClass('active');
+        });
+
+        $('#bid_details').modal();
+    }
+
+    function populateRoundDetailTable(table, bot, round) {
+        round.bids.forEach(function (bid) {
+            amount = parseFloat(bid.data.amount.replace(' SBD', ''));
+            var row = $(document.createElement('tr'));
+
+            var td = $(document.createElement('td'));
+            var link = $(document.createElement('a'));
+            link.attr('href', 'http://www.steemit.com/@' + bid.data.from);
+            link.attr('target', '_blank');
+            link.text('@' + bid.data.from);
+            td.append(link);
+            row.append(td);
+
+            var td = $(document.createElement('td'));
+            td.text(amount.formatMoney(3));
+            row.append(td);
+
+            var td = $(document.createElement('td'));
+            td.text((amount / round.total * 100).formatMoney() + '%');
+            row.append(td);
+
+            var td = $(document.createElement('td'));
+            td.text('$' + ((amount / round.total) * bot.vote).formatMoney());
+            row.append(td);
+
+            var td = $(document.createElement('td'));
+            var div = $(document.createElement('div'));
+            div.css('width', '200px');
+            div.css('overflow', 'hidden');
+            div.css('height', '23px');
+
+            var link = $(document.createElement('a'));
+            link.attr('href', bid.data.memo);
+            link.attr('target', '_blank');
+            link.text(bid.data.memo);
+            div.append(link);
+            td.append(div);
+            row.append(td);
+
+            table.append(row);
+        });
     }
 
     setTimeout(loadBotInfo, 5 * 1000);

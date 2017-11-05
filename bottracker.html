@@ -28,7 +28,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=4"></script>
-    <script src="scripts/bottracker.js?v=15"></script>
+    <script src="scripts/bottracker.js?v=16"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -210,10 +210,12 @@
               <th>Voting Power</th>
               <th>Last Vote</th>
               <th>Next Vote</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
             <tr>
+              <td>Loading...</td>
               <td>Loading...</td>
               <td>Loading...</td>
               <td>Loading...</td>
@@ -440,6 +442,56 @@
           <!-- @minnowpond, @resteembot, @originalworks-->
       </div>
     </div>
+
+      <div class="modal fade" id="bid_details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title" id="myModalLabel">@<span id="bid_details_bot"></span> Bidding Round Details</h4>
+                  </div>
+                  <div class="modal-body">
+                      <ul class="nav nav-tabs">
+                          <li role="presentation" class="active"><a id="cur_round_show" href="javascript:void(0);">Current Round</a></li>
+                          <li role="presentation"><a id="last_round_show" href="javascript:void(0);">Last Round</a></li>
+                      </ul>
+
+                      <div id="cur_round">
+                          <table id="bid_details_table_cur" class="table table-striped">
+                              <thead>
+                                  <tr>
+                                      <th>Sender</th>
+                                      <th>Bid</th>
+                                      <th>Vote %</th>
+                                      <th>Vote Value (Estimated)</th>
+                                      <th>Memo</th>
+                                  </tr>
+                              </thead>
+                              <tbody></tbody>
+                          </table>
+                      </div>
+
+                      <div id="last_round" style="display: none;">
+                          <table id="bid_details_table_last" class="table table-striped">
+                              <thead>
+                                  <tr>
+                                      <th>Sender</th>
+                                      <th>Bid</th>
+                                      <th>Vote %</th>
+                                      <th>Vote Value (Estimated)</th>
+                                      <th>Memo</th>
+                                  </tr>
+                              </thead>
+                              <tbody></tbody>
+                          </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
+      </div>
   </div>
 </body>
 </html>
