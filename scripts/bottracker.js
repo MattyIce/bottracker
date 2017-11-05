@@ -171,19 +171,43 @@ $(function () {
                     var last_vote_time = new Date((account.last_vote_time) + 'Z');
 
                     steem.api.getAccountHistory(account.name, -1, (account.name == 'booster') ? 1000 : 200, function (err, result) {
-                        var total = 0, last_date = 0;
+                        if (err) return;
+
+                        var bot = bots.filter(function (b) { return b.name == account.name; })[0];
+
+                        if (!bot.rounds)
+                            bot.rounds = [];
+
+                        var round = null;
+                        if (bot.rounds.length > 0)
+                            round = bot.rounds.filter(function (r) { return r.last_vote_time >= (last_vote_time - 10 * 60 * 1000); })[0];
+
+                        if (round == null) {
+                            round = { last_vote_time: last_vote_time, bids: [], total: 0 };
+                            bot.rounds.push(round);
+                        }
+
+                        round.last_vote_time = last_vote_time;
+
                         result.forEach(function(trans) {
                             var op = trans[1].op;
                             var ts = new Date((trans[1].timestamp) + 'Z');
 
-                            if(op[0] == 'transfer' && op[1].to == account.name && ts > last_vote_time)
-                                total += parseFloat(op[1].amount.replace(" SBD", ""));
-                        });
+                            if (op[0] == 'transfer' && op[1].to == account.name && ts > last_vote_time) {
+                                //total += parseFloat(op[1].amount.replace(" SBD", ""));
+                                var existing = round.bids.filter(function (b) { return b.id == trans[0]; });
 
-                        var bot = bots.filter(function(b) { return b.name == account.name; })[0];
+                                if (existing.length == 0) {
+                                    round.bids.push({ id: trans[0], data: op[1] });
+                                    round.total += parseFloat(op[1].amount.replace(" SBD", ""));
+                                }
+                            }
+                        });
+                        
+                        bot.last_vote_time = last_vote_time;
                         bot.vote = vote * bot.interval / 2.4;
-                        bot.total = total;
-                        bot.bid = (bot.vote - RETURN * total) / RETURN;
+                        bot.total = round.total;
+                        bot.bid = (bot.vote - RETURN * bot.total) / RETURN;
                         bot.power = getVotingPower(account) / 100;
                         bot.last = (new Date() - last_vote_time);
                         bot.next = timeTilFullPower(account) * 1000;
@@ -195,7 +219,7 @@ $(function () {
             }
 
             setTimeout(showBotInfo, 5 * 1000);
-            setTimeout(loadBotInfo, 30 * 1000);
+            setTimeout(loadBotInfo, 10 * 1000);
         });
     }
 
@@ -217,7 +241,7 @@ $(function () {
       });
 
       bots.forEach(function(bot) {
-        if(bot.vote < MIN_VOTE)
+        if(bot.vote < MIN_VOTE || !bot.vote)
           return;
 
         bid = (AUTHOR_REWARDS * bot.vote - RETURN * bot.total);
