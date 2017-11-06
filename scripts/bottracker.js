@@ -5,7 +5,7 @@ $(function () {
 
     var bots = [
       { name: 'booster', interval: 2.4, comments: true },
-      { name: 'bellyrub', interval: 1.2, comments: true },
+      { name: 'bellyrub', interval: 2.4, comments: true },
       { name: 'buildawhale', interval: 2.4, comments: true },
       { name: 'boomerang', interval: 2.4, comments: true },
       { name: 'minnowhelper', interval: 2.4, comments: true },
@@ -163,6 +163,7 @@ $(function () {
       setTimeout(loadAccountInfo, 60 * 1000);
     }
 
+    var first_load = true;
     function loadBotInfo() {
         steem.api.getAccounts(bot_names, function (err, result) {
             try {
@@ -170,7 +171,7 @@ $(function () {
                     var vote = getVoteValue(100, account);
                     var last_vote_time = new Date((account.last_vote_time) + 'Z');
 
-                    steem.api.getAccountHistory(account.name, -1, (account.name == 'booster') ? 1000 : 200, function (err, result) {
+                    steem.api.getAccountHistory(account.name, -1, (first_load) ? 500 : 50, function (err, result) {
                         if (err) return;
 
                         var bot = bots.filter(function (b) { return b.name == account.name; })[0];
@@ -179,27 +180,29 @@ $(function () {
                             bot.rounds = [];
 
                         var round = null;
-                        if (bot.rounds.length > 0)
-                            round = bot.rounds.filter(function (r) { return r.last_vote_time >= (last_vote_time - 10 * 60 * 1000); })[0];
-
-                        if (round == null) {
-                            round = { last_vote_time: last_vote_time, bids: [], total: 0 };
+                        if (bot.rounds.length == 0) {
+                            round = { last_vote_time: 0, bids: [], total: 0 };
                             bot.rounds.push(round);
-                        }
-
-                        round.last_vote_time = last_vote_time;
+                        } else
+                            round = bot.rounds[bot.rounds.length - 1];
 
                         result.forEach(function(trans) {
                             var op = trans[1].op;
                             var ts = new Date((trans[1].timestamp) + 'Z');
 
-                            if (op[0] == 'transfer' && op[1].to == account.name && ts > last_vote_time) {
-                                //total += parseFloat(op[1].amount.replace(" SBD", ""));
+                            if (op[0] == 'transfer' && op[1].to == account.name && ts > round.last_vote_time) {
                                 var existing = round.bids.filter(function (b) { return b.id == trans[0]; });
 
                                 if (existing.length == 0) {
                                     round.bids.push({ id: trans[0], data: op[1] });
                                     round.total += parseFloat(op[1].amount.replace(" SBD", ""));
+                                }
+                            } else if (op[0] == 'vote' && op[1].voter == account.name) {
+                                round = bot.rounds.filter(function (r) { return r.last_vote_time >= (ts - 10 * 60 * 1000); })[0];
+
+                                if (round == null) {
+                                    round = { last_vote_time: ts, bids: [], total: 0 };
+                                    bot.rounds.push(round);
                                 }
                             }
                         });
@@ -213,7 +216,9 @@ $(function () {
                         bot.next = timeTilFullPower(account) * 1000;
                     });
                 });
+
                 $('#bid_bot_error').css('display', 'none');
+                first_load = false;
             } catch (err) {
                 $('#bid_bot_error').css('display', 'block');
             }
