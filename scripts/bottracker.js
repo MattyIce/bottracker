@@ -198,7 +198,7 @@ $(function () {
                                     round.total += parseFloat(op[1].amount.replace(" SBD", ""));
                                 }
                             } else if (op[0] == 'vote' && op[1].voter == account.name) {
-                                round = bot.rounds.filter(function (r) { return r.last_vote_time >= (ts - 10 * 60 * 1000); })[0];
+                                round = bot.rounds.filter(function (r) { return r.last_vote_time >= (ts - 60 * 60 * 1000); })[0];
 
                                 if (round == null) {
                                     round = { last_vote_time: ts, bids: [], total: 0 };
@@ -258,7 +258,7 @@ $(function () {
         link.attr('href', 'http://www.steemit.com/@' + bot.name);
         link.attr('target', '_blank');
 
-        if(bot.power == 100 && bot.last > 5 * HOURS || bot.power < 90)
+        if(bot.power == 100 && bot.last > 3 * HOURS || bot.power < 90)
           link.text('@' + bot.name + ' (DOWN)');
         else
           link.text('@' + bot.name);
@@ -326,7 +326,7 @@ $(function () {
         } else
             bot.notif = false;
 
-        if(bot.power == 100 && bot.last > 5 * HOURS || bot.power < 90)
+        if(bot.power == 100 && bot.last > 3 * HOURS || bot.power < 90)
           row.css('background-color', '#ffaaaa');
 
         $('#bots_table tbody').append(row);
@@ -342,11 +342,17 @@ $(function () {
         var last_table = $('#bid_details_table_last tbody');
         last_table.empty();
 
-        if (bot.rounds && bot.rounds.length > 0)
+        if (bot.rounds && bot.rounds.length > 0) {
             populateRoundDetailTable(cur_table, bot, bot.rounds[bot.rounds.length - 1]);
+            $('#cur_round_vote').text('$' + bot.vote.formatMoney() + ' (' + (bot.interval / 2.4 * 100) + '%)');
+            $('#cur_round_bids').text('$' + bot.rounds[bot.rounds.length - 1].total.formatMoney());
+        }
 
-        if (bot.rounds && bot.rounds.length > 1)
+        if (bot.rounds && bot.rounds.length > 1) {
             populateRoundDetailTable(last_table, bot, bot.rounds[bot.rounds.length - 2]);
+            $('#last_round_vote').text('$' + bot.vote.formatMoney() + ' (' + (bot.interval / 2.4 * 100) + '%)');
+            $('#last_round_bids').text('$' + bot.rounds[bot.rounds.length - 2].total.formatMoney());
+        }
 
         $('#cur_round_show').click(function (e) {
             $('#cur_round').show();
@@ -379,15 +385,18 @@ $(function () {
             row.append(td);
 
             var td = $(document.createElement('td'));
-            td.text(amount.formatMoney(3));
+            td.text('$' + amount.formatMoney());
+            td.css('text-align', 'right');
             row.append(td);
 
             var td = $(document.createElement('td'));
             td.text((amount / round.total * 100).formatMoney() + '%');
+            td.css('text-align', 'right');
             row.append(td);
 
             var td = $(document.createElement('td'));
             td.text('$' + ((amount / round.total) * bot.vote).formatMoney());
+            td.css('text-align', 'right');
             row.append(td);
 
             var td = $(document.createElement('td'));

@@ -457,28 +457,42 @@
                       </ul>
 
                       <div id="cur_round">
-                          <table id="bid_details_table_cur" class="table table-striped">
-                              <thead>
-                                  <tr>
-                                      <th>Sender</th>
-                                      <th>Bid</th>
-                                      <th>Vote %</th>
-                                      <th>Vote Value (Estimated)</th>
-                                      <th>Memo</th>
-                                  </tr>
-                              </thead>
-                              <tbody></tbody>
-                          </table>
+                        <dl class="dl-horizontal" style="margin: 10px 0;">
+                            <dt>Total Vote Value:</dt>
+                            <dd><span id="cur_round_vote"></span></dd>
+                            <dt>Total Bids:</dt>
+                            <dd><span id="cur_round_bids"></span></dd>
+                        </dl>
+
+                        <table id="bid_details_table_cur" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Sender</th>
+                                    <th style="text-align: right;">Bid</th>
+                                    <th style="text-align: right;">Vote %</th>
+                                    <th style="text-align: right;">Value</th>
+                                    <th>Memo</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                       </div>
 
                       <div id="last_round" style="display: none;">
+                          <dl class="dl-horizontal" style="margin: 10px 0;">
+                              <dt>Total Vote Value:</dt>
+                              <dd><span id="last_round_vote"></span></dd>
+                              <dt>Total Bids:</dt>
+                              <dd><span id="last_round_bids"></span></dd>
+                          </dl>
+
                           <table id="bid_details_table_last" class="table table-striped">
                               <thead>
                                   <tr>
                                       <th>Sender</th>
-                                      <th>Bid</th>
-                                      <th>Vote %</th>
-                                      <th>Vote Value (Estimated)</th>
+                                      <th style="text-align: right;">Bid</th>
+                                      <th style="text-align: right;">Vote %</th>
+                                      <th style="text-align: right;">Value</th>
                                       <th>Memo</th>
                                   </tr>
                               </thead>
