@@ -257,12 +257,12 @@ $(function () {
         var link = $(document.createElement('a'));
         link.attr('href', 'http://www.steemit.com/@' + bot.name);
         link.attr('target', '_blank');
+        var text = '@' + bot.name;
 
         if(bot.power == 100 && bot.last > 3 * HOURS || bot.power < 90)
-          link.text('@' + bot.name + ' (DOWN)');
-        else
-          link.text('@' + bot.name);
+          text += ' (DOWN)';
 
+        link.html("<img class='userpic' src='https://steemitimages.com/u/" + bot.name + "/avatar'></img>" + text);
         td.append(link);
 
         if(bot.comments) {
