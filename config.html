@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <!-- Global Site Tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107512713-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)};
+    gtag('js', new Date());
+
+    gtag('config', 'UA-107512713-1');
+  </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon3.ico" type="image/x-icon">
+    <title>Steem Bot Tracker</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link href="https://unpkg.com/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-switch"></script>
+
+    <!--<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>-->
+    <script src="scripts/bundle.js"></script>
+
+    <script type="text/javascript">
+        steem.api.setOptions({ url: 'https://api.steemit.com' });
+    </script>
+
+    <style type="text/css">
+      body { padding-top: 70px; }
+      .progress-bar { color: black; }
+      .glyphicon-comment { margin-left: 5px; }
+      h3 { margin-top: 0; }
+      .value { font-weight: bold; }
+      dl.values { margin-top: 10px; margin-bottom: 0; }
+      .userpic {
+		  display: inline-block;
+		  background-size: cover;
+		  background-repeat: no-repeat;
+		  background-position: 50% 50%;
+		  border-radius: 25%;
+		  width: 24px;
+		  height: 24px;
+		  margin-right: 5px;
+		}
+      .form-control {
+        display: inline;
+        width: 80%;
+      }
+    </style>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          <img alt="Steem Post Promoter" src="img/logo.png" height="20" width="20">
+        </a>
+        <a class="navbar-brand" href="bottracker.html">Steem Bot Tracker</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li ><a href="bottracker.html#bid">Bid-Based Voting Bots</a></li>
+          <li><a href="bottracker.html#paid">Paid Upvote Bots</a></li>
+          <li><a href="bottracker.html#free">Other Bots</a></li>
+          <li><a href="#">Bot Owner Config</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="alert alert-info">
+      <h3>Bot Owner Configuration Tool</h3>
+      <p>This tool is for bot owners to be able to specify the settings for their bot in the "json_metadata" field of the bot account on the blockchain.</p>
+      <p>The bot tracker tool will pick up these settings, if they are available, so bot owners will no longer need to message me to update the tracker and will make the tracker more accurate since it will update instantly as changes are made.</p>
+      <p>The JSON format for these settings is: <br/><br/>
+        <b>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false }</b><br/><br/>
+        This tool was created to make it super easy for bot owners to set and update this information, but any tool can be used and the bot tracker will pick it up as long as the data is available in the correct format.
+    </div>
+
+    <div class="well">
+      <div class="form-group">
+        <label for="account_name">Bot Account Name</label>
+        <div><span style="font-size: 1.5em; color: #888888;">@&nbsp;</span><input type="text" class="form-control" id="account_name" placeholder="Account Name"></div>
+      </div>
+      <div class="form-group">
+        <label for="active_wif">Active WIF</label> <span>(This is necessary to sign the account update transaction, you can view the source of this page to verify it is not being stored or sent anywhere)</span>
+        <div><input type="password" class="form-control" id="active_wif" placeholder="Active WIF"></div>
+      </div>
+      <div class="form-group">
+        <label for="min_bid">Minimum Bid</label>
+        <div><input type="text" class="form-control" id="min_bid" placeholder="0.5" style="width: 100px;" value="0.5"> SBD</div>
+      </div>
+      <div class="form-group">
+        <label for="bid_window">Bid Window</label>
+        <div>
+          <select id="bid_window" class="form-control">
+            <option value="2.4">2.4 Hours (100% Vote)</option>
+            <option value="1.2">1.2 Hours (50% Vote)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="allows_comments">Comments</label>
+        <div><label style="font-weight: normal;"><input type="checkbox" id="allows_comments"> Allows Comments?</label></div>
+      </div>
+      <button id="btn_submit" class="btn btn-default" onclick="updateBot();">Update Profile</button>
+    </div>
+
+    <div id="result" style="display: none;" class="alert"></div>
+  </div>
+
+  <script type="text/javascript">
+    function updateBot() {
+      $('#result').hide();
+      $('#btn_submit').prop("disabled",true);
+      $('#btn_submit').text('Updating...');
+
+      steem.api.getAccounts([$('#account_name').val()], function (err, result) {
+        console.log(err, result);
+
+        if(err || !result || result.length == 0) {
+          $('#btn_submit').prop("disabled",false);
+          $('#btn_submit').text('Update Profile');
+          showResult(false, 'Could not find account: ' + $('#account_name').val());
+          return;
+        }
+
+        var account = result[0];
+
+        var json_metadata = JSON.parse(account.json_metadata);
+        json_metadata.config = {
+          'min_bid_sbd': parseFloat($('#min_bid').val()),
+          'bid_window': parseFloat($('#bid_window').val()),
+          'comments': $('#allows_comments')[0].checked
+        };
+
+        steem.broadcast.accountUpdate($('#active_wif').val(), account.name, account.memo_key, json_metadata, function(err, result) {
+          console.log(err, result);
+
+          if(err || !result)
+            showResult(false, err);
+          else
+            showResult(true, 'Success! ' + result.operations[0][1].json_metadata);
+
+          $('#btn_submit').prop("disabled",false);
+          $('#btn_submit').text('Update Profile');
+        });
+      });
+    }
+
+    function showResult(success, message) {
+      var result = $('#result');
+      result.show();
+      result.removeClass('alert-success');
+      result.removeClass('alert-danger');
+      result.addClass(success ? 'alert-success' : 'alert-danger');
+      result.text(message);
+    }
+  </script>
+</body>
+</html>
