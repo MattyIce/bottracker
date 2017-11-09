@@ -15,8 +15,7 @@ $(function () {
       { name: 'upgoater', interval: 2.4, comments: true },
       { name: 'voter', interval: 2.4, comments: true },
       { name: 'appreciator', interval: 2.4, comments: false },
-      { name: 'pushup', interval: 2.4, comments: true },
-      { name: 'postpromoter' }
+      { name: 'pushup', interval: 2.4, comments: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -146,7 +145,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale'], function (err, result) {
+        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
