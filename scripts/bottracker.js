@@ -184,6 +184,9 @@ $(function () {
                         if(config.bid_window && parseFloat(config.bid_window) > 0)
                           bot.interval = parseFloat(config.bid_window);
 
+                        if(config.pre_vote_group_url && config.pre_vote_group_url != '')
+                          bot.pre_vote_group_url = config.pre_vote_group_url;
+
                         bot.comments = config.comments;
                       }
                     }
