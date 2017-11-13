@@ -209,10 +209,6 @@ $(function () {
                                 var existing = round.bids.filter(function (b) { return b.id == trans[0]; });
 
                                 if (existing.length == 0 && op[1].amount.indexOf('STEEM') < 0) {
-
-                                    // Check for valid post
-                                    checkPost(bot, trans[0], op[1].memo);
-                                    
                                     var amount = parseFloat(op[1].amount.replace(" SBD", ""));
 
                                     if (amount >= bot.min_bid) {
@@ -259,13 +255,13 @@ $(function () {
             if (!err && result && result.id > 0) {
                 var created = new Date(result.created + 'Z');
 
-                // Check that post is not too old to be voted on
-                if ((new Date() - created) >= ((6 * 24 + 8) * 60 * 60 * 1000)) {
-                    console.log(bot.name + ' - ' + transId + ' - ' + memo + ' - INVALID');
+                var votes = result.active_votes.filter(function(vote) { return vote.voter == bot.name; });
+                if(votes.length > 0 || (new Date() - created) >= ((6 * 24 + 8) * 60 * 60 * 1000)) {
+                    // This post is already voted on by this bot or the post is too old to be voted on
                     removePost(bot, transId);
                 }
             } else {
-                console.log(bot.name + ' - ' + transId + ' - ' + memo + ' - INVALID');
+                // Invalid memo
                 removePost(bot, transId);
             }
         });
@@ -276,7 +272,7 @@ $(function () {
             for (var i = 0; i < round.bids.length; i++) {
                 var bid = round.bids[i];
 
-                if (bid.id == transId) {
+                if (!bid.invalid && bid.id == transId) {
                     round.total -= parseFloat(bid.data.amount);
                     bid.invalid = true;
                     return;
@@ -305,6 +301,9 @@ $(function () {
       bots.forEach(function(bot) {
         if(bot.vote < MIN_VOTE || !bot.vote)
           return;
+
+        // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
+        bot.rounds[bot.rounds.length - 1].bids.forEach(function(bid) { checkPost(bot, bid.id, bid.data.memo); });
 
         bid = (AUTHOR_REWARDS * bot.vote - RETURN * bot.total);
 
