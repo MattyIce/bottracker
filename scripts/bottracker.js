@@ -4,18 +4,18 @@ $(function () {
     var MIN_VOTE = 0;
 
     var bots = [
-      { name: 'booster', interval: 2.4, comments: true },
-      { name: 'bellyrub', interval: 2.4, comments: true },
-      { name: 'buildawhale', interval: 2.4, comments: true },
-      { name: 'boomerang', interval: 2.4, comments: true },
-      { name: 'minnowhelper', interval: 2.4, comments: true },
-      { name: 'discordia', interval: 2.4, comments: true },
-      { name: 'lovejuice', interval: 2.4, comments: true },
-      { name: 'sneaky-ninja', interval: 2.4, comments: true },
-      { name: 'upgoater', interval: 2.4, comments: true },
-      { name: 'voter', interval: 2.4, comments: true },
-      { name: 'appreciator', interval: 2.4, comments: false },
-      { name: 'pushup', interval: 2.4, comments: true }
+      { name: 'booster', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
+      { name: 'bellyrub', interval: 2.4, comments: true, min_bid: 1 },
+      { name: 'buildawhale', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
+      { name: 'boomerang', interval: 2.4, comments: true, min_bid: 0.05 },
+      { name: 'minnowhelper', interval: 2.4, comments: true, min_bid: 0.1 },
+      { name: 'discordia', interval: 2.4, comments: true, min_bid: 0.05 },
+      { name: 'lovejuice', interval: 2.4, comments: true, min_bid: 0.05 },
+      { name: 'sneaky-ninja', interval: 2.4, comments: true, min_bid: 0.05 },
+      { name: 'upgoater', interval: 2.4, comments: true, min_bid: 0.05 },
+      { name: 'voter', interval: 2.4, comments: true, min_bid: 0.05 },
+      { name: 'appreciator', interval: 2.4, comments: false, min_bid: 0.05 },
+      { name: 'pushup', interval: 2.4, comments: true, min_bid: 0.05 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -145,7 +145,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot'], function (err, result) {
+        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
@@ -184,6 +184,9 @@ $(function () {
                         if(config.bid_window && parseFloat(config.bid_window) > 0)
                           bot.interval = parseFloat(config.bid_window);
 
+                        if(config.pre_vote_group_url && config.pre_vote_group_url != '')
+                          bot.pre_vote_group_url = config.pre_vote_group_url;
+
                         bot.comments = config.comments;
                       }
                     }
@@ -208,9 +211,13 @@ $(function () {
                             if (op[0] == 'transfer' && op[1].to == account.name && ts > round.last_vote_time) {
                                 var existing = round.bids.filter(function (b) { return b.id == trans[0]; });
 
-                                if (existing.length == 0) {
-                                    round.bids.push({ id: trans[0], data: op[1] });
-                                    round.total += parseFloat(op[1].amount.replace(" SBD", ""));
+                                if (existing.length == 0 && op[1].amount.indexOf('STEEM') < 0) {
+                                    var amount = parseFloat(op[1].amount.replace(" SBD", ""));
+
+                                    if (amount >= bot.min_bid) {
+                                        round.bids.push({ id: trans[0], data: op[1] });
+                                        round.total += amount;
+                                    }
                                 }
                             } else if (op[0] == 'vote' && op[1].voter == account.name) {
                                 round = bot.rounds.filter(function (r) { return r.last_vote_time >= (ts - 60 * 60 * 1000); })[0];
@@ -243,6 +250,40 @@ $(function () {
         });
     }
 
+    function checkPost(bot, transId, memo) {
+        var permLink = memo.substr(memo.lastIndexOf('/') + 1);
+        var author = memo.substring(memo.lastIndexOf('@') + 1, memo.lastIndexOf('/'));
+
+        steem.api.getContent(author, permLink, function (err, result) {
+            if (!err && result && result.id > 0) {
+                var created = new Date(result.created + 'Z');
+
+                var votes = result.active_votes.filter(function(vote) { return vote.voter == bot.name; });
+                if(votes.length > 0 || (new Date() - created) >= ((6 * 24 + 8) * 60 * 60 * 1000)) {
+                    // This post is already voted on by this bot or the post is too old to be voted on
+                    removePost(bot, transId);
+                }
+            } else {
+                // Invalid memo
+                removePost(bot, transId);
+            }
+        });
+    }
+
+    function removePost(bot, transId) {
+        bot.rounds.forEach(function (round) {
+            for (var i = 0; i < round.bids.length; i++) {
+                var bid = round.bids[i];
+
+                if (!bid.invalid && bid.id == transId) {
+                    round.total -= parseFloat(bid.data.amount);
+                    bid.invalid = true;
+                    return;
+                }
+            }
+        });
+    }
+
     function showBotInfo() {
       if(bots.length == 0 || !bots[0].vote)
         return;
@@ -264,6 +305,9 @@ $(function () {
         if(bot.vote < MIN_VOTE || !bot.vote)
           return;
 
+        // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
+        bot.rounds[bot.rounds.length - 1].bids.forEach(function(bid) { checkPost(bot, bid.id, bid.data.memo); });
+
         bid = (AUTHOR_REWARDS * bot.vote - RETURN * bot.total);
 
         var row = $(document.createElement('tr'));
@@ -282,6 +326,11 @@ $(function () {
 
         if(bot.comments) {
             var icon = $('<span class="glyphicon glyphicon-comment" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
+            td.append(icon);
+        }
+
+        if (bot.pre_vote_group_url && bot.pre_vote_group_url != '') {
+            var icon = $('<a href="' + bot.pre_vote_group_url + '" target="_blank">&nbsp;<span class="glyphicon glyphicon-ok" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot has a Pre-Vote Group which will give you additional upvotes - Click for Details"></span></a>');
             td.append(icon);
         }
 
@@ -396,6 +445,12 @@ $(function () {
             link.attr('href', 'http://www.steemit.com/@' + bid.data.from);
             link.attr('target', '_blank');
             link.text('@' + bid.data.from);
+
+            if (bid.invalid) {
+                var icon = $('<span class="glyphicon glyphicon-remove" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Invalid Post"></span>&nbsp;');
+                td.append(icon);
+            }
+
             td.append(link);
             row.append(td);
 

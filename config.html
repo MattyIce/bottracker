@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -88,7 +88,7 @@
       <p>This tool is for bid bot owners ONLY to be able to specify the settings for their bot in the "json_metadata" field of the bot account on the blockchain.</p>
       <p>The bot tracker tool will pick up these settings, if they are available, so bot owners will no longer need to message me to update the tracker and will make the tracker more accurate since it will update instantly as changes are made.</p>
       <p>The JSON format for these settings is: <br/><br/>
-        <b>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false }</b><br/><br/>
+        <b>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false, "pre_vote_group_url": 'https://steemit.com/@frontrunner' }</b><br/><br/>
         This tool was created to make it super easy for bot owners to set and update this information, but any tool can be used and the bot tracker will pick it up as long as the data is available in the correct format.
     </div>
 
@@ -118,6 +118,11 @@
         <label for="allows_comments">Comments</label>
         <div><label style="font-weight: normal;"><input type="checkbox" id="allows_comments"> Allows Comments?</label></div>
       </div>
+        <div class="form-group">
+            <label for="front_runner">Front-Runner / Pre-Vote Club URL</label>
+            <div><input type="text" class="form-control" id="front_runner" placeholder="Front-Runner / Pre-Vote Club URL"></div>
+        </div>
+
       <button id="btn_submit" class="btn btn-default" onclick="updateBot();">Update Profile</button>
     </div>
 
@@ -146,7 +151,8 @@
         json_metadata.config = {
           'min_bid_sbd': parseFloat($('#min_bid').val()),
           'bid_window': parseFloat($('#bid_window').val()),
-          'comments': $('#allows_comments')[0].checked
+          'comments': $('#allows_comments')[0].checked,
+          'pre_vote_group_url': $('#front_runner').val()
         };
 
         steem.broadcast.accountUpdate($('#active_wif').val(), account.name, account.memo_key, json_metadata, function(err, result) {
