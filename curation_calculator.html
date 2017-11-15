@@ -54,6 +54,10 @@
         display: inline;
         width: 80%;
       }
+
+      .dl-horizontal dt { width: 200px; }
+      .dl-horizontal dd { margin-left: 220px; }
+      .slider.slider-horizontal { width: 80%; }
     </style>
 </head>
 <body>
@@ -90,28 +94,36 @@
     <div class="well">
       <div class="form-group">
         <label for="account_name">Your Account Name</label>
-        <div><span style="font-size: 1.5em; color: #888888;">@&nbsp;</span><input type="text" class="form-control" id="account_name" placeholder="Account Name"></div>
+        <div>
+          <span style="font-size: 1.5em; color: #888888;">@&nbsp;</span><input type="text" class="form-control" id="account_name" placeholder="Account Name">&nbsp;
+          <span id="account_ok" class="glyphicon glyphicon-ok" aria-hidden="true" style="display: none; color: green; font-size: 2.5em; vertical-align: bottom;"></span>
+          <span id="account_bad" class="glyphicon glyphicon-remove" aria-hidden="true" style="display: none; color: red; font-size: 2.5em; vertical-align: bottom;"></span>
+        </div>
       </div>
       <div class="form-group">
         <label for="post_link">Post/Comment Link</label>
-        <div><input type="text" class="form-control" id="post_link" placeholder="Post/Comment Link" value="https://steemit.com/utopian-io/@steem-plus/steemplus-is-now-running-well-with-the-new-steemit-interface"></div>
+        <div>
+          <input type="text" class="form-control" id="post_link" placeholder="Post/Comment Link" value="https://steemit.com/utopian-io/@steem-plus/steemplus-is-now-running-well-with-the-new-steemit-interface">&nbsp;
+          <span id="post_ok" class="glyphicon glyphicon-ok" aria-hidden="true" style="display: none; color: green; font-size: 2.5em; vertical-align: bottom;"></span>
+          <span id="post_bad" class="glyphicon glyphicon-remove" aria-hidden="true" style="display: none; color: red; font-size: 2.5em; vertical-align: bottom;"></span>
+        </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" id="reward_slider_group" style="display: none;">
         <label for="post_total_slider">Expected Total Post Rewards</label>
-        <div><input id="post_total_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="100"/></div>
+        <div><input id="post_total_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="100"/></div>
       </div>
 
       <button id="btn_submit" class="btn btn-default" onclick="calculate();">Calculate</button>
     </div>
 
     <div id="result" class="alert alert-success">
-      <dl>
-        <dd>Vote Value ($):</dd>
-        <dt><span id="vote_value"></span></dt>
-        <dd>Curation Reward (STEEM):</dd>
-        <dt><span id="curation_steem"></span></dt>
-        <dd>Curation Reward ($):</dd>
-        <dt><span id="curation_sbd"></span></dt>
+      <dl class="dl-horizontal">
+        <dt>Vote Value ($):</dt>
+        <dd><span id="vote_value"></span></dd>
+        <dt>Curation Reward (STEEM):</dt>
+        <dd><span id="curation_steem"></span></dd>
+        <dt>Curation Reward ($):</dt>
+        <dd><span id="curation_sbd"></span></dd>
       </dl>
     </div>
   </div>
@@ -119,94 +131,140 @@
   <script type="text/javascript">
     const FULL_CURATION_TIME = 30 * 60 * 1000;
     const CURATION_RATE = 0.25;
-
-    var rshares_before = 0, rshares_vote = 0, rshares_total = 0, pre_30_min_pct = 0;
-    var account = null;
+    var data = {};
 
     function loadAccount(cb) {
       steem.api.getAccounts([$('#account_name').val()], function(err, result) {
-        account = result[0];
+        data.account = result[0];
         cb();
       });
     }
 
-    function calculate() {
-      rshares_before = 0;
-      rshares_vote = 0;
-      rshares_total = 0;
-      pre_30_min_pct = 0;
+    function loadPost(cb) {
+      var link = $('#post_link').val();
+      var permLink = link.substr(link.lastIndexOf('/') + 1);
+      var author = link.substring(link.lastIndexOf('@') + 1, link.lastIndexOf('/'));
 
-      loadAccount(function() {
-        console.log(account);
+      steem.api.getContent(author, permLink, function (err, result) {
+        if (!err && result && result.id > 0) {
+          data.post = result;          
+        }
 
-        var link = $('#post_link').val();
-        var permLink = link.substr(link.lastIndexOf('/') + 1);
-        var author = link.substring(link.lastIndexOf('@') + 1, link.lastIndexOf('/'));
-
-        steem.api.getContent(author, permLink, function (err, result) {
-          if (!err && result && result.id > 0) {
-            console.log(result);
-
-            var votes = result.active_votes;
-            votes.sort(function(a, b) { return new Date(a.time + 'Z') - new Date(b.time + 'Z'); });
-
-            var created = new Date(result.created + 'Z');
-
-            for(var i = 0; i < votes.length; i++) {
-                var vote = votes[i];
-                var vote_time = new Date(vote.time + 'Z');
-                var rshares = parseInt(vote.rshares) * CURATION_RATE;
-
-                if(vote.voter == account.name) {
-                  pre_30_min_pct = Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
-                  rshares_vote = rshares;
-                }
-
-                if(rshares_vote == 0)
-                  rshares_before += rshares;
-
-                rshares_total += rshares;
-            }
-
-            // If the account has not already voted, assume they vote right now at full power
-            if(rshares_vote == 0) {
-              rshares_vote = getVoteRShares(100, account) * CURATION_RATE;
-              pre_30_min_pct = Math.min(new Date() - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
-            }
-
-            showRewards(account, parseInt($('#post_total_slider').val()), true);
-          }
-        });
+        cb();
       });
     }
 
-    function showRewards(account, total_post_rewards, log) {
-      rshares_total = (total_post_rewards * CURATION_RATE) / steemPrice * recentClaims / rewardBalance;
-      var curation_rshares = (Math.sqrt(rshares_before + rshares_vote) - Math.sqrt(rshares_before)) * Math.sqrt(rshares_total) * pre_30_min_pct;
+    $('#post_link').focusout(function (e) {
+      loadPost(function () {
+        var ok = $('#post_ok');
+        var bad = $('#post_bad');
+        ok.hide();
+        bad.hide();
+
+        if (data.post) {
+          ok.show();
+
+          if (data.account && data.account.name)
+            calculate();
+
+        } else
+          bad.show();
+      });
+    });
+
+    $('#account_name').focusout(function (e) {
+      loadAccount(function () {
+        var ok = $('#account_ok');
+        var bad = $('#account_bad');
+        ok.hide();
+        bad.hide();
+
+        if (data.account && data.account.name) {
+          ok.show();
+
+          if (data.post)
+            calculate();
+
+        } else
+          bad.show();        
+      });
+    });
+
+    function calculate() {
+      data.rshares_before = 0;
+      data.rshares_vote = 0;
+      data.rshares_total = 0;
+      data.pre_30_min_pct = 0;
+
+      var votes = data.post.active_votes;
+      votes.sort(function(a, b) { return new Date(a.time + 'Z') - new Date(b.time + 'Z'); });
+
+      var created = new Date(data.post.created + 'Z');
+      data.post_paid_out = (new Date() - created) > (7 * 24 * 60 * 60 * 1000);
+
+      for(var i = 0; i < votes.length; i++) {
+          var vote = votes[i];
+          var vote_time = new Date(vote.time + 'Z');
+          var rshares = parseInt(vote.rshares);
+
+          if(vote.voter == data.account.name) {
+            data.pre_30_min_pct = Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
+            data.rshares_vote = rshares;
+          }
+
+          if(data.rshares_vote == 0)
+            data.rshares_before += rshares;
+
+          data.rshares_total += rshares;
+      }
+
+      if (!data.post_paid_out) {
+        // If the account has not already voted, assume they vote right now at full power
+        if (data.rshares_vote == 0) {
+          data.rshares_vote = getVoteRShares(100, data.account);
+          data.pre_30_min_pct = Math.min(new Date() - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
+        }
+
+        var slider = $('#post_total_slider');
+        var pending_payout = Math.ceil(parseFloat(data.post.pending_payout_value) + getVoteValue(100, data.account));
+        slider.attr('data-slider-min', pending_payout);
+        slider.attr('data-slider-value', pending_payout);
+
+        $('#post_total_slider').slider({});
+        $('#post_total_slider').on("slide", function (e) {
+          if (data.rshares_vote > 0)
+            showRewards();
+        });
+
+        $('#reward_slider_group').show();
+      }
+
+      showRewards(true);
+    }
+
+    function showRewards(log) {
+      if(!data.post_paid_out)
+        data.rshares_total = parseInt($('#post_total_slider').val()) / steemPrice * recentClaims / rewardBalance;
+
+      var curation_rshares = (Math.sqrt(data.rshares_before * CURATION_RATE + data.rshares_vote * CURATION_RATE) - Math.sqrt(data.rshares_before * CURATION_RATE)) * Math.sqrt(data.rshares_total * CURATION_RATE) * data.pre_30_min_pct;
       var curation_steem = curation_rshares * rewardBalance / recentClaims;
       var curation_sbd = curation_steem * steemPrice;
 
       if(log) {
         console.log({
-          "rshares_before": rshares_before,
-          "rshares_vote": rshares_vote,
-          "rshares_total": rshares_total,
+          "data.rshares_before": data.rshares_before,
+          "data.rshares_vote": data.rshares_vote,
+          "data.rshares_total": data.rshares_total,
           "curation_rshares": curation_rshares,
           "reward_steem": curation_steem,
           "dollar_amount" : curation_sbd
         });
       }
 
-      $('#vote_value').text('$' + getVoteValue(100, account).formatMoney());
+      $('#vote_value').text('$' + getVoteValue(100, data.account).formatMoney());
       $('#curation_steem').text(curation_steem.formatMoney(3) + ' STEEM POWER');
       $('#curation_sbd').text('$' + curation_sbd.formatMoney())
     }
-
-    $('#post_total_slider').slider({});
-    $('#post_total_slider').on("slide", function(e) {
-      if(rshares_vote > 0)
-        showRewards(account, e.value);
-    });
 
     function showResult(success, message) {
       var result = $('#result');
