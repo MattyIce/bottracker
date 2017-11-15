@@ -81,10 +81,11 @@ var n = this,
      return current_power;
  }
 
- function getVoteValue(voteWeight, account, power) {
+ function getVoteRShares(voteWeight, account, power) {
      if (!account) {
          return;
      }
+
      if (rewardBalance && recentClaims && steemPrice && votePowerReserveRate) {
 
          var effective_vesting_shares = Math.round(getVestingShares(account) * 1000000);
@@ -102,7 +103,17 @@ var n = this,
 
          var rshares = Math.round((effective_vesting_shares * used_power) / (STEEMIT_100_PERCENT))
 
-         var voteValue = rshares
+         return rshares;
+
+     }
+ }
+
+ function getVoteValue(voteWeight, account, power) {
+     if (!account) {
+         return;
+     }
+     if (rewardBalance && recentClaims && steemPrice && votePowerReserveRate) {
+         var voteValue = getVoteRShares(voteWeight, account, power)
            * rewardBalance / recentClaims
            * steemPrice;
 

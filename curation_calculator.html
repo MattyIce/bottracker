@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <!-- Global Site Tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107512713-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)};
+    gtag('js', new Date());
+
+    gtag('config', 'UA-107512713-1');
+  </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon3.ico" type="image/x-icon">
+    <title>Steem Bot Tracker</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="scripts/bootstrap-slider.min.css">
+    <script src="scripts/bootstrap-slider.min.js"></script>
+    <link href="https://unpkg.com/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-switch"></script>
+
+    <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+    <script src="scripts/utils.js?v=4"></script>
+
+    <script type="text/javascript">
+        steem.api.setOptions({ url: 'https://api.steemit.com' });
+    </script>
+
+    <style type="text/css">
+      body { padding-top: 70px; }
+      .progress-bar { color: black; }
+      .glyphicon-comment { margin-left: 5px; }
+      h3 { margin-top: 0; }
+      .value { font-weight: bold; }
+      dl.values { margin-top: 10px; margin-bottom: 0; }
+      .userpic {
+		  display: inline-block;
+		  background-size: cover;
+		  background-repeat: no-repeat;
+		  background-position: 50% 50%;
+		  border-radius: 25%;
+		  width: 24px;
+		  height: 24px;
+		  margin-right: 5px;
+		}
+      .form-control {
+        display: inline;
+        width: 80%;
+      }
+    </style>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          <img alt="Steem Post Promoter" src="img/logo.png" height="20" width="20">
+        </a>
+        <a class="navbar-brand" href="bottracker.html">Steem Bot Tracker</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li ><a href="bottracker.html#bid">Bid-Based Voting Bots</a></li>
+          <li><a href="bottracker.html#paid">Paid Upvote Bots</a></li>
+          <li><a href="bottracker.html#free">Other Bots</a></li>
+          <li><a href="#">Bot Owner Config</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="alert alert-info">
+    </div>
+
+    <div class="well">
+      <div class="form-group">
+        <label for="account_name">Your Account Name</label>
+        <div><span style="font-size: 1.5em; color: #888888;">@&nbsp;</span><input type="text" class="form-control" id="account_name" placeholder="Account Name"></div>
+      </div>
+      <div class="form-group">
+        <label for="post_link">Post/Comment Link</label>
+        <div><input type="text" class="form-control" id="post_link" placeholder="Post/Comment Link" value="https://steemit.com/utopian-io/@steem-plus/steemplus-is-now-running-well-with-the-new-steemit-interface"></div>
+      </div>
+      <div class="form-group">
+        <label for="post_total_slider">Expected Total Post Rewards</label>
+        <div><input id="post_total_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="100"/></div>
+      </div>
+
+      <button id="btn_submit" class="btn btn-default" onclick="calculate();">Calculate</button>
+    </div>
+
+    <div id="result" class="alert alert-success">
+      <dl>
+        <dd>Vote Value ($):</dd>
+        <dt><span id="vote_value"></span></dt>
+        <dd>Curation Reward (STEEM):</dd>
+        <dt><span id="curation_steem"></span></dt>
+        <dd>Curation Reward ($):</dd>
+        <dt><span id="curation_sbd"></span></dt>
+      </dl>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    const FULL_CURATION_TIME = 30 * 60 * 1000;
+    const CURATION_RATE = 0.25;
+
+    var rshares_before = 0, rshares_vote = 0, rshares_total = 0, pre_30_min_pct = 0;
+    var account = null;
+
+    function loadAccount(cb) {
+      steem.api.getAccounts([$('#account_name').val()], function(err, result) {
+        account = result[0];
+        cb();
+      });
+    }
+
+    function calculate() {
+      rshares_before = 0;
+      rshares_vote = 0;
+      rshares_total = 0;
+      pre_30_min_pct = 0;
+
+      loadAccount(function() {
+        console.log(account);
+
+        var link = $('#post_link').val();
+        var permLink = link.substr(link.lastIndexOf('/') + 1);
+        var author = link.substring(link.lastIndexOf('@') + 1, link.lastIndexOf('/'));
+
+        steem.api.getContent(author, permLink, function (err, result) {
+          if (!err && result && result.id > 0) {
+            console.log(result);
+
+            var votes = result.active_votes;
+            votes.sort(function(a, b) { return new Date(a.time + 'Z') - new Date(b.time + 'Z'); });
+
+            var created = new Date(result.created + 'Z');
+
+            for(var i = 0; i < votes.length; i++) {
+                var vote = votes[i];
+                var vote_time = new Date(vote.time + 'Z');
+                var rshares = parseInt(vote.rshares) * CURATION_RATE;
+
+                if(vote.voter == account.name) {
+                  pre_30_min_pct = Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
+                  rshares_vote = rshares;
+                }
+
+                if(rshares_vote == 0)
+                  rshares_before += rshares;
+
+                rshares_total += rshares;
+            }
+
+            // If the account has not already voted, assume they vote right now at full power
+            if(rshares_vote == 0) {
+              rshares_vote = getVoteRShares(100, account) * CURATION_RATE;
+              pre_30_min_pct = Math.min(new Date() - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
+            }
+
+            showRewards(account, parseInt($('#post_total_slider').val()), true);
+          }
+        });
+      });
+    }
+
+    function showRewards(account, total_post_rewards, log) {
+      rshares_total = (total_post_rewards * CURATION_RATE) / steemPrice * recentClaims / rewardBalance;
+      var curation_rshares = (Math.sqrt(rshares_before + rshares_vote) - Math.sqrt(rshares_before)) * Math.sqrt(rshares_total) * pre_30_min_pct;
+      var curation_steem = curation_rshares * rewardBalance / recentClaims;
+      var curation_sbd = curation_steem * steemPrice;
+
+      if(log) {
+        console.log({
+          "rshares_before": rshares_before,
+          "rshares_vote": rshares_vote,
+          "rshares_total": rshares_total,
+          "curation_rshares": curation_rshares,
+          "reward_steem": curation_steem,
+          "dollar_amount" : curation_sbd
+        });
+      }
+
+      $('#vote_value').text('$' + getVoteValue(100, account).formatMoney());
+      $('#curation_steem').text(curation_steem.formatMoney(3) + ' STEEM POWER');
+      $('#curation_sbd').text('$' + curation_sbd.formatMoney())
+    }
+
+    $('#post_total_slider').slider({});
+    $('#post_total_slider').on("slide", function(e) {
+      if(rshares_vote > 0)
+        showRewards(account, e.value);
+    });
+
+    function showResult(success, message) {
+      var result = $('#result');
+      result.show();
+      result.text(message);
+    }
+  </script>
+</body>
+</html>
