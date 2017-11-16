@@ -88,10 +88,10 @@
   </nav>
 
   <div class="container">
-    <div class="alert alert-info">
-    </div>
-
     <div class="well">
+      <h2 style="margin-top: 0px;">Curation Reward Estimator</h2>
+      <h4>Enter a Steem account name and a link to a post or comment below to estimate the curation rewards that will be received!</h4>
+      <hr style="border-top: 1px solid #333;"/>
       <div class="form-group">
         <label for="account_name">Your Account Name</label>
         <div>
@@ -103,28 +103,51 @@
       <div class="form-group">
         <label for="post_link">Post/Comment Link</label>
         <div>
-          <input type="text" class="form-control" id="post_link" placeholder="Post/Comment Link" value="https://steemit.com/utopian-io/@steem-plus/steemplus-is-now-running-well-with-the-new-steemit-interface">&nbsp;
+          <input type="text" class="form-control" id="post_link" placeholder="Post/Comment Link">&nbsp;
           <span id="post_ok" class="glyphicon glyphicon-ok" aria-hidden="true" style="display: none; color: green; font-size: 2.5em; vertical-align: bottom;"></span>
           <span id="post_bad" class="glyphicon glyphicon-remove" aria-hidden="true" style="display: none; color: red; font-size: 2.5em; vertical-align: bottom;"></span>
         </div>
       </div>
-      <div class="form-group" id="reward_slider_group" style="display: none;">
-        <label for="post_total_slider">Expected Total Post Rewards</label>
-        <div><input id="post_total_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="100"/></div>
-      </div>
 
-      <button id="btn_submit" class="btn btn-default" onclick="calculate();">Calculate</button>
+      <button id="btn_submit" class="btn btn-default" onclick="checkAccount();checkPost();document.location.href='#result';">Estimate Curation Rewards</button>
     </div>
 
-    <div id="result" class="alert alert-success">
+    <div class="alert alert-info">
+      <h4>
+        <marquee>
+          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+          Help support me and my development efforts by voting for me for Steem witness! Go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and enter "yabapmatt" in the vote box at the bottom of the page. Thank you!
+        </marquee>
+      </h4>
+    </div>
+
+    <div id="result" class="well" style="display: none;"><a name="result"></a>
       <dl class="dl-horizontal">
-        <dt>Vote Value ($):</dt>
+        <dt>Post Title:</dt>
+        <dd><span id="post_title"></span></dd>
+        <dt>Vote Status:</dt>
+        <dd><span id="vote_status"></span></dd>
+        <dt>Vote Value:</dt>
         <dd><span id="vote_value"></span></dd>
-        <dt>Curation Reward (STEEM):</dt>
-        <dd><span id="curation_steem"></span></dd>
-        <dt>Curation Reward ($):</dt>
-        <dd><span id="curation_sbd"></span></dd>
+        <dt>Previous Votes Value: <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This shows the total value of the votes cast on this post before yours. Curation rewards are heavily dependent on the value of votes cast before yours."></span></dt>
+        <dd><span id="prev_vote_value"></span></dd>
+        <dt>Expected Total Payout: <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Use this slider to see what the curation reward will be for different total payout amounts for the post."></span></dt>
+        <dd>
+          <div id="reward_slider_group" style="display: none;">
+            <div><b id="slider_min_payout"></b>&nbsp;&nbsp;&nbsp;<input id="post_total_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="100"/>&nbsp;&nbsp;&nbsp;<b id="slider_max_payout">$500</b></div>
+          </div>
+          <span id="total_payout"></span>
+        </dd>
       </dl>
+
+      <div class="alert alert-success" style="text-align: center;">
+        <h4>Estimated Curation Reward <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This shows the expected amount of STEEM POWER / SBD you will receive as a curation reward. This is just an estimation and may vary once the post pays out."></span></h4>
+        <h3>
+          <span id="curation_sbd"></span> / <span id="curation_steem"></span>
+        </h3>
+      </div>
+
+      <div style="display: none;" id="pre_30_note" class="alert alert-warning"></div>
     </div>
   </div>
 
@@ -147,14 +170,14 @@
 
       steem.api.getContent(author, permLink, function (err, result) {
         if (!err && result && result.id > 0) {
-          data.post = result;          
+          data.post = result;
         }
 
         cb();
       });
     }
 
-    $('#post_link').focusout(function (e) {
+    function checkPost() {
       loadPost(function () {
         var ok = $('#post_ok');
         var bad = $('#post_bad');
@@ -170,9 +193,9 @@
         } else
           bad.show();
       });
-    });
+    }
 
-    $('#account_name').focusout(function (e) {
+    function checkAccount() {
       loadAccount(function () {
         var ok = $('#account_ok');
         var bad = $('#account_bad');
@@ -186,15 +209,34 @@
             calculate();
 
         } else
-          bad.show();        
+          bad.show();
       });
-    });
+    }
+
+    $('#post_link').focusout(function (e) { checkPost(); });
+    $('#account_name').focusout(function (e) { checkAccount(); });
+    $(function () { $('[data-toggle="tooltip"]').tooltip() });
+
+    function rSharesToSBD(rshares) {
+      return rshares * rewardBalance / recentClaims * steemPrice;
+    }
 
     function calculate() {
       data.rshares_before = 0;
       data.rshares_vote = 0;
       data.rshares_total = 0;
       data.pre_30_min_pct = 0;
+      data.account_vote = null;
+
+      data.beneficiary_pct = 0;
+      if(data.post.beneficiaries && data.post.beneficiaries.length > 0)
+      {
+          for(var i = 0; i < data.post.beneficiaries.length; i++) {
+            var b = data.post.beneficiaries[i];
+            data.beneficiary_pct += parseInt(b.weight);
+          }
+      }
+      data.beneficiary_pct = (1 - data.beneficiary_pct / 10000);
 
       var votes = data.post.active_votes;
       votes.sort(function(a, b) { return new Date(a.time + 'Z') - new Date(b.time + 'Z'); });
@@ -206,70 +248,105 @@
           var vote = votes[i];
           var vote_time = new Date(vote.time + 'Z');
           var rshares = parseInt(vote.rshares);
+          vote.rshares_before = data.rshares_total;
+          vote.pre_30_min_pct = Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
 
           if(vote.voter == data.account.name) {
             data.pre_30_min_pct = Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
             data.rshares_vote = rshares;
+            data.account_vote = vote;
           }
 
           if(data.rshares_vote == 0)
             data.rshares_before += rshares;
 
           data.rshares_total += rshares;
+
+          //console.log(vote.voter + ' - rShares: ' + rshares.formatMoney(0) + ', value: ' + rSharesToSBD(rshares).formatMoney(3) + ', before: ' + (data.rshares_vote == 0) + ', author pct: ' + Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME);
       }
 
-      if (!data.post_paid_out) {
+      if (data.post_paid_out) {
+        $('#reward_slider_group').hide();
+      } else {
+        var pending_payout = Math.ceil(parseFloat(data.post.pending_payout_value) + ((data.rshares_vote == 0) ? getVoteValue(100, data.account) : 0));
+        post_slider.slider('setAttribute', 'min', pending_payout);
+        post_slider.slider('setValue', pending_payout);
+        $('#slider_min_payout').text('$' + pending_payout);
+
+        $('#reward_slider_group').show();
+
         // If the account has not already voted, assume they vote right now at full power
         if (data.rshares_vote == 0) {
           data.rshares_vote = getVoteRShares(100, data.account);
           data.pre_30_min_pct = Math.min(new Date() - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
         }
-
-        var slider = $('#post_total_slider');
-        var pending_payout = Math.ceil(parseFloat(data.post.pending_payout_value) + getVoteValue(100, data.account));
-        slider.attr('data-slider-min', pending_payout);
-        slider.attr('data-slider-value', pending_payout);
-
-        $('#post_total_slider').slider({});
-        $('#post_total_slider').on("slide", function (e) {
-          if (data.rshares_vote > 0)
-            showRewards();
-        });
-
-        $('#reward_slider_group').show();
       }
 
-      showRewards(true);
+      showRewards();
     }
 
-    function showRewards(log) {
+    var post_slider = $('#post_total_slider').slider({
+      formatter: function(value) {
+    		return 'Total Post Rewards: $' + value;
+    	}
+    });
+
+    $('#post_total_slider').on("slide", function (e) {
+      if (data.rshares_vote > 0)
+        showRewards();
+    });
+
+    function totalCuration() {
+      var rshares = 0;
+
+      for(var i = 0; i < data.post.active_votes.length; i++) {
+        var vote = data.post.active_votes[i];
+        vote.curation_rshares = (Math.sqrt(vote.rshares_before * CURATION_RATE + parseInt(vote.rshares) * CURATION_RATE) - Math.sqrt(vote.rshares_before * CURATION_RATE)) * Math.sqrt(data.rshares_total * CURATION_RATE) * vote.pre_30_min_pct * data.beneficiary_pct;
+        rshares += vote.curation_rshares;
+        vote.curation_steem = vote.curation_rshares * rewardBalance / recentClaims;
+        vote.matt_weight = (Math.sqrt(vote.rshares_before + parseInt(vote.rshares)) - Math.sqrt(vote.rshares_before)) * vote.pre_30_min_pct;
+      }
+
+      return rshares * rewardBalance / recentClaims;
+    }
+
+    function showRewards() {
       if(!data.post_paid_out)
         data.rshares_total = parseInt($('#post_total_slider').val()) / steemPrice * recentClaims / rewardBalance;
 
-      var curation_rshares = (Math.sqrt(data.rshares_before * CURATION_RATE + data.rshares_vote * CURATION_RATE) - Math.sqrt(data.rshares_before * CURATION_RATE)) * Math.sqrt(data.rshares_total * CURATION_RATE) * data.pre_30_min_pct;
+      var curation_rshares = (Math.sqrt(data.rshares_before * CURATION_RATE + data.rshares_vote * CURATION_RATE) - Math.sqrt(data.rshares_before * CURATION_RATE)) * Math.sqrt(data.rshares_total * CURATION_RATE) * data.pre_30_min_pct * data.beneficiary_pct;
       var curation_steem = curation_rshares * rewardBalance / recentClaims;
       var curation_sbd = curation_steem * steemPrice;
 
-      if(log) {
-        console.log({
-          "data.rshares_before": data.rshares_before,
-          "data.rshares_vote": data.rshares_vote,
-          "data.rshares_total": data.rshares_total,
-          "curation_rshares": curation_rshares,
-          "reward_steem": curation_steem,
-          "dollar_amount" : curation_sbd
-        });
+      $('#post_title').text(data.post.title);
+      $('#vote_status').text('@' + data.account.name + (data.account_vote ? ' has already voted on this post.' : ' has not voted on this post.'));
+      $('#total_payout').text(data.post_paid_out ? ('$' + rSharesToSBD(data.rshares_total).formatMoney() + ' (This post has already paid out)') : '');
+
+      if(data.account_vote)
+        $('#vote_value').text('$' + rSharesToSBD(data.account_vote.rshares).formatMoney() + ' (' + (data.account_vote.percent / 100).formatMoney(0) + '%)');
+      else
+        $('#vote_value').text('$' + getVoteValue(100, data.account).formatMoney());
+
+      $('#prev_vote_value').text('$' + rSharesToSBD(data.rshares_before).formatMoney());
+      $('#curation_steem').html(curation_steem.formatMoney(3) + ' STEEM POWER');
+      $('#curation_sbd').text('$' + curation_sbd.formatMoney());
+
+      $('#pre_30_note').hide();
+
+      var warning = '';
+      if(data.pre_30_min_pct < 1) {
+        if(!data.account_vote)
+          warning = 'NOTE: This post is only ' + (data.pre_30_min_pct * 30).formatMoney(0) + ' minutes old so ' + ((1 - data.pre_30_min_pct) * 100).formatMoney(0) + '% of the curation rewards will go to the author.';
+        else
+          warning = 'NOTE: @' + data.account.name + '\'s vote was cast when this post was ' + (data.pre_30_min_pct * 30).formatMoney(0) + ' minutes old so ' + ((1 - data.pre_30_min_pct) * 100).formatMoney(0) + '% of the curation rewards went to the author.';
       }
 
-      $('#vote_value').text('$' + getVoteValue(100, data.account).formatMoney());
-      $('#curation_steem').text(curation_steem.formatMoney(3) + ' STEEM POWER');
-      $('#curation_sbd').text('$' + curation_sbd.formatMoney())
-    }
+      if(warning != '') {
+        $('#pre_30_note').show();
+        $('#pre_30_note').text(warning);
+      }
 
-    function showResult(success, message) {
-      var result = $('#result');
-      result.show();
-      result.text(message);
+      $('#result').show();
     }
   </script>
 </body>
