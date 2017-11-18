@@ -145,7 +145,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto'], function (err, result) {
+        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
