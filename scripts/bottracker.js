@@ -5,7 +5,7 @@ $(function () {
 
     var bots = [
       { name: 'booster', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
-      { name: 'bellyrub', interval: 2.4, comments: true, min_bid: 1 },
+      { name: 'bellyrub', interval: 2.4, comments: false, min_bid: 1 },
       { name: 'buildawhale', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
       { name: 'boomerang', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'minnowhelper', interval: 2.4, comments: true, min_bid: 0.1 },
@@ -123,7 +123,7 @@ $(function () {
                 bar.css('width', power + '%');
                 bar.text(power + '%');
                 var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
-                var weight = 3 / vote;
+                var weight = 2.5 / vote;
                 //$('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
                 $('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
                 $('#mb_bot_error').css('display', 'none');
@@ -145,7 +145,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators'], function (err, result) {
+        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'spinbot'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
