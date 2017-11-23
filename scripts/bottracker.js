@@ -5,7 +5,7 @@ $(function () {
 
     var bots = [
       { name: 'booster', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
-      { name: 'bellyrub', interval: 2.4, comments: false, min_bid: 1 },
+      //{ name: 'bellyrub', interval: 2.4, comments: false, min_bid: 1 },
       { name: 'buildawhale', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
       { name: 'boomerang', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'minnowhelper', interval: 2.4, comments: true, min_bid: 0.1 },
@@ -68,6 +68,7 @@ $(function () {
 
     var rw_last = false;
     function loadAccountInfo() {
+      /*
         steem.api.getAccounts(['randowhale'], function (err, result) {
             try {
                 var account = result[0];
@@ -114,6 +115,7 @@ $(function () {
                 $('#rw_bot_error').css('display', 'block');
             }
         });
+        */
 
         steem.api.getAccounts(['minnowbooster'], function (err, result) {
             try {
@@ -146,7 +148,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'spinbot'], function (err, result) {
+        steem.api.getAccounts(['bellyrub', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'spinbot'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
@@ -352,7 +354,7 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
-        var bar = $('#randowhale-progress div').clone();
+        var bar = $('#minnowbooster-progress div').clone();
         var pct = (bot.power - 90) * 10;
         bar.attr('aria-valuenow', pct);
         bar.css('width', pct + '%');

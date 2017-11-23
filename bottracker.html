@@ -33,7 +33,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
-    <script src="scripts/bottracker.js?v=23"></script>
+    <script src="scripts/bottracker.js?v=24"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -331,60 +331,6 @@
             </dl>
           </div>
         </div>
-
-        <div id="randowhale-panel" class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
-          </div>
-          <div class="panel-body">
-              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                  <div class="panel panel-default">
-                      <div class="panel-heading" role="tab" id="headingOne">
-                          <h4 class="panel-title">
-                              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#rw-howto" aria-expanded="true" aria-controls="collapseOne">
-                                  How To Use
-                              </a>
-                          </h4>
-                      </div>
-                      <div id="rw-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                          <div class="panel-body">
-                              <ul>
-                                  <li>Check the Status below to see if <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> is sleeping or awake. It "wakes up" when it gets to 100% vote power.</li>
-                                  <li>Send <strong>EXACTLY</strong> the Fee amount specified below to <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> with your post URL as the memo.</li>
-                                  <li>You will receive an upvote worth the Vote Value shown below - sometimes you can randomly receive a larger vote as a surprise! I once received a $10 upvote for $0.5 SBD!</li>
-                              </ul>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <div id="rw_bot_error" style="display: none;" class="alert alert-danger" role="alert">
-                  There was an error loading bot info. Please try again in a little bit.
-              </div>
-
-            <dl class="dl-horizontal" style="font-size: 1.3em;">
-              <dt>Status:</dt>
-              <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
-
-                <dt>Fee:</dt>
-                <dd><span id="randowhale-fee">Loading...</span></dd>
-                <dt>Vote Value:</dt>
-              <dd><span id="randowhale-value">Loading...</span> (<span id="randowhale-vote">Loading...</span>)</dd>
-              <dt>Next Wake-Up:</dt>
-              <dd><span class="timer " id="randowhale-time">Loading...</span></dd>
-              <dt>Comment Voting:</dt>
-              <dd>Disabled</dd>
-              <dt>Voting Power:</dt>
-              <dd>
-                <div class="progress" id="randowhale-progress" style="margin-top: 7px;">
-                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                    Loading...
-                  </div>
-                </div>
-              </dd>
-            </dl>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -406,6 +352,12 @@
                   </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td><a target="_blank" href="https://steemit.com/@bellyrub">@bellyrub</a></td>
+                  <td id="bellyrub-vote">Loading...</td>
+                  <td id="bellyrub-desc">Loading...</td>
+                  <td id="bellyrub-site">Loading...</td>
+                </tr>
                   <tr>
                       <td><a target="_blank" href="https://steemit.com/@minnowpond">@minnowpond</a></td>
                       <td id="minnowpond-vote">Loading...</td>
