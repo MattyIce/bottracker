@@ -19,7 +19,11 @@ $(function () {
       { name: 'aksdwi', interval: 2.4, comments: false, min_bid: 0.1, max_bid: 5 },
       { name: 'msp-bidbot', interval: 2.4, comments: true, min_bid: 0.1 },
       { name: 'kittybot', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'upmyvote', interval: 2.4, comments: false, min_bid: 1 }
+      { name: 'upmyvote', interval: 2.4, comments: false, min_bid: 1 },
+      { name: 'postpromoter', interval: 2.4, comments: true, min_bid: 0.1 },
+      { name: 'mrswhale', interval: 2.4, comments: false, min_bid: 0.1 },
+      { name: 'hellowhale', interval: 2.4, comments: false, min_bid: 0.05 },
+      { name: 'upme', interval: 2.4, comments: true, min_bid: 0.1 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
