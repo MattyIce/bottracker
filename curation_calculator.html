@@ -23,14 +23,13 @@
     <title>Curation Reward Estimator</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="scripts/bootstrap-slider.min.css">
-    <script src="scripts/bootstrap-slider.min.js"></script>
-    <link href="https://unpkg.com/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
-    <script src="https://unpkg.com/bootstrap-switch"></script>
+    <!-- Import google fonts - Heading first/ text second -->
+    <link href='http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>
 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="scripts/bootstrap-slider.min.js"></script>
+    
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
 
@@ -38,85 +37,94 @@
         steem.api.setOptions({ url: 'https://api.steemit.com' });
     </script>
 
-    <style type="text/css">
-      body { padding-top: 70px; }
-      .progress-bar { color: black; }
-      .glyphicon-comment { margin-left: 5px; }
-      h3 { margin-top: 0; }
-      .value { font-weight: bold; }
-      dl.values { margin-top: 10px; margin-bottom: 0; }
-      .userpic {
-		  display: inline-block;
-		  background-size: cover;
-		  background-repeat: no-repeat;
-		  background-position: 50% 50%;
-		  border-radius: 25%;
-		  width: 24px;
-		  height: 24px;
-		  margin-right: 5px;
-		}
-      .form-control {
-        display: inline;
-        width: 80%;
-      }
+     <!-- Dynamic admin theme -->
+    <link rel="stylesheet" href="css/icons.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/plugins.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/custom.css">
 
-      .dl-horizontal dt { width: 200px; }
-      .dl-horizontal dd { margin-left: 220px; }
-      .slider.slider-horizontal { width: 80%; }
-    </style>
 </head>
 <body>
-  <nav class="navbar navbar-default navbar-fixed-top">
+   <!-- .page-navbar -->
+  <div id="header" class="page-navbar header-fixed">
     <div class="container">
-      <div class="navbar-header">
+
+     <!-- .navbar-brand -->
+      <a href="bottracker.html" class="navbar-brand"> 
+         <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
+         Steem Bot Tracker
+      </a>
+      <!-- / navbar-brand -->
+
+      <nav class="nav navbar-nav">
+              
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">
-          <img alt="Steem Post Promoter" src="img/logo.png" height="20" width="20">
-        </a>
-        <a class="navbar-brand" href="bottracker.html">Steem Bot Tracker</a>
-      </div>
-
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li ><a href="bottracker.html#bid">Bid-Based Voting Bots</a></li>
-          <li><a href="bottracker.html#paid">Paid Upvote Bots</a></li>
-          <li><a href="bottracker.html#free">Other Bots</a></li>
-          <li><a href="config.html">Bot Owner Config</a></li>
-          <li><a href="#">Curation Estimator</a></li>
-        </ul>
-      </div>
+        
+        <!-- .no-collapse -->
+        <div id="navbar-no-collapse" class="navbar-no-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="bottracker.html#bid"><i class="l-basic-hammer mr10"></i> Bid-Based Voting Bots</a></li>
+            <li><a href="#paid"><i class="l-banknote mr10"></i> Paid Upvote Bots</a></li>
+            <li><a href="#free"><i class="fa fa-android mr10"></i> Other Bots</a></li>
+            <li><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
+            <li class="active"><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
+          </ul>
+        </div>
+     
+      </nav>
     </div>
-  </nav>
+  </div>
+  <!-- / page-navbar -->
 
   <div class="container">
-    <div class="well">
-      <h2 style="margin-top: 0px;">Curation Reward Estimator</h2>
-      <h4>Enter a Steem account name and a link to a post or comment below to estimate the curation rewards that will be received!</h4>
-      <hr style="border-top: 1px solid #333;"/>
-      <div class="form-group">
-        <label for="account_name">Your Account Name</label>
-        <div>
-          <span style="font-size: 1.5em; color: #888888;">@&nbsp;</span><input type="text" class="form-control" id="account_name" placeholder="Account Name">&nbsp;
-          <span id="account_ok" class="glyphicon glyphicon-ok" aria-hidden="true" style="display: none; color: green; font-size: 2.5em; vertical-align: bottom;"></span>
-          <span id="account_bad" class="glyphicon glyphicon-remove" aria-hidden="true" style="display: none; color: red; font-size: 2.5em; vertical-align: bottom;"></span>
+
+    <div class="panel panel-default">
+
+       <div class="panel-heading">
+          <h4 class="panel-title"> Curation Reward Estimator</h4>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="post_link">Post/Comment Link</label>
-        <div>
-          <input type="text" class="form-control" id="post_link" placeholder="Post/Comment Link">&nbsp;
-          <span id="post_ok" class="glyphicon glyphicon-ok" aria-hidden="true" style="display: none; color: green; font-size: 2.5em; vertical-align: bottom;"></span>
-          <span id="post_bad" class="glyphicon glyphicon-remove" aria-hidden="true" style="display: none; color: red; font-size: 2.5em; vertical-align: bottom;"></span>
-        </div>
+      <div class="panel-body">
+        
+        <h4>Enter a Steem account name and a link to a post or comment below to estimate the curation rewards that will be received!</h4>
+
+        <form class="form-horizontal">
+           <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="account_name">Your Account Name</label>
+              <div class="col-lg-10 col-md-9">
+                <div class="input-group">
+                  <span class="input-group-addon">@</span>
+                  <input type="text" class="form-control" id="account_name" placeholder="Account Name">
+                  <span id="account_ok" class="fa fa-check validation-icon-ok color-green" aria-hidden="true" style="display: none;"></span>
+                  <span id="account_bad" class="fa fa-times validation-icon-error color-red" aria-hidden="true" style="display: none;"></span>
+                </div>   
+              </div>
+            </div><!-- End .form-group  -->
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="post_link" >Post/Comment Link</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="text" class="form-control" id="post_link" placeholder="Post/Comment Link">
+                <span id="post_ok" class="fa fa-check validation-icon-ok post-icon color-green" aria-hidden="true" style="display: none;"></span>
+                <span id="post_bad" class="fa fa-times validation-icon-error post-icon color-red" aria-hidden="true" style="display: none;"></span>
+              </div>
+            </div><!-- End .form-group  -->
+          
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" id="btn_submit" class="btn btn-default" onclick="checkAccount();checkPost();document.location.href='#result';">Estimate Curation Rewards</button>
+              </div>
+            </div>
+
+        </form>
+
       </div>
 
-      <button id="btn_submit" class="btn btn-default" onclick="checkAccount();checkPost();document.location.href='#result';">Estimate Curation Rewards</button>
-    </div>
+    </div> 
 
     <div class="alert alert-info">
       <h4>
@@ -127,7 +135,7 @@
       </h4>
     </div>
 
-    <div id="result" class="well" style="display: none;"><a name="result"></a>
+    <div id="result" class="well white-bg" style="display: none;"><a name="result"></a>
       <dl class="dl-horizontal">
         <dt>Post Title:</dt>
         <dd><span id="post_title"></span></dd>
@@ -156,6 +164,15 @@
       <div style="display: none;" id="pre_30_note" class="alert alert-warning"></div>
     </div>
   </div>
+
+  <div id="footer" class="clearfix white-bg"><!-- Start #footer  -->
+    <p class="pull-left">
+      Copyrights &copy; 2017 <a href="http://www.steemit.com/@yabapmatt" class="color-blue strong" target="_blank">Yabapmatt</a>. All rights reserved.
+    </p>
+    <p class="pull-right">
+      Bootstrap theme by <a href="http://www.steemit.com/@suggeelson" class="color-blue strong" target="_blank">SuggeElson</a>
+    </p>
+  </div><!-- End #footer  -->
 
   <script type="text/javascript">
     const FULL_CURATION_TIME = 30 * 60 * 1000;
@@ -210,12 +227,13 @@
 
         if (data.account && data.account.name) {
           ok.show();
-
+          
           if (data.post)
             calculate();
 
         } else
           bad.show();
+         
       });
     }
 
