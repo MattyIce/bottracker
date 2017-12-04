@@ -266,7 +266,7 @@ $(function () {
                 var created = new Date(result.created + 'Z');
 
                 var votes = result.active_votes.filter(function(vote) { return vote.voter == bot.name; });
-                var already_voted = votes.length > 0 && (new Date() - new Date(votes[0].time + 'Z') > 20 * 60 * 1000);
+                var already_voted = false; //votes.length > 0 && (new Date() - new Date(votes[0].time + 'Z') > 20 * 60 * 1000);
 
                 if(already_voted || (new Date() - created) >= ((6 * 24 + 8) * 60 * 60 * 1000)) {
                     // This post is already voted on by this bot or the post is too old to be voted on
