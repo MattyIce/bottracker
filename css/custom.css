@@ -1,0 +1,95 @@
+/* -----------------------------------------
+   Custom.css - put your own changes here 
+----------------------------------------- */
+.page-navbar .navbar-brand {
+    /* font-weight: bold; */
+    background-color: inherit;
+    text-transform:  inherit;
+    font-size: 18px;
+    padding-top: 15px;
+}
+#header .container .navbar-brand > img {
+	display: inline-block;
+	margin-right: 5px;
+	margin-top: -3px;
+}
+#header .navbar .navbar-nav {
+	float: inherit;
+}
+
+#header .navbar-nav .active a{
+	background-color: #f7f9fe;
+}
+
+ body { padding-top: 70px; }
+
+.progress-bar { color: black; }
+.glyphicon-comment { margin-left: 5px; }
+h3 { margin-top: 0; }
+.value { font-weight: bold; }
+dl.values { margin-top: 10px; margin-bottom: 0; }
+.userpic {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border-radius: 25%;
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+
+.slider.slider-horizontal {
+    width: 210px;
+    margin-top: 4px;
+    margin-left: 5px;
+}
+.slider.slider-horizontal .slider-track {
+	margin-top: -8px;
+}
+.text-left {text-align: left !important;}
+.red-light-bg a, .green-bg a {color: white !important;}
+
+.table .progress {
+	margin-top: 2px;
+    border: 1px solid white;
+    height: 18px;
+}
+
+.validation-icon-ok, 
+.validation-icon-error {
+	position: absolute;
+	top: 6px;
+    right: 10px;
+    z-index: 10;
+    font-size: 2rem;
+}
+
+.post-icon { right: 25px;}
+
+
+@media all and (max-width: 1200px) {
+	#header {text-align: center;}
+	#header .navbar-brand {
+		float: inherit;
+	    margin-left: auto;
+	    margin-right: auto;
+	    display: inline-block;	
+	}
+}
+
+@media all and (max-width: 767px) {
+	#header {text-align: inherit;}
+	#header .navbar-brand {
+		margin-left: inherit;
+	    margin-right: inherit;
+	    width: auto;
+	}
+	#header .navbar-nav {height: auto; float: right;}
+	#header .navbar-nav li {width: 100%;}
+	#header .navbar-toggle {
+		position: absolute;
+	    right: 15px;
+	    top: 0px;
+	}
+}

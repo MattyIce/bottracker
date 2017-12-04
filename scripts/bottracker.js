@@ -20,9 +20,6 @@ $(function () {
       { name: 'msp-bidbot', interval: 2.4, comments: true, min_bid: 0.1 },
       { name: 'kittybot', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'upmyvote', interval: 2.4, comments: false, min_bid: 1 },
-      { name: 'postpromoter', interval: 2.4, comments: true, min_bid: 0.1 },
-      { name: 'mrswhale', interval: 2.4, comments: false, min_bid: 0.1 },
-      { name: 'hellowhale', interval: 2.4, comments: false, min_bid: 0.05 },
       { name: 'upme', interval: 2.4, comments: true, min_bid: 0.1 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
@@ -337,12 +334,12 @@ $(function () {
         td.append(link);
 
         if(bot.comments) {
-            var icon = $('<span class="glyphicon glyphicon-comment" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
+            var icon = $('<span class="fa fa-comment-o ml5" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
             td.append(icon);
         }
 
         if (bot.pre_vote_group_url && bot.pre_vote_group_url != '') {
-            var icon = $('<a href="' + bot.pre_vote_group_url + '" target="_blank">&nbsp;<span class="glyphicon glyphicon-ok" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot has a Pre-Vote Group which will give you additional upvotes - Click for Details"></span></a>');
+            var icon = $('<a href="' + bot.pre_vote_group_url + '" target="_blank">&nbsp;<span class="fa fa-check" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot has a Pre-Vote Group which will give you additional upvotes - Click for Details"></span></a>');
             td.append(icon);
         }
 
@@ -368,7 +365,7 @@ $(function () {
         bar.text(bot.power.formatMoney());
 
         var div = $(document.createElement('div'));
-        div.addClass('progress');
+        div.addClass('progress flat');
         div.append(bar);
         td.append(div);
         row.append(td);
@@ -387,13 +384,14 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
-        var link = $('<a href="javascript:void(0);">Details</a>');
+        var link = $('<a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a>');
         link.click(function (e) { showBotDetails(bot); });
         td.append(link);
         row.append(td);
 
         if (bid > 0 && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
-            row.css('background-color', '#aaffaa');
+            //row.css('background-color', '#aaffaa');
+            row.addClass('green-bg');
 
             if (!bot.notif) {
                 sendNotification(bot.name, bid);
@@ -403,7 +401,8 @@ $(function () {
             bot.notif = false;
 
         if(bot.power == 100 && bot.last > 3 * HOURS || bot.power < 90)
-          row.css('background-color', '#ffaaaa');
+          //row.css('background-color', '#ffaaaa');
+          row.addClass('red-light-bg');
 
         $('#bots_table tbody').append(row);
         $('[data-toggle="tooltip"]').tooltip();
@@ -459,8 +458,9 @@ $(function () {
             link.text('@' + bid.data.from);
 
             if (bid.invalid) {
-                var icon = $('<span class="glyphicon glyphicon-remove" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Invalid Post"></span>&nbsp;');
+                var icon = $('<span class="fa fa-warning mr5 color-white" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Invalid Post"></span>&nbsp;');
                 td.append(icon);
+                row.addClass('red-light-bg');
             }
 
             td.append(link);
@@ -503,11 +503,21 @@ $(function () {
     setTimeout(loadAccountInfo, 5 * 1000);
     setInterval(updateTimers, 1000);
 
-    $('#curation_option').bootstrapSwitch();
-    $('#curation_option').on('switchChange.bootstrapSwitch', function(event, state) {
+    //$('#curation_option').bootstrapSwitch();
+   /* $('#curation_option').on('switchChange.bootstrapSwitch', function(event, state) {
       AUTHOR_REWARDS = state ? 0.75 : 1;
       showBotInfo();
+    });*/
+
+    $('#curation_option').on('change', function () {
+        if(this.checked) {
+            AUTHOR_REWARDS = 0.75;
+        } else {
+            AUTHOR_REWARDS = 1;  
+        }
+        showBotInfo();
     });
+   
 
     $('[data-switch-get]').on('click', function () {
       var type = $(this).data('switch-get')

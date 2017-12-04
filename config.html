@@ -18,12 +18,10 @@
     <title>Steem Bot Tracker</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!-- Import google fonts - Heading first/ text second -->
+    <link href='http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>
 
-    <link href="https://unpkg.com/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
-    <script src="https://unpkg.com/bootstrap-switch"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <!--<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>-->
     <script src="scripts/bundle.js"></script>
@@ -32,102 +30,143 @@
         steem.api.setOptions({ url: 'https://api.steemit.com' });
     </script>
 
-    <style type="text/css">
-      body { padding-top: 70px; }
-      .progress-bar { color: black; }
-      .glyphicon-comment { margin-left: 5px; }
-      h3 { margin-top: 0; }
-      .value { font-weight: bold; }
-      dl.values { margin-top: 10px; margin-bottom: 0; }
-      .userpic {
-		  display: inline-block;
-		  background-size: cover;
-		  background-repeat: no-repeat;
-		  background-position: 50% 50%;
-		  border-radius: 25%;
-		  width: 24px;
-		  height: 24px;
-		  margin-right: 5px;
-		}
-      .form-control {
-        display: inline;
-        width: 80%;
-      }
-    </style>
+     <!-- Dynamic admin theme -->
+    <link rel="stylesheet" href="css/icons.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/plugins.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/custom.css">
+
 </head>
 <body>
-  <nav class="navbar navbar-default navbar-fixed-top">
+   <!-- .page-navbar -->
+  <div id="header" class="page-navbar header-fixed">
     <div class="container">
-      <div class="navbar-header">
+
+     <!-- .navbar-brand -->
+      <a href="bottracker.html" class="navbar-brand"> 
+         <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
+         Steem Bot Tracker
+      </a>
+      <!-- / navbar-brand -->
+
+      <nav class="nav navbar-nav">
+              
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">
-          <img alt="Steem Post Promoter" src="img/logo.png" height="20" width="20">
-        </a>
-        <a class="navbar-brand" href="bottracker.html">Steem Bot Tracker</a>
-      </div>
-
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li ><a href="bottracker.html#bid">Bid-Based Voting Bots</a></li>
-          <li><a href="bottracker.html#paid">Paid Upvote Bots</a></li>
-          <li><a href="bottracker.html#free">Other Bots</a></li>
-          <li><a href="#">Bot Owner Config</a></li>
-        </ul>
-      </div>
+        
+        <!-- .no-collapse -->
+        <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="bottracker.html#bid"><i class="l-basic-hammer mr10"></i> Bid-Based Voting Bots</a></li>
+            <li><a href="#paid"><i class="l-banknote mr10"></i> Paid Upvote Bots</a></li>
+            <li><a href="#free"><i class="fa fa-android mr10"></i> Other Bots</a></li>
+            <li class="active"><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
+            <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
+          </ul>
+        </div>
+     
+      </nav>
     </div>
-  </nav>
+  </div>
+  <!-- / page-navbar -->
 
   <div class="container">
-    <div class="alert alert-info">
-      <h3>Bid-Bot Owner Configuration Tool</h3>
+    <div class="bs-callout bs-callout-warning fade in">
+      <h4>Bid-Bot Owner Configuration Tool</h4>
       <p>This tool is for bid bot owners ONLY to be able to specify the settings for their bot in the "json_metadata" field of the bot account on the blockchain.</p>
       <p>The bot tracker tool will pick up these settings, if they are available, so bot owners will no longer need to message me to update the tracker and will make the tracker more accurate since it will update instantly as changes are made.</p>
-      <p>The JSON format for these settings is: <br/><br/>
-        <b>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false, "pre_vote_group_url": 'https://steemit.com/@frontrunner' }</b><br/><br/>
-        This tool was created to make it super easy for bot owners to set and update this information, but any tool can be used and the bot tracker will pick it up as long as the data is available in the correct format.
+      <p>The JSON format for these settings is:</p>
+      <p><code>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false, "pre_vote_group_url": 'https://steemit.com/@frontrunner' }</code></p>
+      <p>This tool was created to make it super easy for bot owners to set and update this information, but any tool can be used and the bot tracker will pick it up as long as the data is available in the correct format.</p>
     </div>
+    
+    <div class="panel panel-default">
 
-    <div class="well">
-      <div class="form-group">
-        <label for="account_name">Bot Account Name</label>
-        <div><span style="font-size: 1.5em; color: #888888;">@&nbsp;</span><input type="text" class="form-control" id="account_name" placeholder="Account Name"></div>
+      <div class="panel-heading">
+        <h4 class="panel-title"> Update Bot Form</h4>
       </div>
-      <div class="form-group">
-        <label for="active_wif">Active WIF</label> <span>(This is necessary to sign the account update transaction, you can view the source of this page to verify it is not being stored or sent anywhere)</span>
-        <div><input type="password" class="form-control" id="active_wif" placeholder="Active WIF"></div>
-      </div>
-      <div class="form-group">
-        <label for="min_bid">Minimum Bid</label>
-        <div><input type="text" class="form-control" id="min_bid" placeholder="0.5" style="width: 100px;" value="0.5"> SBD</div>
-      </div>
-      <div class="form-group">
-        <label for="bid_window">Bid Window</label>
-        <div>
-          <select id="bid_window" class="form-control">
-            <option value="2.4">2.4 Hours (100% Vote)</option>
-            <option value="1.2">1.2 Hours (50% Vote)</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="allows_comments">Comments</label>
-        <div><label style="font-weight: normal;"><input type="checkbox" id="allows_comments"> Allows Comments?</label></div>
-      </div>
-        <div class="form-group">
-            <label for="front_runner">Front-Runner / Pre-Vote Club URL</label>
-            <div><input type="text" class="form-control" id="front_runner" placeholder="Front-Runner / Pre-Vote Club URL"></div>
+      <div class="panel-body">
+
+        <div class="bs-callout bs-callout-danger fade in">
+            <h4>Important</h4>
+            <p>Information bellow is not saved / stored or send anywhere. You can view the source code to make sure.</p>
         </div>
 
-      <button id="btn_submit" class="btn btn-default" onclick="updateBot();">Update Profile</button>
+        <form class="form-horizontal">
+           <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="account_name">Bot Account Name</label>
+              <div class="col-lg-10 col-md-9">
+                <div class="input-group">
+                  <span class="input-group-addon">@</span>
+                  <input type="text" class="form-control" id="account_name" placeholder="Account Name">
+                </div>   
+              </div>
+            </div><!-- End .form-group  -->
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="active_wif" >Active WIF</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="password" class="form-control" id="active_wif" placeholder="Active WIF">
+                <span class="help-block text-danger">This is necessary to sign the account update transaction, you can view the source of this page to verify it is not being stored or sent anywhere</span>
+              </div>
+            </div><!-- End .form-group  -->
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="min_bid" >Minimum Bid</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="text" class="form-control input-mini" id="min_bid" placeholder="0.5" value="0.5">
+                <span class="help-block text-info">Minimum bid in SBD</span>
+              </div>
+            </div><!-- End .form-group  -->
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="bid_window" >Bid Window</label>
+              <div class="col-lg-10 col-md-9">
+               <select id="bid_window" class="form-control input-large">
+                  <option value="2.4">2.4 Hours (100% Vote)</option>
+                  <option value="1.2">1.2 Hours (50% Vote)</option>
+                </select>
+              </div>
+            </div><!-- End .form-group  -->
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="allows_comments" >Comments</label>
+              <div class="col-lg-10 col-md-9">
+                <div class="checkbox-custom">
+                    <input type="checkbox" value="option1" id="allows_comments">
+                    <label for="checkbox1">Allows Comments?</label>
+                </div>
+              </div>
+            </div><!-- End .form-group  -->
+             <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="front_runner" >Front-Runner / Pre-Vote Club URL</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="url" class="form-control" id="front_runner" placeholder="Front-Runner / Pre-Vote Club URL">
+              </div>
+            </div><!-- End .form-group  -->
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" id="btn_submit" class="btn btn-default" onclick="updateBot();">Update Profile</button>
+              </div>
+            </div>
+
+        </form>
+      </div>
     </div>
 
     <div id="result" style="display: none;" class="alert"></div>
+
   </div>
+
+  <div id="footer" class="clearfix white-bg"><!-- Start #footer  -->
+    <p class="pull-left">
+      Copyrights &copy; 2017 <a href="http://www.steemit.com/@yabapmatt" class="color-blue strong" target="_blank">Yabapmatt</a>. All rights reserved.
+    </p>
+    <p class="pull-right">
+      Bootstrap theme by <a href="http://www.steemit.com/@suggeelson" class="color-blue strong" target="_blank">SuggeElson</a>
+    </p>
+  </div><!-- End #footer  -->
 
   <script type="text/javascript">
     function updateBot() {
