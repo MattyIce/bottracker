@@ -5,14 +5,12 @@ $(function () {
 
     var bots = [
       { name: 'booster', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
-      //{ name: 'bellyrub', interval: 2.4, comments: false, min_bid: 1 },
       { name: 'buildawhale', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
       { name: 'boomerang', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'minnowhelper', interval: 2.4, comments: true, min_bid: 0.1 },
       { name: 'discordia', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'lovejuice', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'sneaky-ninja', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'upgoater', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'voter', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'appreciator', interval: 2.4, comments: false, min_bid: 0.05 },
       { name: 'pushup', interval: 2.4, comments: true, min_bid: 0.05 },
@@ -20,7 +18,10 @@ $(function () {
       { name: 'msp-bidbot', interval: 2.4, comments: true, min_bid: 0.1 },
       { name: 'kittybot', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'upmyvote', interval: 2.4, comments: false, min_bid: 1 },
-      { name: 'upme', interval: 2.4, comments: true, min_bid: 0.1 }
+      { name: 'upme', interval: 2.4, comments: true, min_bid: 0.1 },
+      { name: 'postpromoter', interval: 2.4, comments: true, min_bid: 0.1 },
+      { name: 'mrswhale', interval: 2.4, comments: false, min_bid: 0.1 },
+      { name: 'hellowhale', interval: 2.4, comments: false, min_bid: 0.05 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -53,74 +54,7 @@ $(function () {
         } catch (err) { }
     }
 
-    function sendRandoWhaleNotification() {
-        try {
-            if (Notification.permission !== "granted")
-                Notification.requestPermission();
-            else {
-                var notification = new Notification('Randowhale is Awake!', {
-                    icon: 'https://i.imgur.com/SEm0LBl.jpg',
-                    body: '@randowhale is awake! Send your payment quickly before it goes to sleep again!'
-                });
-
-                notification.onclick = function () {
-                    window.open("https://steemit.com/@randowhale");
-                };
-            }
-        } catch (err) { }
-    }
-
-    var rw_last = false;
     function loadAccountInfo() {
-      /*
-        steem.api.getAccounts(['randowhale'], function (err, result) {
-            try {
-                var account = result[0];
-                var bar = $('#randowhale-progress div');
-                var power = getVotingPower(account) / 100;
-                bar.attr('aria-valuenow', power);
-                bar.css('width', power + '%');
-                bar.text(power + '%');
-
-                var time = timeTilFullPower(account) * 1000;
-                $('#randowhale-time').attr('time', time);
-                $('#randowhale-time').text(toTimer(time));
-
-                var metadata = JSON.parse(account.json_metadata);
-                var vote = metadata.config.min_vote;
-                $('#randowhale-fee').text('$' + metadata.config.fee_sbd.formatMoney() + ' SBD');
-                $('#randowhale-vote').text((vote * 2 / 100).formatMoney() + '%');
-                $('#randowhale-value').text('$' + getVoteValue(vote * 2 / 100, account).formatMoney());
-
-                var status = $('#randowhale-status');
-                status.removeClass('label-default');
-                status.removeClass('label-success');
-
-                if(metadata.config.sleep) {
-                    status.text('Sleeping');
-                    status.addClass('label-default');
-                    rw_last = false;
-                } else {
-                    status.text('Awake!');
-                    status.addClass('label-success');
-
-                    if(!rw_last) {
-                        sendRandoWhaleNotification();
-                        rw_last = true;
-                    }
-                }
-
-                var panel = $('#randowhale-panel');
-                panel.removeClass('panel-default');
-                panel.removeClass('panel-success');
-                panel.addClass('panel-' + (metadata.config.sleep ? 'default' : 'success'));
-                $('#rw_bot_error').css('display', 'none');
-            } catch (err) {
-                $('#rw_bot_error').css('display', 'block');
-            }
-        });
-        */
-
         steem.api.getAccounts(['minnowbooster'], function (err, result) {
             try {
                 var account = result[0];
@@ -129,10 +63,10 @@ $(function () {
                 bar.attr('aria-valuenow', power);
                 bar.css('width', power + '%');
                 bar.text(power + '%');
-                var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
-                var weight = 2.5 / vote;
-                //$('#minnowbooster-weight').text((weight * 100).formatMoney(1) + '%');
-                $('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
+                //var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
+                //var weight = 2.5 / vote;
+                //$('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
+                $('#minnowbooster-vote').text('$1.60');
                 $('#mb_bot_error').css('display', 'none');
             } catch (err) {
                 $('#mb_bot_error').css('display', 'block');
@@ -305,8 +239,8 @@ $(function () {
       $('#bots_table tbody').empty();
 
       bots.sort(function(a, b) {
-        var an = (a.power == 100 && a.last > 5 * HOURS) ? 999 : a.next;
-        var bn = (b.power == 100 && b.last > 5 * HOURS) ? 999 : b.next;
+        var an = (a.power == 100 && a.last > 3 * HOURS || a.last < 60 * 1000) ? 9990000000 : a.next;
+        var bn = (b.power == 100 && b.last > 3 * HOURS || b.last < 60 * 1000) ? 9990000000 : b.next;
         return an - bn;
       });
 
@@ -315,7 +249,7 @@ $(function () {
           return;
 
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
-        bot.rounds[bot.rounds.length - 1].bids.forEach(function(bid) { checkPost(bot, bid.id, bid.data.memo); });
+        //bot.rounds[bot.rounds.length - 1].bids.forEach(function(bid) { checkPost(bot, bid.id, bid.data.memo); });
 
         bid = (AUTHOR_REWARDS * bot.vote - RETURN * bot.total);
 
@@ -503,12 +437,6 @@ $(function () {
     setTimeout(loadAccountInfo, 5 * 1000);
     setInterval(updateTimers, 1000);
 
-    //$('#curation_option').bootstrapSwitch();
-   /* $('#curation_option').on('switchChange.bootstrapSwitch', function(event, state) {
-      AUTHOR_REWARDS = state ? 0.75 : 1;
-      showBotInfo();
-    });*/
-
     $('#curation_option').on('change', function () {
         if(this.checked) {
             AUTHOR_REWARDS = 0.75;
@@ -554,4 +482,7 @@ $(function () {
 
       return false;
     });
+
+    // Show disclaimer message
+    setTimeout(function () { $('#disclaimer').modal(); }, 2000);
 });
