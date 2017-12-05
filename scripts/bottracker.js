@@ -86,7 +86,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['smartsteem', 'lays', 'thehumanbot', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'spinbot', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['smartsteem', 'lays', 'thehumanbot', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
@@ -154,6 +154,10 @@ $(function () {
                             var ts = new Date((trans[1].timestamp) + 'Z');
 
                             if (op[0] == 'transfer' && op[1].to == account.name && ts > round.last_vote_time) {
+                                // Check that the memo is a valid post or comment URL.
+                                if(!checkMemo(op[1].memo))
+                                  return;
+
                                 var existing = round.bids.filter(function (b) { return b.id == trans[0]; });
 
                                 if (existing.length == 0 && op[1].amount.indexOf('STEEM') < 0) {
@@ -193,6 +197,10 @@ $(function () {
             setTimeout(showBotInfo, 5 * 1000);
             setTimeout(loadBotInfo, 10 * 1000);
         });
+    }
+
+    function checkMemo(memo) {
+      return (memo.lastIndexOf('/') >= 0 && memo.lastIndexOf('@') >= 0);
     }
 
     function checkPost(bot, transId, memo) {

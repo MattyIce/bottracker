@@ -34,12 +34,12 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
-    <script src="scripts/bottracker.js?v=36"></script>
+    <script src="scripts/bottracker.js?v=38"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
     </script>
-    
+
     <!-- Dynamic admin theme -->
     <link rel="stylesheet" href="css/icons.css">
     <link rel="stylesheet" href="css/bootstrap.css">
@@ -49,27 +49,27 @@
 
 </head>
 <body>
-  
+
   <!-- .page-navbar -->
   <div id="header" class="page-navbar header-fixed">
     <div class="container">
 
      <!-- .navbar-brand -->
-      <a href="bottracker.html" class="navbar-brand"> 
+      <a href="bottracker.html" class="navbar-brand">
          <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
          Steem Bot Tracker
       </a>
       <!-- / navbar-brand -->
 
       <nav class="nav navbar-nav">
-              
+
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        
+
         <!-- .no-collapse -->
         <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -80,7 +80,7 @@
             <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
           </ul>
         </div>
-     
+
       </nav>
     </div>
   </div>
@@ -88,7 +88,7 @@
 
   <div class="container">
 
-    <div class="panel panel-info plain">      
+    <div class="panel panel-info plain">
       <div class="panel-body">
         <h1> Steem Upvote Bot Tracker</h1>
         <p>Welcome to the Steem Upvote Bot Tracker, the #1 place for information on voting bots and other options to <strong style="color: green;">profitably</strong> promote your posts on Steem!</p>
@@ -206,7 +206,7 @@
 
           </div>
         </div>
-        
+
         <div class="panel panel-primary plain">
           <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-sliders mr5"></i> Settings</h3>
@@ -216,7 +216,7 @@
             <div class="form-horizontal">
               <div class="form-group">
                 <label class="col-lg-4 col-md-6 control-label text-left"> Include 25% curation rewards in Max Profitable Bid calculation:</label>
-                <div class="col-lg-8 col-md-6">  
+                <div class="col-lg-8 col-md-6">
                   <div class="toggle-custom">
                       <label class="toggle" data-on="ON" data-off="OFF">
                           <input type="checkbox" id="curation_option" name="curation_option" checked>
@@ -228,12 +228,12 @@
               </div>
               <div class="form-group">
                 <label class="col-lg-4 col-md-6 control-label text-left"> Only show bots with vote value greater than:</label>
-                <div class="col-lg-8 col-md-6">  
+                <div class="col-lg-8 col-md-6">
                   <div style="margin-top: 7px;">
                     <b>$0&nbsp;&nbsp;</b>
-                    <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="0"/> 
+                    <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="0"/>
                     <b>&nbsp;&nbsp;$10</b>
-                  </div>                  
+                  </div>
                 </div>
               </div>
             </div>
@@ -471,12 +471,6 @@
                   <td id="blockgators-site">Loading...</td>
                 </tr>
                 <tr>
-                  <td><a target="_blank" href="https://steemit.com/@spinbot">@spinbot</td>
-                  <td id="spinbot-vote">Loading...</td>
-                  <td id="spinbot-desc">Loading...</td>
-                  <td id="spinbot-site">Loading...</td>
-                </tr>
-                <tr>
                   <td><a target="_blank" href="https://steemit.com/@superbot">@superbot</td>
                   <td id="superbot-vote">Loading...</td>
                   <td id="superbot-desc">Loading...</td>
@@ -506,7 +500,7 @@
                           <li role="presentation" class="active"><a id="cur_round_show" href="javascript:void(0);">Current Round</a></li>
                           <li role="presentation"><a id="last_round_show" href="javascript:void(0);">Last Round</a></li>
                         </ul>
-                      </div>                     
+                      </div>
 
                       <div id="cur_round">
                         <dl class="dl-horizontal" style="margin: 10px 0;">
