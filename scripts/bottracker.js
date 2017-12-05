@@ -18,8 +18,8 @@ $(function () {
       { name: 'msp-bidbot', interval: 2.4, comments: true, min_bid: 0.1 },
       { name: 'kittybot', interval: 2.4, comments: true, min_bid: 0.05 },
       { name: 'upmyvote', interval: 2.4, comments: false, min_bid: 1 },
-      { name: 'upme', interval: 2.4, comments: true, min_bid: 0.1 },
-      { name: 'postpromoter', interval: 2.4, comments: true, min_bid: 0.1 },
+      { name: 'upme', interval: 2.4, comments: true, min_bid: 0.1, refunds: true },
+      { name: 'postpromoter', interval: 2.4, comments: true, min_bid: 0.1, refunds: true },
       { name: 'mrswhale', interval: 2.4, comments: false, min_bid: 0.1 },
       { name: 'hellowhale', interval: 2.4, comments: false, min_bid: 0.05 }
       /*{ name: 'khoa', interval: 2.4 },
@@ -128,7 +128,11 @@ $(function () {
                         if(config.pre_vote_group_url && config.pre_vote_group_url != '')
                           bot.pre_vote_group_url = config.pre_vote_group_url;
 
-                        bot.comments = config.comments;
+                        if(config.refunds != undefined)
+                          bot.refunds = config.refunds;
+
+                        if(config.comments != undefined)
+                          bot.comments = config.comments;
                       }
                     }
 
@@ -274,6 +278,11 @@ $(function () {
 
         if (bot.pre_vote_group_url && bot.pre_vote_group_url != '') {
             var icon = $('<a href="' + bot.pre_vote_group_url + '" target="_blank">&nbsp;<span class="fa fa-check" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot has a Pre-Vote Group which will give you additional upvotes - Click for Details"></span></a>');
+            td.append(icon);
+        }
+
+        if(bot.refunds) {
+            var icon = $('<img src="img/refund.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot automatically refunds invalid bids!" />');
             td.append(icon);
         }
 
@@ -441,11 +450,11 @@ $(function () {
         if(this.checked) {
             AUTHOR_REWARDS = 0.75;
         } else {
-            AUTHOR_REWARDS = 1;  
+            AUTHOR_REWARDS = 1;
         }
         showBotInfo();
     });
-   
+
 
     $('[data-switch-get]').on('click', function () {
       var type = $(this).data('switch-get')

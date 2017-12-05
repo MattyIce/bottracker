@@ -44,21 +44,21 @@
     <div class="container">
 
      <!-- .navbar-brand -->
-      <a href="bottracker.html" class="navbar-brand"> 
+      <a href="bottracker.html" class="navbar-brand">
          <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
          Steem Bot Tracker
       </a>
       <!-- / navbar-brand -->
 
       <nav class="nav navbar-nav">
-              
+
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        
+
         <!-- .no-collapse -->
         <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -69,7 +69,7 @@
             <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
           </ul>
         </div>
-     
+
       </nav>
     </div>
   </div>
@@ -84,7 +84,7 @@
       <p><code>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false, "pre_vote_group_url": 'https://steemit.com/@frontrunner' }</code></p>
       <p>This tool was created to make it super easy for bot owners to set and update this information, but any tool can be used and the bot tracker will pick it up as long as the data is available in the correct format.</p>
     </div>
-    
+
     <div class="panel panel-default">
 
       <div class="panel-heading">
@@ -104,23 +104,26 @@
                 <div class="input-group">
                   <span class="input-group-addon">@</span>
                   <input type="text" class="form-control" id="account_name" placeholder="Account Name">
-                </div>   
+                </div>
               </div>
-            </div><!-- End .form-group  -->
+            </div>
+
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="active_wif" >Active WIF</label>
               <div class="col-lg-10 col-md-9">
                 <input type="password" class="form-control" id="active_wif" placeholder="Active WIF">
                 <span class="help-block text-danger">This is necessary to sign the account update transaction, you can view the source of this page to verify it is not being stored or sent anywhere</span>
               </div>
-            </div><!-- End .form-group  -->
+            </div>
+
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="min_bid" >Minimum Bid</label>
               <div class="col-lg-10 col-md-9">
                 <input type="text" class="form-control input-mini" id="min_bid" placeholder="0.5" value="0.5">
                 <span class="help-block text-info">Minimum bid in SBD</span>
               </div>
-            </div><!-- End .form-group  -->
+            </div>
+
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="bid_window" >Bid Window</label>
               <div class="col-lg-10 col-md-9">
@@ -129,7 +132,8 @@
                   <option value="1.2">1.2 Hours (50% Vote)</option>
                 </select>
               </div>
-            </div><!-- End .form-group  -->
+            </div>
+
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="allows_comments" >Comments</label>
               <div class="col-lg-10 col-md-9">
@@ -138,7 +142,18 @@
                     <label for="checkbox1">Allows Comments?</label>
                 </div>
               </div>
-            </div><!-- End .form-group  -->
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="auto_refunds" >Comments</label>
+              <div class="col-lg-10 col-md-9">
+                <div class="checkbox-custom">
+                    <input type="checkbox" value="option1" id="auto_refunds">
+                    <label for="checkbox1">Automatically refunds invalid bids?</label>
+                </div>
+              </div>
+            </div>
+
              <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="front_runner" >Front-Runner / Pre-Vote Club URL</label>
               <div class="col-lg-10 col-md-9">
@@ -191,6 +206,7 @@
           'min_bid_sbd': parseFloat($('#min_bid').val()),
           'bid_window': parseFloat($('#bid_window').val()),
           'comments': $('#allows_comments')[0].checked,
+          'refunds': $('#auto_refunds')[0].checked,
           'pre_vote_group_url': $('#front_runner').val()
         };
 
