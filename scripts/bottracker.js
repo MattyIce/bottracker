@@ -132,6 +132,7 @@ $(function () {
                     var last_vote_time = new Date((account.last_vote_time) + 'Z');
 
                     var bot = bots.filter(function (b) { return b.name == account.name; })[0];
+
                     if(account.json_metadata != null && account.json_metadata != '') {
                       var json_metadata = JSON.parse(account.json_metadata);
 
@@ -147,12 +148,29 @@ $(function () {
                         if(config.pre_vote_group_url && config.pre_vote_group_url != '')
                           bot.pre_vote_group_url = config.pre_vote_group_url;
 
+                        if(config.accepts_steem != undefined)
+                          bot.accepts_steem = config.accepts_steem;
+
                         if(config.refunds != undefined)
                           bot.refunds = config.refunds;
 
                         if(config.comments != undefined)
                           bot.comments = config.comments;
+
+                        if(config.api_url && config.api_url != '')
+                          bot.api_url = config.api_url;
                       }
+                    }
+
+                    bot.last_vote_time = last_vote_time;
+                    bot.vote = vote * bot.interval / 2.4;
+                    bot.power = getVotingPower(account) / 100;
+                    bot.last = (new Date() - last_vote_time);
+                    bot.next = timeTilFullPower(account) * 1000;
+
+                    if(bot.api_url) {
+                      loadFromApi(bot);
+                      return;
                     }
 
                     steem.api.getAccountHistory(account.name, -1, (first_load) ? 500 : 50, function (err, result) {
@@ -201,13 +219,8 @@ $(function () {
                             }
                         });
 
-                        bot.last_vote_time = last_vote_time;
-                        bot.vote = vote * bot.interval / 2.4;
                         bot.total = round.total;
                         bot.bid = (bot.vote - RETURN * bot.total) / RETURN;
-                        bot.power = getVotingPower(account) / 100;
-                        bot.last = (new Date() - last_vote_time);
-                        bot.next = timeTilFullPower(account) * 1000;
                     });
                 });
 
@@ -220,6 +233,38 @@ $(function () {
             setTimeout(showBotInfo, 5 * 1000);
             setTimeout(loadBotInfo, 10 * 1000);
         });
+    }
+
+    function loadFromApi(bot) {
+      $.get(bot.api_url, function (data) {
+        bot.rounds = [];
+        loadRoundFromApi(bot, data.last_round);
+        bot.total = loadRoundFromApi(bot, data.current_round);
+        bot.bid = (bot.vote - RETURN * bot.total) / RETURN;
+      });
+    }
+
+    function loadRoundFromApi(bot, data) {
+      var round = { bids: [], total: 0 };
+
+      // Sum the total of all the bids
+      round.total = data.reduce(function(total, bid) { return total + bid.amount; }, 0);
+
+      // Map the bids to the bot tracker format
+      round.bids = data.map(function(bid) {
+        return {
+          data: {
+            amount: bid.amount,
+            from: bid.sender,
+            memo: 'https://steemit.com' + bid.url,
+            weight: bid.weight
+          }
+        }
+      });
+
+      bot.rounds.push(round);
+
+      return round.total;
     }
 
     function checkMemo(memo) {
@@ -433,7 +478,7 @@ $(function () {
 
     function populateRoundDetailTable(table, bot, round) {
         round.bids.forEach(function (bid) {
-            amount = parseFloat(bid.data.amount.replace(' SBD', ''));
+            amount = parseFloat(bid.data.amount);
             var row = $(document.createElement('tr'));
 
             var td = $(document.createElement('td'));

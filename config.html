@@ -19,7 +19,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Import google fonts - Heading first/ text second -->
-    <link href='http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
@@ -164,12 +164,20 @@
               </div>
             </div>
 
-             <div class="form-group">
+            <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="front_runner" >Front-Runner / Pre-Vote Club URL</label>
               <div class="col-lg-10 col-md-9">
                 <input type="url" class="form-control" id="front_runner" placeholder="Front-Runner / Pre-Vote Club URL">
               </div>
-            </div><!-- End .form-group  -->
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="api_url" >Bids API URL (<a href="http://postpromoter.com/api/bids" target="_blank">example</a>)</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="url" class="form-control" id="api_url" placeholder="URL of Bids API call">
+              </div>
+            </div>
+
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" id="btn_submit" class="btn btn-default" onclick="updateBot();">Update Profile</button>
@@ -218,7 +226,8 @@
           'comments': $('#allows_comments')[0].checked,
           'refunds': $('#auto_refunds')[0].checked,
           'accepts_steem': $('#accepts_steem')[0].checked,
-          'pre_vote_group_url': $('#front_runner').val()
+          'pre_vote_group_url': $('#front_runner').val(),
+          'api_url': $('#api_url').val()
         };
 
         steem.broadcast.accountUpdate($('#active_wif').val(), account.name, account.memo_key, json_metadata, function(err, result) {

@@ -24,12 +24,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Import google fonts - Heading first/ text second -->
-    <link href='http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script src="scripts/bootstrap-slider.min.js"></script>
-    
+
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
 
@@ -51,21 +51,21 @@
     <div class="container">
 
      <!-- .navbar-brand -->
-      <a href="bottracker.html" class="navbar-brand"> 
+      <a href="bottracker.html" class="navbar-brand">
          <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
          Steem Bot Tracker
       </a>
       <!-- / navbar-brand -->
 
       <nav class="nav navbar-nav">
-              
+
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        
+
         <!-- .no-collapse -->
         <div id="navbar-no-collapse" class="navbar-no-collapse">
           <ul class="nav navbar-nav">
@@ -76,7 +76,7 @@
             <li class="active"><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
           </ul>
         </div>
-     
+
       </nav>
     </div>
   </div>
@@ -90,7 +90,7 @@
           <h4 class="panel-title"> Curation Reward Estimator</h4>
         </div>
       <div class="panel-body">
-        
+
         <h4>Enter a Steem account name and a link to a post or comment below to estimate the curation rewards that will be received!</h4>
 
         <form class="form-horizontal">
@@ -102,7 +102,7 @@
                   <input type="text" class="form-control" id="account_name" placeholder="Account Name">
                   <span id="account_ok" class="fa fa-check validation-icon-ok color-green" aria-hidden="true" style="display: none;"></span>
                   <span id="account_bad" class="fa fa-times validation-icon-error color-red" aria-hidden="true" style="display: none;"></span>
-                </div>   
+                </div>
               </div>
             </div><!-- End .form-group  -->
             <div class="form-group">
@@ -113,7 +113,7 @@
                 <span id="post_bad" class="fa fa-times validation-icon-error post-icon color-red" aria-hidden="true" style="display: none;"></span>
               </div>
             </div><!-- End .form-group  -->
-          
+
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" id="btn_submit" class="btn btn-default" onclick="checkAccount();checkPost();document.location.href='#result';">Estimate Curation Rewards</button>
@@ -124,7 +124,7 @@
 
       </div>
 
-    </div> 
+    </div>
 
     <div class="alert alert-info">
       <h4>
@@ -227,13 +227,13 @@
 
         if (data.account && data.account.name) {
           ok.show();
-          
+
           if (data.post)
             calculate();
 
         } else
           bad.show();
-         
+
       });
     }
 
