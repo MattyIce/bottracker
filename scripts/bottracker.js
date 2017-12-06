@@ -4,24 +4,25 @@ $(function () {
     var MIN_VOTE = 0;
 
     var bots = [
-      { name: 'booster', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
-      { name: 'buildawhale', interval: 2.4, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
-      { name: 'boomerang', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'minnowhelper', interval: 2.4, comments: true, min_bid: 0.1 },
-      { name: 'discordia', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'lovejuice', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'sneaky-ninja', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'voter', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'appreciator', interval: 2.4, comments: false, min_bid: 0.05 },
-      { name: 'pushup', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'aksdwi', interval: 2.4, comments: false, min_bid: 0.1, max_bid: 5 },
-      { name: 'msp-bidbot', interval: 2.4, comments: true, min_bid: 0.1 },
-      { name: 'kittybot', interval: 2.4, comments: true, min_bid: 0.05 },
-      { name: 'upmyvote', interval: 2.4, comments: false, min_bid: 1 },
-      { name: 'upme', interval: 2.4, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'postpromoter', interval: 2.4, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'mrswhale', interval: 2.4, comments: false, min_bid: 0.1 },
-      { name: 'hellowhale', interval: 2.4, comments: false, min_bid: 0.05 }
+      { name: 'booster', interval: 2.4, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
+      { name: 'buildawhale', interval: 2.4, accepts_steem: false, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
+      { name: 'boomerang', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'minnowhelper', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
+      { name: 'discordia', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'lovejuice', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      //{ name: 'sneaky-ninja', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'voter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'appreciator', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
+      { name: 'pushup', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'aksdwi', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, max_bid: 5 },
+      { name: 'msp-bidbot', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
+      { name: 'kittybot', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'upmyvote', interval: 2.4, accepts_steem: false, comments: false, min_bid: 1 },
+      { name: 'upme', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
+      { name: 'postpromoter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
+      { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 },
+      { name: 'hellowhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
+      { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -55,6 +56,24 @@ $(function () {
     }
 
     function loadAccountInfo() {
+      steem.api.getAccounts(['smartsteem'], function (err, result) {
+          try {
+              var account = result[0];
+              var bar = $('#smartsteem-progress div');
+              var power = getVotingPower(account) / 100;
+              bar.attr('aria-valuenow', power);
+              bar.css('width', power + '%');
+              bar.text(power + '%');
+              //var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
+              //var weight = 2.5 / vote;
+              //$('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
+              $('#smartsteem-vote').text('$' + getVoteValue(100, account).formatMoney());
+              $('#ss_bot_error').css('display', 'none');
+          } catch (err) {
+              $('#ss_bot_error').css('display', 'block');
+          }
+      });
+
         steem.api.getAccounts(['minnowbooster'], function (err, result) {
             try {
                 var account = result[0];
@@ -82,11 +101,11 @@ $(function () {
         $.get('https://www.minnowbooster.net/upvotes.json', function (data) {
             for (var i = 0; i < 5; i++) {
                 var vote = data[i];
-                $('#mb-upvote-' + i).html('<a href="http://steemit.com/@' + vote.sender_name + '">' + vote.sender_name + '</a> received a <strong>$' + parseFloat(vote.value).formatMoney() + ' upvote for $' + vote.sbd + ' SBD</strong> on <a href="' + vote.url + '">' + vote.url + '</a> at ' + new Date(vote.created_at).toLocaleDateString() + ' ' + new Date(vote.created_at).toLocaleTimeString());
+                $('#mb-upvote-' + i).html('<a href="http://steemit.com/@' + vote.sender_name + '">' + vote.sender_name + '</a> received a <strong>$' + parseFloat(vote.value).formatMoney() + ' upvote for $' + parseFloat(vote.sbd).formatMoney() + ' SBD</strong> on <a href="' + vote.url + '">' + vote.url + '</a> at ' + new Date(vote.created_at).toLocaleDateString() + ' ' + new Date(vote.created_at).toLocaleTimeString());
             }
         });
 
-        steem.api.getAccounts(['smartsteem', 'lays', 'thehumanbot', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['lays', 'thehumanbot', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
@@ -158,9 +177,13 @@ $(function () {
                                 if(!checkMemo(op[1].memo))
                                   return;
 
+                                // Check that the bid is not in STEEM unless the bot accepts STEEM.
+                                if(!bot.accepts_steem && op[1].amount.indexOf('STEEM') >= 0)
+                                  return;
+
                                 var existing = round.bids.filter(function (b) { return b.id == trans[0]; });
 
-                                if (existing.length == 0 && op[1].amount.indexOf('STEEM') < 0) {
+                                if (existing.length == 0) {
                                     var amount = parseFloat(op[1].amount.replace(" SBD", ""));
 
                                     if (amount >= bot.min_bid) {
@@ -289,6 +312,11 @@ $(function () {
             td.append(icon);
         }
 
+        if(bot.accepts_steem) {
+          var icon = $('<img src="img/steem.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot accepts STEEM bids!" />');
+          td.append(icon);
+        }
+
         if(bot.refunds) {
             var icon = $('<img src="img/refund.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot automatically refunds invalid bids!" />');
             td.append(icon);
@@ -301,6 +329,10 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
+        td.text('$' + bot.min_bid.formatMoney() + ' SBD' + (bot.accepts_steem ? ' or STEEM' : ''));
+        row.append(td);
+
+        td = $(document.createElement('td'));
         td.text('$' + bot.total.formatMoney());
         row.append(td);
 
@@ -308,6 +340,7 @@ $(function () {
         td.text('$' + Math.max(bid, 0).formatMoney());
         row.append(td);
 
+/*
         td = $(document.createElement('td'));
         var bar = $('#minnowbooster-progress div').clone();
         var pct = (bot.power - 90) * 10;
@@ -320,6 +353,7 @@ $(function () {
         div.append(bar);
         td.append(div);
         row.append(td);
+*/
 
         td = $(document.createElement('td'));
         td.addClass('timer');

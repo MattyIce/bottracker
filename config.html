@@ -145,11 +145,21 @@
             </div>
 
             <div class="form-group">
-              <label class="col-lg-2 col-md-3 control-label" for="auto_refunds" >Comments</label>
+              <label class="col-lg-2 col-md-3 control-label" for="auto_refunds" >Refunds</label>
               <div class="col-lg-10 col-md-9">
                 <div class="checkbox-custom">
                     <input type="checkbox" value="option1" id="auto_refunds">
                     <label for="checkbox1">Automatically refunds invalid bids?</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="accepts_steem" >STEEM</label>
+              <div class="col-lg-10 col-md-9">
+                <div class="checkbox-custom">
+                    <input type="checkbox" value="option1" id="accepts_steem">
+                    <label for="checkbox1">Accepts bids in STEEM?</label>
                 </div>
               </div>
             </div>
@@ -207,6 +217,7 @@
           'bid_window': parseFloat($('#bid_window').val()),
           'comments': $('#allows_comments')[0].checked,
           'refunds': $('#auto_refunds')[0].checked,
+          'accepts_steem': $('#accepts_steem')[0].checked,
           'pre_vote_group_url': $('#front_runner').val()
         };
 
