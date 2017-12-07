@@ -34,7 +34,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
-    <script src="scripts/bottracker.js?v=40"></script>
+    <script src="scripts/bottracker.js?v=43"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -371,13 +371,20 @@
 
             <div>
               <div style="float:left;"><a href="https://smartsteem.com" target="_blank"><img src="https://steemitimages.com/u/smartsteem/avatar"/></a></div>
-              <div style="text-align: center; padding-top: 5px;">
-                <h2>SmartSteem</h2>
-                <div style="font-size: 1.5em;">Making content on Steem smarter! Visit <a href="https://smartsteem.com" target="_blank">https://smartsteem.com</a> for more details!</div>
+              <div style="padding-top: 40px;">
+                <div style="font-size: 2em;" id="smartsteem-desc"></div>
               </div>
             </div>
 
             <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
+              <dt>Profit:</dt>
+              <dd><span id="smartsteem-profit">Loading...</span></dd>
+              <dt>Payment:</dt>
+              <dd><span id="smartsteem-payment">Loading...</span></dd>
+              <dt>Daily Limit:</dt>
+              <dd><span id="smartsteem-daily">Loading...</span></dd>
+              <dt>Weekly Limit:</dt>
+              <dd><span id="smartsteem-weekly">Loading...</span></dd>
               <dt>Vote Value:</dt>
               <dd><span id="smartsteem-vote">Loading...</span></dd>
               <dt>Voting Power:</dt>
@@ -388,7 +395,27 @@
                   </div>
                 </div>
               </dd>
+
+              <dt>Additional Features:</dt>
+              <dd><span id="smartsteem-features">Loading...</span></dd>
             </dl>
+
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#ss-howto" aria-expanded="true" aria-controls="collapseOne">
+                                <i class="l-arrows-question mr10"></i>How To Use
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="ss-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                        <div class="panel-body">
+                            <ul id="smartsteem-howto"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -423,6 +450,12 @@
                   <td id="withsmn-vote">Loading...</td>
                   <td id="withsmn-desc">Loading...</td>
                   <td id="withsmn-site">Loading...</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="https://steemit.com/@steemvote">@steemvote</a></td>
+                    <td id="steemvote-vote">Loading...</td>
+                    <td id="steemvote-desc">Loading...</td>
+                    <td id="steemvote-site">Loading...</td>
                 </tr>
                   <tr>
                       <td><a target="_blank" href="https://steemit.com/@minnowpond">@minnowpond</a></td>

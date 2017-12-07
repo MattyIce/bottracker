@@ -4,13 +4,13 @@ $(function () {
     var MIN_VOTE = 0;
 
     var bots = [
-      { name: 'booster', interval: 2.4, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
+      { name: 'booster', interval: 1.2, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
       { name: 'buildawhale', interval: 2.4, accepts_steem: false, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
       { name: 'boomerang', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'minnowhelper', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
       { name: 'discordia', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'lovejuice', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      //{ name: 'sneaky-ninja', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'sneaky-ninja', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'voter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'appreciator', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'pushup', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
@@ -22,7 +22,8 @@ $(function () {
       { name: 'postpromoter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
       { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 },
       { name: 'hellowhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
-      { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 }
+      { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
+      { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -64,14 +65,25 @@ $(function () {
               bar.attr('aria-valuenow', power);
               bar.css('width', power + '%');
               bar.text(power + '%');
-              //var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
-              //var weight = 2.5 / vote;
-              //$('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
               $('#smartsteem-vote').text('$' + getVoteValue(100, account).formatMoney());
               $('#ss_bot_error').css('display', 'none');
           } catch (err) {
               $('#ss_bot_error').css('display', 'block');
           }
+      });
+
+      $.get('https://smartsteem.com/api/general/bot_tracker', function (data) {
+          $('#smartsteem-desc').text(data.description);
+          $('#smartsteem-profit').text(data.profit);
+          $('#smartsteem-payment').text(data.payment);
+          $('#smartsteem-daily').text(data.daily_limit);
+          $('#smartsteem-weekly').text(data.weekly_limit);
+          $('#smartsteem-features').text(data.additional_features);
+          $('#smartsteem-howto').empty();
+          
+          data.how_to.forEach(function(item) {
+            $('#smartsteem-howto').append($('<li>' + item + '</li>'));
+          })
       });
 
         steem.api.getAccounts(['minnowbooster'], function (err, result) {
@@ -105,7 +117,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['lays', 'thehumanbot', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['lays', 'thehumanbot', 'steemvote', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
@@ -325,7 +337,7 @@ $(function () {
       });
 
       bots.forEach(function(bot) {
-        if(bot.vote < MIN_VOTE || !bot.vote)
+        if(bot.vote < MIN_VOTE || !bot.vote || !bot.rounds || bot.rounds.length == 0)
           return;
 
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
