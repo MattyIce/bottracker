@@ -2,7 +2,7 @@ $(function () {
     var RETURN = 1;
     var AUTHOR_REWARDS = 0.75;
     var MIN_VOTE = 0;
-    var CURRENCY = 'SBD';
+    var CURRENCY = 'USD';
 
     var bots = [
       { name: 'booster', interval: 1.2, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
@@ -62,7 +62,8 @@ $(function () {
     var steem_price = 1;
     var sbd_price = 1;
     $.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) { steem_price = parseFloat(data[0].price_usd); });
-    $.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) { sbd_price = parseFloat(data[0].price_usd); });
+    //$.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) { sbd_price = parseFloat(data[0].price_usd); });
+    $.get('https://postpromoter.com/api/sbd/', function (data) { sbd_price = parseFloat(data.sbd_price); console.log(sbd_price); });
 
     var smartsteem_loaded = false;
     function loadAccountInfo() {
@@ -130,7 +131,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['lays', 'thehumanbot', 'steemvote', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['lays', 'thehumanbot', 'steemvote', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot', 'randofish'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
@@ -280,7 +281,7 @@ $(function () {
       round.bids = data.map(function(bid) {
         return {
           data: {
-            amount: bid.amount,
+            amount: bid.amount + ' ' + bid.currency,
             from: bid.sender,
             memo: 'https://steemit.com' + bid.url,
             weight: bid.weight
@@ -351,7 +352,7 @@ $(function () {
       });
 
       bots.forEach(function(bot) {
-        if(bot.vote < MIN_VOTE || !bot.vote || !bot.rounds || bot.rounds.length == 0)
+        if(bot.vote_usd < MIN_VOTE || !bot.vote || !bot.rounds || bot.rounds.length == 0)
           return;
 
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
@@ -397,28 +398,8 @@ $(function () {
 
         row.append(td);
 
-        var vote = bot.vote;
-        var total = bot.total;
-
-        switch (CURRENCY) {
-          case 'SBD':
-            vote = bot.vote_usd / sbd_price;
-            total = bot.accepts_steem ? bot.total * steem_price / sbd_price : bot.total;
-            break;
-          case 'STEEM':
-            vote = bot.vote_usd / steem_price;
-            total = bot.accepts_steem ? bot.total : bot.total * sbd_price / steem_price;
-            break;
-          case 'USD':
-            vote = bot.vote_usd;
-            total = (bot.accepts_steem ? bot.total * steem_price : bot.total * sbd_price);
-            break;
-          case 'POST REWARDS':
-            break;
-        }
-
         td = $(document.createElement('td'));
-        td.text('$' + vote.formatMoney() + ' (' + (bot.interval / 2.4 * 100) + '%)');
+        td.text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
         row.append(td);
 
         td = $(document.createElement('td'));
@@ -426,7 +407,7 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
-        td.text('$' + total.formatMoney());
+        td.text(formatCurrencyTotal(bot, bot.total));
         row.append(td);
 
         td = $(document.createElement('td'));
@@ -491,6 +472,40 @@ $(function () {
       });
     }
 
+    function formatCurrencyVote(bot) {
+      switch (CURRENCY) {
+        case 'SBD':
+          return (bot.vote_usd / sbd_price).formatMoney() + ' SBD';
+          break;
+        case 'STEEM':
+          return (bot.vote_usd / steem_price).formatMoney() + ' STEEM';
+          break;
+        case 'USD':
+          return '$' + bot.vote_usd.formatMoney();
+          break;
+        case 'POST REWARDS':
+          return '$' + bot.vote.formatMoney();
+          break;
+      }
+    }
+
+    function formatCurrencyTotal(bot, total) {
+      switch (CURRENCY) {
+        case 'SBD':
+          return (bot.accepts_steem ? total * steem_price / sbd_price : total).formatMoney() + ' SBD';
+          break;
+        case 'STEEM':
+          return (bot.accepts_steem ? total : total * sbd_price / steem_price).formatMoney() + ' STEEM';
+          break;
+        case 'USD':
+          return '$' + (bot.accepts_steem ? total * steem_price : total * sbd_price).formatMoney();
+          break;
+        case 'POST REWARDS':
+          return '$' + total.formatMoney();
+          break;
+      }
+    }
+
     function showBotDetails(bot) {
         $('#bid_details_bot').text(bot.name);
 
@@ -501,14 +516,14 @@ $(function () {
 
         if (bot.rounds && bot.rounds.length > 0) {
             populateRoundDetailTable(cur_table, bot, bot.rounds[bot.rounds.length - 1]);
-            $('#cur_round_vote').text('$' + bot.vote.formatMoney() + ' (' + (bot.interval / 2.4 * 100) + '%)');
-            $('#cur_round_bids').text('$' + bot.rounds[bot.rounds.length - 1].total.formatMoney());
+            $('#cur_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+            $('#cur_round_bids').text(formatCurrencyTotal(bot, bot.rounds[bot.rounds.length - 1].total));
         }
 
         if (bot.rounds && bot.rounds.length > 1) {
             populateRoundDetailTable(last_table, bot, bot.rounds[bot.rounds.length - 2]);
-            $('#last_round_vote').text('$' + bot.vote.formatMoney() + ' (' + (bot.interval / 2.4 * 100) + '%)');
-            $('#last_round_bids').text('$' + bot.rounds[bot.rounds.length - 2].total.formatMoney());
+            $('#last_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+            $('#last_round_bids').text(formatCurrencyTotal(bot, bot.rounds[bot.rounds.length - 2].total));
         }
 
         $('#cur_round_show').click(function (e) {
@@ -530,7 +545,8 @@ $(function () {
 
     function populateRoundDetailTable(table, bot, round) {
         round.bids.forEach(function (bid) {
-            amount = parseFloat(bid.data.amount);
+            var amount = parseFloat(bid.data.amount);
+            var currency = getCurrency(bid.data.amount);
             var row = $(document.createElement('tr'));
 
             var td = $(document.createElement('td'));
@@ -549,7 +565,7 @@ $(function () {
             row.append(td);
 
             var td = $(document.createElement('td'));
-            td.text('$' + amount.formatMoney());
+            td.text(amount.formatMoney() + ' ' + currency);
             td.css('text-align', 'right');
             row.append(td);
 
@@ -558,14 +574,21 @@ $(function () {
             td.css('text-align', 'right');
             row.append(td);
 
+            var value = ((amount / round.total) * parseFloat(formatCurrencyVote(bot).replace('$', ''))).formatMoney();
+
+            if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
+              value = value + ' ' + CURRENCY;
+            else
+              value = '$' + value;
+
             var td = $(document.createElement('td'));
-            td.text('$' + ((amount / round.total) * bot.vote).formatMoney());
+            td.text(value);
             td.css('text-align', 'right');
             row.append(td);
 
             var td = $(document.createElement('td'));
             var div = $(document.createElement('div'));
-            div.css('width', '200px');
+            div.css('width', '300px');
             div.css('overflow', 'hidden');
             div.css('height', '23px');
 
@@ -638,4 +661,8 @@ $(function () {
 
     // Show disclaimer message
     setTimeout(function () { $('#disclaimer').modal(); }, 2000);
+
+    function getCurrency(amount) {
+      return amount.substr(amount.indexOf(' ') + 1);
+    }
 });

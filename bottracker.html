@@ -34,7 +34,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
-    <script src="scripts/bottracker.js?v=44"></script>
+    <script src="scripts/bottracker.js?v=45"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -47,6 +47,10 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/custom.css">
 
+    <style type="text/css">
+    .modal-dialog { width: 800px; }
+    .slider.slider-horizontal { width: 80%; }
+    </style>
 </head>
 <body>
 
@@ -218,10 +222,10 @@
                 <label class="col-lg-4 col-md-6 control-label text-left">Display Currency:</label>
                 <div class="col-lg-8 col-md-6">
                   <select id="currency_list" class="form-control">
+                    <option value="USD">USD</option>
                     <option value="SBD">SBD</option>
                     <option value="STEEM">STEEM</option>
-                    <option value="USD">USD</option>
-                    <option value="POST REWARDS">POST REWARDS</option>
+                    <option value="POST REWARDS">POST REWARDS (What is shown on steemit.com)</option>
                   </select>
                 </div>
               </div>
@@ -244,8 +248,8 @@
                 <div class="col-lg-8 col-md-6">
                   <div style="margin-top: 7px;">
                     <b>$0&nbsp;&nbsp;</b>
-                    <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="0"/>
-                    <b>&nbsp;&nbsp;$10</b>
+                    <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="0"/>
+                    <b>&nbsp;&nbsp;$500</b>
                   </div>
                 </div>
               </div>
@@ -256,7 +260,19 @@
 
         <div class="bs-callout bs-callout-info fade in">
             <h4>Vote for Witness!</h4>
-            <p>Help support me and the bot tracker by voting for me for Steem witness! Go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and enter "yabapmatt" in the vote box at the bottom of the page. Thank you!</p>
+            <p>Help support me and the bot tracker by voting for me for Steem witness! Go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> to vote. Thank you!</p>
+        </div>
+
+        <div class="bs-callout bs-callout-danger fade in">
+            <h3>MAJOR UPDATE - PLEASE READ!</h3>
+            <h4>
+              Due to the broken SBD peg and some bots now accepting SBD and STEEM:<br/><br/>
+              <ul>
+                <li>All vote and total bid values are now shown in USD by default based on the current exchange rates for STEEM and SBDs.</li>
+                <li>Profitability calculations now also take into account the exchange rates of the two currencies.</li>
+                <li>If you want to view numbers in a different currency you can choose a currency in the settings section above.</li>
+              </ul>
+            </h4>
         </div>
 
         <div id="bid_bot_error" style="display: none;" class="alert alert-danger" role="alert">
@@ -553,6 +569,12 @@
                   <td id="thehumanbot-vote">Loading...</td>
                   <td id="thehumanbot-desc">Loading...</td>
                   <td id="thehumanbot-site">Loading...</td>
+                </tr>
+                <tr>
+                  <td><a target="_blank" href="https://steemit.com/@randofish">@randofish</td>
+                  <td id="randofish-vote">Loading...</td>
+                  <td id="randofish-desc">Loading...</td>
+                  <td id="randofish-site">Loading...</td>
                 </tr>
               </tbody>
           </table>
