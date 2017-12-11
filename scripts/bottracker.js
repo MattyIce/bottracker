@@ -2,6 +2,7 @@ $(function () {
     var RETURN = 1;
     var AUTHOR_REWARDS = 0.75;
     var MIN_VOTE = 0;
+    var CURRENCY = 'SBD';
 
     var bots = [
       { name: 'booster', interval: 1.2, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
@@ -56,6 +57,12 @@ $(function () {
             }
         } catch (err) { }
     }
+
+    // Load the current prices of STEEM and SBD
+    var steem_price = 1;
+    var sbd_price = 1;
+    $.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) { steem_price = parseFloat(data[0].price_usd); });
+    $.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) { sbd_price = parseFloat(data[0].price_usd); });
 
     var smartsteem_loaded = false;
     function loadAccountInfo() {
@@ -185,6 +192,7 @@ $(function () {
                     bot.power = getVotingPower(account) / 100;
                     bot.last = (new Date() - last_vote_time);
                     bot.next = timeTilFullPower(account) * 1000;
+                    bot.vote_usd = bot.vote / 2 * sbd_price + bot.vote / 2;
 
                     if(bot.api_url) {
                       loadFromApi(bot);
@@ -349,7 +357,9 @@ $(function () {
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
         //bot.rounds[bot.rounds.length - 1].bids.forEach(function(bid) { checkPost(bot, bid.id, bid.data.memo); });
 
-        bid = (AUTHOR_REWARDS * bot.vote - RETURN * bot.total);
+        //var bid = (AUTHOR_REWARDS * bot.vote - RETURN * bot.total);
+        var bid_sbd = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total * sbd_price) / sbd_price;
+        var bid_steem = bot.accepts_steem ? (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total * steem_price) / steem_price : 0;
 
         var row = $(document.createElement('tr'));
 
@@ -387,8 +397,28 @@ $(function () {
 
         row.append(td);
 
+        var vote = bot.vote;
+        var total = bot.total;
+
+        switch (CURRENCY) {
+          case 'SBD':
+            vote = bot.vote_usd / sbd_price;
+            total = bot.accepts_steem ? bot.total * steem_price / sbd_price : bot.total;
+            break;
+          case 'STEEM':
+            vote = bot.vote_usd / steem_price;
+            total = bot.accepts_steem ? bot.total : bot.total * sbd_price / steem_price;
+            break;
+          case 'USD':
+            vote = bot.vote_usd;
+            total = (bot.accepts_steem ? bot.total * steem_price : bot.total * sbd_price);
+            break;
+          case 'POST REWARDS':
+            break;
+        }
+
         td = $(document.createElement('td'));
-        td.text('$' + bot.vote.formatMoney() + ' (' + (bot.interval / 2.4 * 100) + '%)');
+        td.text('$' + vote.formatMoney() + ' (' + (bot.interval / 2.4 * 100) + '%)');
         row.append(td);
 
         td = $(document.createElement('td'));
@@ -396,11 +426,15 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
-        td.text('$' + bot.total.formatMoney());
+        td.text('$' + total.formatMoney());
         row.append(td);
 
         td = $(document.createElement('td'));
-        td.text('$' + Math.max(bid, 0).formatMoney());
+        if (bot.accepts_steem)
+          td.text(Math.max(bid_steem, 0).formatMoney() + ' STEEM or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
+        else
+          td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
+
         row.append(td);
 
 /*
@@ -437,12 +471,12 @@ $(function () {
         td.append(link);
         row.append(td);
 
-        if (bid > 0 && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
+        if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
             //row.css('background-color', '#aaffaa');
             row.addClass('green-bg');
 
             if (!bot.notif) {
-                sendNotification(bot.name, bid);
+                sendNotification(bot.name, bid_sbd);
                 bot.notif = true;
             }
         } else
@@ -558,6 +592,11 @@ $(function () {
             AUTHOR_REWARDS = 1;
         }
         showBotInfo();
+    });
+
+    $('#currency_list').change(function () {
+      CURRENCY = $('#currency_list').val();
+      showBotInfo();
     });
 
 
