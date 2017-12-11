@@ -23,7 +23,8 @@ $(function () {
       { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 },
       { name: 'hellowhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
-      { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01 }
+      { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01 },
+      { name: 'levitation', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -56,6 +57,7 @@ $(function () {
         } catch (err) { }
     }
 
+    var smartsteem_loaded = false;
     function loadAccountInfo() {
       steem.api.getAccounts(['smartsteem'], function (err, result) {
           try {
@@ -72,7 +74,8 @@ $(function () {
           }
       });
 
-      $.get('https://smartsteem.com/api/general/bot_tracker', function (data) {
+      if (!smartsteem_loaded) {
+        $.get('https://smartsteem.com/api/general/bot_tracker', function (data) {
           $('#smartsteem-desc').text(data.description);
           $('#smartsteem-profit').text(data.profit);
           $('#smartsteem-payment').text(data.payment);
@@ -80,11 +83,14 @@ $(function () {
           $('#smartsteem-weekly').text(data.weekly_limit);
           $('#smartsteem-features').text(data.additional_features);
           $('#smartsteem-howto').empty();
-          
-          data.how_to.forEach(function(item) {
+
+          data.how_to.forEach(function (item) {
             $('#smartsteem-howto').append($('<li>' + item + '</li>'));
-          })
-      });
+          });
+
+          smartsteem_loaded = true;
+        });
+      }
 
         steem.api.getAccounts(['minnowbooster'], function (err, result) {
             try {
