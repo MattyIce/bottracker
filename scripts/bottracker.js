@@ -570,11 +570,16 @@ $(function () {
             row.append(td);
 
             var td = $(document.createElement('td'));
+            td.text('$' + ((currency == 'SBD') ? amount * sbd_price : amount * steem_price).formatMoney());
+            td.css('text-align', 'right');
+            row.append(td);
+
+            var td = $(document.createElement('td'));
             td.text((amount / round.total * 100).formatMoney() + '%');
             td.css('text-align', 'right');
             row.append(td);
 
-            var value = ((amount / round.total) * parseFloat(formatCurrencyVote(bot).replace('$', ''))).formatMoney();
+            var value = ((amount / round.total) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
 
             if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
               value = value + ' ' + CURRENCY;
@@ -588,7 +593,7 @@ $(function () {
 
             var td = $(document.createElement('td'));
             var div = $(document.createElement('div'));
-            div.css('width', '300px');
+            div.css('width', '250px');
             div.css('overflow', 'hidden');
             div.css('height', '23px');
 
@@ -648,13 +653,17 @@ $(function () {
           }
       });
 
+      var currency = $('#calc_currency').val();
       var bid = parseFloat($('#bid_amount').val());
-      var value = bid / (bid + bot.total) * bot.vote;
+      var value = bid / (bid + bot.total) * bot.vote_usd;
+      var bid_value = (currency == 'SBD') ? bid * sbd_price : bid * steem_price;
+
+      $('#bid_value').text('$' + bid_value.formatMoney());
       $('#vote_value').text('$' + value.formatMoney());
       $('#vote_value_net').text('$' + (value * 0.75).formatMoney());
 
-      $('#vote_value').css('color', (value >= bid) ? '#008800' : '#FF0000');
-      $('#vote_value_net').css('color', ((value * 0.75) >= bid) ? '#008800' : '#FF0000');
+      $('#vote_value').css('color', (value >= bid_value) ? '#008800' : '#FF0000');
+      $('#vote_value_net').css('color', ((value * 0.75) >= bid_value) ? '#008800' : '#FF0000');
 
       return false;
     });

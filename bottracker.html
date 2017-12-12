@@ -191,9 +191,17 @@
               <div class="form-group">
                 <input id="bid_amount" type="text" class="form-control" placeholder="Bid Amount">
               </div>
+              <div class="form-group">
+                <select id="calc_currency" class="form-control">
+                  <option value="SBD">SBD</option>
+                  <option value="STEEM">STEEM</option>
+                </select>
+              </div>
               <button id="calculate_vote" class="btn btn-default">Calculate</button>
               <div class="form-group">
                 <dl class="dl-horizontal values">
+                  <dt>Bid Value Value:</dt>
+                  <dd><span class="value" id="bid_value">$0.00</span></dd>
                   <dt>Total Vote Value:</dt>
                   <dd><span class="value" id="vote_value">$0.00</span></dd>
                   <dt>After 25% Curation:</dt>
@@ -264,13 +272,14 @@
         </div>
 
         <div class="bs-callout bs-callout-danger fade in">
-            <h3>MAJOR UPDATE - PLEASE READ!</h3>
+            <h3>IMPORTANT UPDATE - PLEASE READ!</h3>
             <h4>
               Due to the broken SBD peg and some bots now accepting SBD and STEEM:<br/><br/>
               <ul>
-                <li>All vote and total bid values are now shown in USD by default based on the current exchange rates for STEEM and SBDs.</li>
-                <li>Profitability calculations now also take into account the exchange rates of the two currencies.</li>
-                <li>If you want to view numbers in a different currency you can choose a currency in the settings section above.</li>
+                <li style="margin-bottom: 5px;">All vote and total bid values are now shown in USD by default based on the current exchange rates for STEEM and SBDs.</li>
+                <li style="margin-bottom: 5px;">Profitability calculations now also take into account the exchange rates of the two currencies.</li>
+                <li style="margin-bottom: 5px;">If you want to view numbers in a different currency you can choose a currency in the settings section above.</li>
+                <li style="margin-bottom: 5px;">To view the numbers how they were originally, choose the "POST REWARDS" currency which matches what is shown on steemit.com.</li>
               </ul>
             </h4>
         </div>
@@ -286,7 +295,7 @@
               <th>Bot Name</th>
               <th>Vote Value</th>
               <th>Min Bid</th>
-              <th>Total Bids</th>
+              <th>Total Bid Value</th>
               <th>Max Profitable Bid</th>
               <th>Last Vote</th>
               <th>Next Vote</th>
@@ -600,7 +609,7 @@
                         <dl class="dl-horizontal" style="margin: 10px 0;">
                             <dt>Total Vote Value:</dt>
                             <dd><span id="cur_round_vote"></span></dd>
-                            <dt>Total Bids:</dt>
+                            <dt>Total Bid Value:</dt>
                             <dd><span id="cur_round_bids"></span></dd>
                         </dl>
 
@@ -609,6 +618,7 @@
                                 <tr>
                                     <th>Sender</th>
                                     <th style="text-align: right;">Bid</th>
+                                    <th style="text-align: right;">Bid Value (USD)</th>
                                     <th style="text-align: right;">Vote %</th>
                                     <th style="text-align: right;">Value</th>
                                     <th>Memo</th>
@@ -631,6 +641,7 @@
                                   <tr>
                                       <th>Sender</th>
                                       <th style="text-align: right;">Bid</th>
+                                      <th style="text-align: right;">Bid Value (USD)</th>
                                       <th style="text-align: right;">Vote %</th>
                                       <th style="text-align: right;">Value</th>
                                       <th>Memo</th>
