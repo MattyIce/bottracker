@@ -138,7 +138,6 @@ function timeTilFullPower(account){
 $(document).ready(function() {
   //Center modal function
   $('.modal.modal-center').on('show.bs.modal', function (e) {
-    console.log("modal is shown");
     $('.modal.modal-center').each(function(){
       if($(this).hasClass('in') == false){
         $(this).show();
