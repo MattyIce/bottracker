@@ -296,33 +296,36 @@
             <i class="glyphicon glyphicon-ban-circle alert-icon "></i>
             There was an error loading bot info. Please try again in a little bit.
         </div>
+        
+        <div class="table-responsive">
+          <table id="bots_table" class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Bot Name</th>
+                <th>Vote Value</th>
+                <th>Min Bid</th>
+                <th>Total Bid Value</th>
+                <th>Max Profitable Bid</th>
+                <th>Last Vote</th>
+                <th>Next Vote</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <table id="bots_table" class="table table-striped table-hover">
-          <thead>
-            <tr>
-              <th>Bot Name</th>
-              <th>Vote Value</th>
-              <th>Min Bid</th>
-              <th>Total Bid Value</th>
-              <th>Max Profitable Bid</th>
-              <th>Last Vote</th>
-              <th>Next Vote</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Loading...</td>
-              <td>Loading...</td>
-              <td>Loading...</td>
-              <td>Loading...</td>
-              <td>Loading...</td>
-              <td>Loading...</td>
-              <td>Loading...</td>
-              <td>Loading...</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
 
@@ -474,133 +477,136 @@
           <div id="other_bot_error" style="display: none;" class="alert alert-danger" role="alert">
               There was an error loading bot info. Please try again in a little bit.
           </div>
-
-          <table id="other_table" class="table table-striped table-hover">
-              <thead>
+          
+          <div class="table-responsive">
+            
+            <table id="other_table" class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Bot Name</th>
+                        <th>Vote Value</th>
+                        <th>Description</th>
+                        <th>Website</th>
+                    </tr>
+                </thead>
+                <tbody>
                   <tr>
-                      <th>Bot Name</th>
-                      <th>Vote Value</th>
-                      <th>Description</th>
-                      <th>Website</th>
-                  </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><a target="_blank" href="https://steemit.com/@lays">@lays</a></td>
-                  <td id="lays-vote">Loading...</td>
-                  <td id="lays-desc">Loading...</td>
-                  <td id="lays-site">Loading...</td>
-                </tr>
-                <tr>
-                  <td><a target="_blank" href="https://steemit.com/@withsmn">@withsmn</a></td>
-                  <td id="withsmn-vote">Loading...</td>
-                  <td id="withsmn-desc">Loading...</td>
-                  <td id="withsmn-site">Loading...</td>
-                </tr>
-                <tr>
-                    <td><a target="_blank" href="https://steemit.com/@steemvote">@steemvote</a></td>
-                    <td id="steemvote-vote">Loading...</td>
-                    <td id="steemvote-desc">Loading...</td>
-                    <td id="steemvote-site">Loading...</td>
-                </tr>
-                <tr>
-                  <td><a target="_blank" href="https://steemit.com/@upvotewhale">@upvotewhale</a></td>
-                  <td id="upvotewhale-vote">Loading...</td>
-                  <td id="upvotewhale-desc">Loading...</td>
-                  <td id="upvotewhale-site">Loading...</td>
-                </tr>
-                  <tr>
-                      <td><a target="_blank" href="https://steemit.com/@minnowpond">@minnowpond</a></td>
-                      <td id="minnowpond-vote">Loading...</td>
-                      <td id="minnowpond-desc">Loading...</td>
-                      <td id="minnowpond-site">Loading...</td>
+                    <td><a target="_blank" href="https://steemit.com/@lays">@lays</a></td>
+                    <td id="lays-vote">Loading...</td>
+                    <td id="lays-desc">Loading...</td>
+                    <td id="lays-site">Loading...</td>
                   </tr>
                   <tr>
-                      <td><a target="_blank" href="https://steemit.com/@resteembot">@resteembot</td>
-                      <td id="resteembot-vote">Loading...</td>
-                      <td id="resteembot-desc">Loading...</td>
-                      <td id="resteembot-site">Loading...</td>
+                    <td><a target="_blank" href="https://steemit.com/@withsmn">@withsmn</a></td>
+                    <td id="withsmn-vote">Loading...</td>
+                    <td id="withsmn-desc">Loading...</td>
+                    <td id="withsmn-site">Loading...</td>
                   </tr>
                   <tr>
-                      <td><a target="_blank" href="https://steemit.com/@originalworks">@originalworks</td>
-                      <td id="originalworks-vote">Loading...</td>
-                      <td id="originalworks-desc">Loading...</td>
-                      <td id="originalworks-site">Loading...</td>
+                      <td><a target="_blank" href="https://steemit.com/@steemvote">@steemvote</a></td>
+                      <td id="steemvote-vote">Loading...</td>
+                      <td id="steemvote-desc">Loading...</td>
+                      <td id="steemvote-site">Loading...</td>
                   </tr>
                   <tr>
-                      <td><a target="_blank" href="https://steemit.com/@treeplanter">@treeplanter</td>
-                      <td id="treeplanter-vote">Loading...</td>
-                      <td id="treeplanter-desc">Loading...</td>
-                      <td id="treeplanter-site">Loading...</td>
+                    <td><a target="_blank" href="https://steemit.com/@upvotewhale">@upvotewhale</a></td>
+                    <td id="upvotewhale-vote">Loading...</td>
+                    <td id="upvotewhale-desc">Loading...</td>
+                    <td id="upvotewhale-site">Loading...</td>
+                  </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@minnowpond">@minnowpond</a></td>
+                        <td id="minnowpond-vote">Loading...</td>
+                        <td id="minnowpond-desc">Loading...</td>
+                        <td id="minnowpond-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@resteembot">@resteembot</td>
+                        <td id="resteembot-vote">Loading...</td>
+                        <td id="resteembot-desc">Loading...</td>
+                        <td id="resteembot-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@originalworks">@originalworks</td>
+                        <td id="originalworks-vote">Loading...</td>
+                        <td id="originalworks-desc">Loading...</td>
+                        <td id="originalworks-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@treeplanter">@treeplanter</td>
+                        <td id="treeplanter-vote">Loading...</td>
+                        <td id="treeplanter-desc">Loading...</td>
+                        <td id="treeplanter-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@followforupvotes">@followforupvotes</td>
+                        <td id="followforupvotes-vote">Loading...</td>
+                        <td id="followforupvotes-desc">Loading...</td>
+                        <td id="followforupvotes-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@steemthat">@steemthat</td>
+                        <td id="steemthat-vote">Loading...</td>
+                        <td id="steemthat-desc">Loading...</td>
+                        <td id="steemthat-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@frontrunner">@frontrunner</td>
+                        <td id="frontrunner-vote">Loading...</td>
+                        <td id="frontrunner-desc">Loading...</td>
+                        <td id="frontrunner-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@steemvoter">@steemvoter</td>
+                        <td id="steemvoter-vote">Loading...</td>
+                        <td id="steemvoter-desc">Loading...</td>
+                        <td id="steemvoter-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@morwhale">@morwhale</td>
+                        <td id="morwhale-vote">Loading...</td>
+                        <td id="morwhale-desc">Loading...</td>
+                        <td id="morwhale-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@moonbot">@moonbot</td>
+                        <td id="moonbot-vote">Loading...</td>
+                        <td id="moonbot-desc">Loading...</td>
+                        <td id="moonbot-site">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="https://steemit.com/@drotto">@drotto</td>
+                        <td id="drotto-vote">Loading...</td>
+                        <td id="drotto-desc">Loading...</td>
+                        <td id="drotto-site">Loading...</td>
+                    </tr>
+                  <tr>
+                    <td><a target="_blank" href="https://steemit.com/@blockgators">@blockgators</td>
+                    <td id="blockgators-vote">Loading...</td>
+                    <td id="blockgators-desc">Loading...</td>
+                    <td id="blockgators-site">Loading...</td>
                   </tr>
                   <tr>
-                      <td><a target="_blank" href="https://steemit.com/@followforupvotes">@followforupvotes</td>
-                      <td id="followforupvotes-vote">Loading...</td>
-                      <td id="followforupvotes-desc">Loading...</td>
-                      <td id="followforupvotes-site">Loading...</td>
+                    <td><a target="_blank" href="https://steemit.com/@superbot">@superbot</td>
+                    <td id="superbot-vote">Loading...</td>
+                    <td id="superbot-desc">Loading...</td>
+                    <td id="superbot-site">Loading...</td>
                   </tr>
                   <tr>
-                      <td><a target="_blank" href="https://steemit.com/@steemthat">@steemthat</td>
-                      <td id="steemthat-vote">Loading...</td>
-                      <td id="steemthat-desc">Loading...</td>
-                      <td id="steemthat-site">Loading...</td>
+                    <td><a target="_blank" href="https://steemit.com/@thehumanbot">@thehumanbot</td>
+                    <td id="thehumanbot-vote">Loading...</td>
+                    <td id="thehumanbot-desc">Loading...</td>
+                    <td id="thehumanbot-site">Loading...</td>
                   </tr>
                   <tr>
-                      <td><a target="_blank" href="https://steemit.com/@frontrunner">@frontrunner</td>
-                      <td id="frontrunner-vote">Loading...</td>
-                      <td id="frontrunner-desc">Loading...</td>
-                      <td id="frontrunner-site">Loading...</td>
+                    <td><a target="_blank" href="https://steemit.com/@randofish">@randofish</td>
+                    <td id="randofish-vote">Loading...</td>
+                    <td id="randofish-desc">Loading...</td>
+                    <td id="randofish-site">Loading...</td>
                   </tr>
-                  <tr>
-                      <td><a target="_blank" href="https://steemit.com/@steemvoter">@steemvoter</td>
-                      <td id="steemvoter-vote">Loading...</td>
-                      <td id="steemvoter-desc">Loading...</td>
-                      <td id="steemvoter-site">Loading...</td>
-                  </tr>
-                  <tr>
-                      <td><a target="_blank" href="https://steemit.com/@morwhale">@morwhale</td>
-                      <td id="morwhale-vote">Loading...</td>
-                      <td id="morwhale-desc">Loading...</td>
-                      <td id="morwhale-site">Loading...</td>
-                  </tr>
-                  <tr>
-                      <td><a target="_blank" href="https://steemit.com/@moonbot">@moonbot</td>
-                      <td id="moonbot-vote">Loading...</td>
-                      <td id="moonbot-desc">Loading...</td>
-                      <td id="moonbot-site">Loading...</td>
-                  </tr>
-                  <tr>
-                      <td><a target="_blank" href="https://steemit.com/@drotto">@drotto</td>
-                      <td id="drotto-vote">Loading...</td>
-                      <td id="drotto-desc">Loading...</td>
-                      <td id="drotto-site">Loading...</td>
-                  </tr>
-                <tr>
-                  <td><a target="_blank" href="https://steemit.com/@blockgators">@blockgators</td>
-                  <td id="blockgators-vote">Loading...</td>
-                  <td id="blockgators-desc">Loading...</td>
-                  <td id="blockgators-site">Loading...</td>
-                </tr>
-                <tr>
-                  <td><a target="_blank" href="https://steemit.com/@superbot">@superbot</td>
-                  <td id="superbot-vote">Loading...</td>
-                  <td id="superbot-desc">Loading...</td>
-                  <td id="superbot-site">Loading...</td>
-                </tr>
-                <tr>
-                  <td><a target="_blank" href="https://steemit.com/@thehumanbot">@thehumanbot</td>
-                  <td id="thehumanbot-vote">Loading...</td>
-                  <td id="thehumanbot-desc">Loading...</td>
-                  <td id="thehumanbot-site">Loading...</td>
-                </tr>
-                <tr>
-                  <td><a target="_blank" href="https://steemit.com/@randofish">@randofish</td>
-                  <td id="randofish-vote">Loading...</td>
-                  <td id="randofish-desc">Loading...</td>
-                  <td id="randofish-site">Loading...</td>
-                </tr>
-              </tbody>
-          </table>
+                </tbody>
+            </table>
+          </div>
       </div>
     </div>
 
@@ -630,8 +636,9 @@
                             <dt>Current ROI:</dt>
                             <dd><span id="cur_round_roi"></span></dd>
                         </dl>
-
-                        <table id="bid_details_table_cur" class="table table-striped">
+                        
+                        <div class="table-responsive">
+                          <table id="bid_details_table_cur" class="table table-striped table-responsive">
                             <thead>
                                 <tr>
                                     <th>Sender</th>
@@ -643,7 +650,9 @@
                                 </tr>
                             </thead>
                             <tbody></tbody>
-                        </table>
+                          </table>
+                        </div>
+                        
                       </div>
 
                       <div id="last_round" style="display: none;">
@@ -657,8 +666,9 @@
                               <dt>ROI:</dt>
                               <dd><span id="last_round_roi"></span></dd>
                           </dl>
-
-                          <table id="bid_details_table_last" class="table table-striped">
+                          
+                          <div class="table-responsive">
+                            <table id="bid_details_table_last" class="table table-striped">
                               <thead>
                                   <tr>
                                       <th>Sender</th>
@@ -670,7 +680,9 @@
                                   </tr>
                               </thead>
                               <tbody></tbody>
-                          </table>
+                            </table>
+                          </div>
+  
                       </div>
                   </div>
                   <div class="modal-footer">
