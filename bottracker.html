@@ -34,7 +34,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
-    <script src="scripts/bottracker.js?v=45"></script>
+    <script src="scripts/bottracker.js?v=47"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -48,7 +48,12 @@
     <link rel="stylesheet" href="css/custom.css">
 
     <style type="text/css">
-    .modal-dialog { width: 800px; }
+      @media (min-width: 768px) {
+        .modal-dialog {
+          width: 800px;
+        }
+      }
+
     .slider.slider-horizontal { width: 80%; }
     </style>
 </head>
@@ -281,6 +286,9 @@
                 <li style="margin-bottom: 5px;">If you want to view numbers in a different currency you can choose a currency in the settings section above.</li>
                 <li style="margin-bottom: 5px;">To view the numbers how they were originally, choose the "POST REWARDS" currency which matches what is shown on steemit.com.</li>
               </ul>
+              <p>
+                Current Prices: 1 STEEM = $<span id="steem_price">loading...</span> | 1 SBD = $<span id="sbd_price">loading...</span>
+              </p>
             </h4>
         </div>
 
@@ -495,6 +503,12 @@
                     <td id="steemvote-desc">Loading...</td>
                     <td id="steemvote-site">Loading...</td>
                 </tr>
+                <tr>
+                  <td><a target="_blank" href="https://steemit.com/@upvotewhale">@upvotewhale</a></td>
+                  <td id="upvotewhale-vote">Loading...</td>
+                  <td id="upvotewhale-desc">Loading...</td>
+                  <td id="upvotewhale-site">Loading...</td>
+                </tr>
                   <tr>
                       <td><a target="_blank" href="https://steemit.com/@minnowpond">@minnowpond</a></td>
                       <td id="minnowpond-vote">Loading...</td>
@@ -609,8 +623,12 @@
                         <dl class="dl-horizontal" style="margin: 10px 0;">
                             <dt>Total Vote Value:</dt>
                             <dd><span id="cur_round_vote"></span></dd>
-                            <dt>Total Bid Value:</dt>
+                            <dt>Total Bids:</dt>
                             <dd><span id="cur_round_bids"></span></dd>
+                            <dt>Total Bid Value:</dt>
+                            <dd><span id="cur_round_value"></span></dd>
+                            <dt>Current ROI:</dt>
+                            <dd><span id="cur_round_roi"></span></dd>
                         </dl>
 
                         <table id="bid_details_table_cur" class="table table-striped">
@@ -634,6 +652,10 @@
                               <dd><span id="last_round_vote"></span></dd>
                               <dt>Total Bids:</dt>
                               <dd><span id="last_round_bids"></span></dd>
+                              <dt>Total Bid Value:</dt>
+                              <dd><span id="last_round_value"></span></dd>
+                              <dt>ROI:</dt>
+                              <dd><span id="last_round_roi"></span></dd>
                           </dl>
 
                           <table id="bid_details_table_last" class="table table-striped">

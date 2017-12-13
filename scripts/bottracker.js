@@ -62,9 +62,15 @@ $(function () {
     // Load the current prices of STEEM and SBD
     var steem_price = 1;
     var sbd_price = 1;
-    $.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) { steem_price = parseFloat(data[0].price_usd); });
+    $.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) {
+      steem_price = parseFloat(data[0].price_usd);
+      $('#steem_price').text(steem_price.formatMoney());
+    });
     //$.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) { sbd_price = parseFloat(data[0].price_usd); });
-    $.get('https://postpromoter.com/api/sbd/', function (data) { sbd_price = parseFloat(data.sbd_price); console.log(sbd_price); });
+    $.get('https://postpromoter.com/api/sbd/', function (data) {
+      sbd_price = parseFloat(data.sbd_price); console.log(sbd_price);
+      $('#sbd_price').text(sbd_price.formatMoney());
+    });
 
     var smartsteem_loaded = false;
     function loadAccountInfo() {
@@ -132,7 +138,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['lays', 'thehumanbot', 'steemvote', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot', 'randofish'], function (err, result) {
+        steem.api.getAccounts(['lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot', 'randofish'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
@@ -516,15 +522,26 @@ $(function () {
         last_table.empty();
 
         if (bot.rounds && bot.rounds.length > 0) {
-            populateRoundDetailTable(cur_table, bot, bot.rounds[bot.rounds.length - 1]);
-            $('#cur_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
-            $('#cur_round_bids').text(formatCurrencyTotal(bot, bot.rounds[bot.rounds.length - 1].total));
+          var total = bot.rounds[bot.rounds.length - 1].total;
+          var value = (bot.accepts_steem ? total * steem_price : total * sbd_price);
+
+          populateRoundDetailTable(cur_table, bot, bot.rounds[bot.rounds.length - 1]);
+
+          $('#cur_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+          $('#cur_round_bids').text(total.formatMoney() + (bot.accepts_steem ? ' STEEM' : ' SBD'));
+          $('#cur_round_value').text('$' + value.formatMoney());
+          $('#cur_round_roi').text((((bot.vote_usd / value) - 1) * 100).formatMoney() + '%');
         }
 
         if (bot.rounds && bot.rounds.length > 1) {
-            populateRoundDetailTable(last_table, bot, bot.rounds[bot.rounds.length - 2]);
-            $('#last_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
-            $('#last_round_bids').text(formatCurrencyTotal(bot, bot.rounds[bot.rounds.length - 2].total));
+          var total = bot.rounds[bot.rounds.length - 2].total;
+          var value = (bot.accepts_steem ? total * steem_price : total * sbd_price);
+
+          populateRoundDetailTable(last_table, bot, bot.rounds[bot.rounds.length - 2]);
+          $('#last_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+          $('#last_round_bids').text(total.formatMoney() + (bot.accepts_steem ? ' STEEM' : ' SBD'));
+          $('#last_round_value').text('$' + value.formatMoney());
+          $('#last_round_roi').text((((bot.vote_usd / value) - 1) * 100).formatMoney() + '%');
         }
 
         $('#cur_round_show').click(function (e) {
@@ -657,11 +674,13 @@ $(function () {
       var currency = $('#calc_currency').val();
       var bid = parseFloat($('#bid_amount').val());
       var value = bid / (bid + bot.total) * bot.vote_usd;
+      var value_sbd = (bid / (bid + bot.total) * bot.vote) / 2;
+      var value_steem = ((bid / (bid + bot.total) * bot.vote) / 2 / steem_price);
       var bid_value = (currency == 'SBD') ? bid * sbd_price : bid * steem_price;
 
       $('#bid_value').text('$' + bid_value.formatMoney());
-      $('#vote_value').text('$' + value.formatMoney());
-      $('#vote_value_net').text('$' + (value * 0.75).formatMoney());
+      $('#vote_value').text('$' + value.formatMoney() + ' = ' + value_sbd.formatMoney() + ' SBD + ' + value_steem.formatMoney() + ' STEEM');
+      $('#vote_value_net').text('$' + (value * 0.75).formatMoney() + ' = ' + (value_sbd * 0.75).formatMoney() + ' SBD + ' + (value_steem * 0.75).formatMoney() + ' STEEM');
 
       $('#vote_value').css('color', (value >= bid_value) ? '#008800' : '#FF0000');
       $('#vote_value_net').css('color', ((value * 0.75) >= bid_value) ? '#008800' : '#FF0000');
