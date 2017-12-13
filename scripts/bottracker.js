@@ -26,7 +26,8 @@ $(function () {
       { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01 },
       { name: 'levitation', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 },
-      { name: 'upgoater', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
+      { name: 'upgoater', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
+      { name: 'allaz', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
