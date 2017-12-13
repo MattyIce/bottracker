@@ -343,6 +343,7 @@ $(function () {
     }
 
     function showBotInfo() {
+
       if(bots.length == 0 || !bots[0].vote)
         return;
 
@@ -360,6 +361,7 @@ $(function () {
       });
 
       bots.forEach(function(bot) {
+
         if(bot.vote_usd < MIN_VOTE || !bot.vote || !bot.rounds || bot.rounds.length == 0)
           return;
 
@@ -461,7 +463,6 @@ $(function () {
         row.append(td);
 
         if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
-            //row.css('background-color', '#aaffaa');
             row.addClass('green-bg');
 
             if (!bot.notif) {
@@ -472,7 +473,6 @@ $(function () {
             bot.notif = false;
 
         if(bot.power == 100 && bot.last > 3 * HOURS || bot.power < 90)
-          //row.css('background-color', '#ffaaaa');
           row.addClass('red-light-bg');
 
         $('#bots_table tbody').append(row);
@@ -631,7 +631,7 @@ $(function () {
     setTimeout(loadBotInfo, 5 * 1000);
     setTimeout(loadAccountInfo, 5 * 1000);
     setInterval(updateTimers, 1000);
-
+   
     $('#curation_option').on('change', function () {
         if(this.checked) {
             AUTHOR_REWARDS = 0.75;
@@ -641,21 +641,34 @@ $(function () {
         showBotInfo();
     });
 
+    //remember currency choice
+    if (!localStorage.hasOwnProperty('currency_list')) { 
+      localStorage.setItem('currency_list', 'USD'); 
+    } else {
+      $('#currency_list').val(localStorage.getItem('currency_list'));
+      CURRENCY = localStorage.getItem('currency_list');
+    }
+
     $('#currency_list').change(function () {
       CURRENCY = $('#currency_list').val();
+      localStorage.setItem('currency_list', CURRENCY);
       showBotInfo();
     });
 
+    $('#min_vote_slider').slider();
 
-    $('[data-switch-get]').on('click', function () {
-      var type = $(this).data('switch-get')
-      window.alert($('#switch-' + type).bootstrapSwitch(type))
-    })
+    //remember slider choice
+    if (!localStorage.hasOwnProperty('min_vote_slider')) { 
+      localStorage.setItem('min_vote_slider', 0); 
+    } else {
+      $('#min_vote_slider').slider('setValue', localStorage.getItem('min_vote_slider'));
+      MIN_VOTE = localStorage.getItem('min_vote_slider');
+    }
 
-    $('#min_vote_slider').slider({});
     $('#min_vote_slider').on("slide", function(e) {
       if(e.value != MIN_VOTE) {
         MIN_VOTE = e.value;
+        localStorage.setItem('min_vote_slider', e.value);
         showBotInfo();
       }
     });
