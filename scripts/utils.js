@@ -1,6 +1,19 @@
 var STEEMIT_100_PERCENT = 10000;
 var STEEMIT_VOTE_REGENERATION_SECONDS = (5 * 60 * 60 * 24);
 var HOURS = 60 * 60 * 1000;
+var steem_price = 1;
+var sbd_price = 1;
+
+function getCurrency(amount) {
+  return amount.substr(amount.indexOf(' ') + 1);
+}
+
+function getUsdValue(bid) {
+  if(bid.currency)
+    return parseFloat(bid.amount) * ((bid.currency == 'SBD') ? sbd_price : steem_price);
+  else
+    return parseFloat(bid.amount) * ((getCurrency(bid.amount) == 'SBD') ? sbd_price : steem_price);
+}
 
 function toTimer(ts) {
   var h = Math.floor(ts / HOURS);
@@ -169,6 +182,6 @@ $(document).ready(function() {
       if($(this).hasClass('in') == false){
         $(this).hide();
       };
-    }); 
+    });
   });
 });
