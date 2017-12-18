@@ -5,7 +5,7 @@ $(function () {
     var CURRENCY = 'USD';
 
     var bots = [
-      { name: 'booster', interval: 1.2, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
+      //{ name: 'booster', interval: 1.2, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
       { name: 'buildawhale', interval: 2.4, accepts_steem: false, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
       { name: 'boomerang', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'minnowhelper', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
@@ -21,7 +21,7 @@ $(function () {
       { name: 'upmyvote', interval: 2.4, accepts_steem: false, comments: false, min_bid: 1 },
       { name: 'upme', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
       { name: 'postpromoter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 },
+      { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, min_bid_steem: 0.5 },
       { name: 'hellowhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01 },
@@ -72,7 +72,7 @@ $(function () {
 
     var smartsteem_loaded = false;
     function loadAccountInfo() {
-      steem.api.getAccounts(['smartsteem', 'randofish'], function (err, result) {
+      steem.api.getAccounts(['smartsteem', 'randofish', 'randowhale'], function (err, result) {
           try {
               var account = result[0];
               var bar = $('#smartsteem-progress div');
@@ -91,6 +91,33 @@ $(function () {
               bar.text(power + '%');
               $('#randofish-vote').text('$' + getVoteValue(100, account).formatMoney());
               $('#ss_bot_error').css('display', 'none');
+
+              account = result[2];
+              var metadata = JSON.parse(account.json_metadata);
+              $('#randowhale-desc').text(metadata.profile.about);
+
+              var config = metadata.config;
+              var status = $('#randowhale-status');
+              status.text(config.sleep ? 'Sleeping' : 'Awake!');
+
+              if(config.sleep)
+              {
+                status.removeClass('label-success')
+                status.addClass('label-default');
+              } else {
+                status.removeClass('label-default')
+                status.addClass('label-success');
+              }
+
+              $('#randowhale-fee').text(config.fee_sbd.formatMoney() + ' SBD');
+
+              var bar = $('#randowhale-progress div');
+              var power = getVotingPower(account) / 100;
+              bar.attr('aria-valuenow', power);
+              bar.css('width', power + '%');
+              bar.text(power + '%');
+              $('#randowhale-vote').text('$' + getVoteValue(100, account).formatMoney());
+              $('#rw_bot_error').css('display', 'none');
           } catch (err) {
               $('#ss_bot_error').css('display', 'block');
           }
@@ -181,6 +208,9 @@ $(function () {
 
                         if(config.min_bid_sbd && parseFloat(config.min_bid_sbd) > 0)
                           bot.min_bid = parseFloat(config.min_bid_sbd);
+
+                        if(config.min_bid_steem && parseFloat(config.min_bid_steem) > 0)
+                          bot.min_bid_steem = parseFloat(config.min_bid_steem);
 
                         if(config.bid_window && parseFloat(config.bid_window) > 0)
                           bot.interval = parseFloat(config.bid_window);
@@ -429,8 +459,16 @@ $(function () {
         td.text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
         row.append(td);
 
+        var steem_bid = '';
+        if(bot.accepts_steem){
+          if(bot.min_bid_steem && bot.min_bid_steem != bot.min_bid_sbd)
+            steem_bid = ' or ' + bot.min_bid_steem.formatMoney() + ' STEEM';
+          else
+            steem_bid = ' or STEEM';
+        }
+
         td = $(document.createElement('td'));
-        td.text('$' + bot.min_bid.formatMoney() + ' SBD' + (bot.accepts_steem ? ' or STEEM' : ''));
+        td.text(bot.min_bid.formatMoney() + ' SBD' + steem_bid);
         row.append(td);
 
         td = $(document.createElement('td'));

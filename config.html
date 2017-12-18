@@ -117,10 +117,18 @@
             </div>
 
             <div class="form-group">
-              <label class="col-lg-2 col-md-3 control-label" for="min_bid" >Minimum Bid</label>
+              <label class="col-lg-2 col-md-3 control-label" for="min_bid" >Minimum Bid SBD</label>
               <div class="col-lg-10 col-md-9">
                 <input type="text" class="form-control input-mini" id="min_bid" placeholder="0.5" value="0.5">
                 <span class="help-block text-info">Minimum bid in SBD</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="min_bid_steem" >Minimum Bid STEEM</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="text" class="form-control input-mini" id="min_bid_steem" placeholder="0.5" value="0.5">
+                <span class="help-block text-info">Minimum bid in STEEM</span>
               </div>
             </div>
 
@@ -202,6 +210,25 @@
   </div><!-- End #footer  -->
 
   <script type="text/javascript">
+    $('#account_name').focusout(function (e) { loadAccountInfo(); });
+
+    function loadAccountInfo() {
+      steem.api.getAccounts([$('#account_name').val()], function (err, result) {
+        if(result && result.length > 0) {
+          var config = JSON.parse(result[0].json_metadata).config;
+
+          $('#min_bid').val(config.min_bid_sbd);
+          $('#min_bid_steem').val(config.min_bid_steem);
+          $('#bid_window').val(config.bid_window);
+          $('#allows_comments').prop('checked', config.comments);
+          $('#auto_refunds').prop('checked', config.refunds);
+          $('#accepts_steem').prop('checked', config.accepts_steem);
+          $('#front_runner').val(config.pre_vote_group_url);
+          $('#api_url').val(config.api_url);
+        }
+      });
+    }
+
     function updateBot() {
       $('#result').hide();
       $('#btn_submit').prop("disabled",true);
@@ -222,6 +249,7 @@
         var json_metadata = JSON.parse(account.json_metadata);
         json_metadata.config = {
           'min_bid_sbd': parseFloat($('#min_bid').val()),
+          'min_bid_steem': parseFloat($('#min_bid_steem').val()),
           'bid_window': parseFloat($('#bid_window').val()),
           'comments': $('#allows_comments')[0].checked,
           'refunds': $('#auto_refunds')[0].checked,

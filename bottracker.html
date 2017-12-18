@@ -34,7 +34,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
 
-    <script src="scripts/bottracker.min.js?v=50"></script>
+    <script src="scripts/bottracker.min.js?v=1"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -99,7 +99,7 @@
 
     <div class="panel panel-info plain">
       <div class="panel-body">
-        <h1> Steem Upvote Bot Tracker</h1>
+        <h1>Steem Upvote Bot Tracker</h1>
         <p>Welcome to the Steem Upvote Bot Tracker, the #1 place for information on voting bots and other options to <strong style="color: green;">profitably</strong> promote your posts on Steem!</p>
         <p>If you like what you see here, you can find more great info by following me on SteemIt at <a target="_blank" href="http://www.steemit.com/@yabapmatt">@yabapmatt</a>.
         </p>
@@ -126,7 +126,7 @@
               </div>
 
             <div>
-              <div style="float:left;"><a href="https://randofish.com" target="_blank"><img src="https://steemitimages.com/u/randofish/avatar"/></a></div>
+              <div style="float:left;"><a href="http://www.steemit.com/@randofish" target="_blank"><img src="https://steemitimages.com/u/randofish/avatar"/></a></div>
               <div style="padding-top: 40px;">
                 <div style="font-size: 1.5em; text-align: center;" id="randofish-desc-x">
                   Send 0.25 SBD for random Upvote (20-80%)<br/>
@@ -523,6 +523,65 @@
                     <div id="ss-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                         <div class="panel-body">
                             <ul id="smartsteem-howto"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="randowhale-panel" class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
+          </div>
+          <div class="panel-body">
+              <div id="rw_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+                  There was an error loading bot info. Please try again in a little bit.
+              </div>
+
+              <div>
+                <div style="float:left;"><a href="https://steemit.com/@randowhale" target="_blank"><img src="https://steemitimages.com/u/randowhale/avatar"/></a></div>
+                <div style="padding-top: 40px;">
+                  <div style="font-size: 2em; text-align: center;" id="randowhale-desc"></div>
+                </div>
+              </div>
+
+            <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
+              <dt>Status:</dt>
+              <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
+
+                <dt>Fee:</dt>
+                <dd><span id="randowhale-fee">Loading...</span></dd>
+                <dt>Vote Value:</dt>
+              <dd><span id="randowhale-vote">Loading...</span></dd>
+              <dt>Comment Voting:</dt>
+              <dd>Disabled</dd>
+              <dt>Voting Power:</dt>
+              <dd>
+                <div class="progress" id="randowhale-progress" style="margin-top: 7px;">
+                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    Loading...
+                  </div>
+                </div>
+              </dd>
+            </dl>
+
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#rw-howto" aria-expanded="true" aria-controls="collapseOne">
+                                How To Use
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="rw-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                        <div class="panel-body">
+                            <ul>
+                                <li>Check the Status below to see if <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> is sleeping or awake.</li>
+                                <li>Send <strong>EXACTLY</strong> the Fee amount specified below to <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> with your post URL as the memo.</li>
+                                <li>You will receive an upvote worth the Vote Value shown below - sometimes you can randomly receive a larger vote as a surprise! I once received a $10 upvote for $0.5 SBD!</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
