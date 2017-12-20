@@ -308,7 +308,7 @@ $(function () {
             }
 
             setTimeout(showBotInfo, 5 * 1000);
-            setTimeout(loadBotInfo, 10 * 1000);
+            setTimeout(loadBotInfo, 30 * 1000);
         });
     }
 
