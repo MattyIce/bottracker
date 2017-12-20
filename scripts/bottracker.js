@@ -5,7 +5,7 @@ $(function () {
     var CURRENCY = 'USD';
 
     var bots = [
-      //{ name: 'booster', interval: 1.2, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
+      { name: 'booster', interval: 1.2, accepts_steem: true, comments: true, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
       { name: 'buildawhale', interval: 2.4, accepts_steem: false, comments: true, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
       { name: 'boomerang', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'minnowhelper', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
@@ -29,7 +29,8 @@ $(function () {
       { name: 'upgoater', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
       { name: 'allaz', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: true },
       { name: 'jerrybanfield', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'smartsteem', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
+      { name: 'smartsteem', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
+      { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
