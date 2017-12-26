@@ -30,7 +30,9 @@ $(function () {
       { name: 'allaz', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: true },
       { name: 'jerrybanfield', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
       { name: 'smartsteem', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
+      { name: 'upyou', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
+      { name: 'yourwhale', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true }
+      //{ name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -73,7 +75,7 @@ $(function () {
 
     var smartsteem_loaded = false;
     function loadAccountInfo() {
-      steem.api.getAccounts(['smartsteem', 'randofish', 'randowhale'], function (err, result) {
+      steem.api.getAccounts(['smartsteem', 'randowhale'], function (err, result) {
           try {
               var account = result[0];
               var bar = $('#smartsteem-progress div');
@@ -85,15 +87,6 @@ $(function () {
               $('#ss_bot_error').css('display', 'none');
 
               account = result[1];
-              var bar = $('#randofish-progress div');
-              var power = getVotingPower(account) / 100;
-              bar.attr('aria-valuenow', power);
-              bar.css('width', power + '%');
-              bar.text(power + '%');
-              $('#randofish-vote').text('$' + getVoteValue(100, account).formatMoney());
-              $('#ss_bot_error').css('display', 'none');
-
-              account = result[2];
               var metadata = JSON.parse(account.json_metadata);
               $('#randowhale-desc').text(metadata.profile.about);
 
@@ -173,7 +166,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
             try {
                 result.forEach(function (account) {
                     $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
