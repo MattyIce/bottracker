@@ -31,7 +31,8 @@ $(function () {
       { name: 'jerrybanfield', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
       { name: 'smartsteem', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
       { name: 'upyou', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'yourwhale', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true }
+      { name: 'yourwhale', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
+      { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
       //{ name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
