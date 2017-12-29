@@ -12,7 +12,7 @@ $(function () {
       { name: 'discordia', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'lovejuice', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'sneaky-ninja', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      { name: 'voter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      //{ name: 'voter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'appreciator', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'pushup', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'aksdwi', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, max_bid: 5 },
@@ -32,8 +32,8 @@ $(function () {
       { name: 'smartsteem', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
       { name: 'upyou', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
       { name: 'yourwhale', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
-      //{ name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
+      { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
+      { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -66,13 +66,17 @@ $(function () {
         } catch (err) { }
     }
 
-    // Load the current prices of STEEM and SBD
-    $.get('https://postpromoter.com/api/prices/', function (data) {
-      sbd_price = parseFloat(data.sbd_price);
-      steem_price = parseFloat(data.steem_price);
-      $('#sbd_price').text(sbd_price.formatMoney());
-      $('#steem_price').text(steem_price.formatMoney());
-    });
+    function loadPrices() {
+      // Load the current prices of STEEM and SBD
+      $.get('https://postpromoter.com/api/prices/', function (data) {
+        sbd_price = parseFloat(data.sbd_price);
+        steem_price = parseFloat(data.steem_price);
+        $('#sbd_price').text(sbd_price.formatMoney());
+        $('#steem_price').text(steem_price.formatMoney());
+      });
+    }
+    loadPrices();
+    setInterval(loadPrices, 30000);
 
     var smartsteem_loaded = false;
     function loadAccountInfo() {
@@ -167,16 +171,30 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
-            try {
-                result.forEach(function (account) {
-                    $('#' + account.name + '-vote').text('$' + getVoteValue(100, account).formatMoney());
+        steem.api.getAccounts(['hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+          try {
+            result.sort(function (a, b) { return getVoteValue(100, b) - getVoteValue(100, a); });
 
-                    var metadata = JSON.parse(account.json_metadata);
-                    $('#' + account.name + '-desc').text(metadata.profile.about ? metadata.profile.about : '');
-                    $('#' + account.name + '-site').html(metadata.profile.website ? '<a target="_blank" href="' + metadata.profile.website + '">' + metadata.profile.website + '</a>' : '');
-                });
-                $('#other_bot_error').css('display', 'none');
+            var container = $('#other_table tbody');
+
+            result.forEach(function (account) {
+              var row = $(document.createElement('tr'));
+              var td = $('<td><a target="_blank" href="https://steemit.com/@' + account.name + '">@' + account.name + '</a></td>');
+              row.append(td);
+
+              td = $('<td>$' + getVoteValue(100, account).formatMoney() + '</td>');
+              row.append(td);
+
+              var metadata = JSON.parse(account.json_metadata);
+
+              td = $('<td>' + (metadata.profile.about ? metadata.profile.about : '') + '</td>');
+              row.append(td);
+
+              td = $('<td>' + (metadata.profile.website ? '<a target="_blank" href="' + metadata.profile.website + '">' + metadata.profile.website + '</a>' : '') + '</td>');
+              row.append(td);
+              container.append(row);
+            });
+            $('#other_bot_error').css('display', 'none');
             } catch (err) {
                 $('#other_bot_error').css('display', 'block');
             }
