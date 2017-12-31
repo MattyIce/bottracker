@@ -11,29 +11,30 @@ $(function () {
       { name: 'minnowhelper', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
       { name: 'discordia', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'lovejuice', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      { name: 'sneaky-ninja', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
+      { name: 'sneaky-ninja', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05, max_post_age: 6 },
       //{ name: 'voter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'appreciator', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'pushup', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'aksdwi', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, max_bid: 5 },
-      { name: 'msp-bidbot', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
+      { name: 'msp-bidbot', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, max_post_age: 6 },
       { name: 'kittybot', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
       { name: 'upmyvote', interval: 2.4, accepts_steem: false, comments: false, min_bid: 1 },
-      { name: 'upme', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'postpromoter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, min_bid_steem: 0.5 },
+      { name: 'upme', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
+      { name: 'postpromoter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
+      { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, min_bid_steem: 0.5, is_disabled: true },
       { name: 'hellowhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
       { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
-      { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01 },
+      { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01, max_post_age: 6 },
       { name: 'levitation', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 },
-      { name: 'upgoater', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'allaz', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'jerrybanfield', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
+      { name: 'upgoater', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
+      { name: 'allaz', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
+      { name: 'jerrybanfield', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
       { name: 'smartsteem', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'upyou', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
+      { name: 'upyou', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
       { name: 'yourwhale', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
+      { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
+      { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
+      { name: 'sleeplesswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -240,10 +241,20 @@ $(function () {
                         if(config.comments != undefined)
                           bot.comments = config.comments;
 
+                        if (config.is_disabled != undefined)
+                          bot.is_disabled = config.is_disabled;
+
                         if(config.api_url && config.api_url != '')
                           bot.api_url = config.api_url;
+
+                        if (config.max_post_age && parseFloat(config.max_post_age) > 0)
+                          bot.max_post_age = parseFloat(config.max_post_age);
                       }
                     }
+
+                    // Don't list bots that have indicated that they are disabled.
+                    if (bot.is_disabled)
+                      return;
 
                     bot.last_vote_time = last_vote_time;
                     bot.vote = vote * bot.interval / 2.4;
@@ -422,7 +433,7 @@ $(function () {
 
       bots.forEach(function(bot) {
 
-        if(bot.vote_usd < MIN_VOTE || !bot.vote || !bot.rounds || bot.rounds.length == 0)
+        if(bot.vote_usd < MIN_VOTE || !bot.vote || !bot.rounds || bot.rounds.length == 0 || bot.is_disabled)
           return;
 
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
@@ -452,7 +463,7 @@ $(function () {
         }
 
         if (bot.pre_vote_group_url && bot.pre_vote_group_url != '') {
-            var icon = $('<a href="' + bot.pre_vote_group_url + '" target="_blank">&nbsp;<span class="fa fa-check" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot has a Pre-Vote Group which will give you additional upvotes - Click for Details"></span></a>');
+          var icon = $('<a href="' + bot.pre_vote_group_url + '" target="_blank">&nbsp;<img src="img/frontrunner.png" style="width: 20px; margin-left: 5px;" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot has a Pre-Vote Group which will give you additional upvotes - Click for Details"/></a>');
             td.append(icon);
         }
 
@@ -466,22 +477,31 @@ $(function () {
             td.append(icon);
         }
 
+        if (bot.api_url) {
+          var guarantee = $('<img src="img/verified.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot provides a bid API so the data shown here is guaranteed to be accurate!" />');
+          td.append(guarantee);
+        }
+
         row.append(td);
 
         td = $(document.createElement('td'));
-        td.text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+        td.text(formatCurrencyVote(bot));
         row.append(td);
 
         var steem_bid = '';
         if(bot.accepts_steem){
-          if(bot.min_bid_steem && bot.min_bid_steem != bot.min_bid_sbd)
-            steem_bid = ' or ' + bot.min_bid_steem.formatMoney() + ' STEEM';
+          if(bot.min_bid_steem && bot.min_bid_steem != bot.min_bid)
+            steem_bid = ' or ' + bot.min_bid_steem.formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
           else
-            steem_bid = ' or STEEM';
+            steem_bid = ' or <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
         }
 
         td = $(document.createElement('td'));
-        td.text(bot.min_bid.formatMoney() + ' SBD' + steem_bid);
+        td.html(bot.min_bid.formatMoney() + ' SBD' + steem_bid);
+        row.append(td);
+
+        td = $(document.createElement('td'));
+        td.text((bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
         row.append(td);
 
         td = $(document.createElement('td'));
@@ -490,7 +510,7 @@ $(function () {
 
         td = $(document.createElement('td'));
         if (bot.accepts_steem)
-          td.text(Math.max(bid_steem, 0).formatMoney() + ' STEEM or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
+          td.html(Math.max(bid_steem, 0).formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/> or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
         else
           td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
 

@@ -133,6 +133,14 @@
             </div>
 
             <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="max_post_age">Max Post Age</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="text" class="form-control input-mini" id="max_post_age" placeholder="3.5" value="3.5">
+                <span class="help-block text-info">Maximum age of posts (in days)</span>
+              </div>
+            </div>
+
+            <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="bid_window" >Bid Window</label>
               <div class="col-lg-10 col-md-9">
                <select id="bid_window" class="form-control input-large">
@@ -168,6 +176,16 @@
                 <div class="checkbox-custom">
                     <input type="checkbox" value="option1" id="accepts_steem">
                     <label for="checkbox1">Accepts bids in STEEM?</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="is_disabled">Disabled</label>
+              <div class="col-lg-10 col-md-9">
+                <div class="checkbox-custom">
+                  <input type="checkbox" value="option1" id="is_disabled">
+                  <label for="checkbox1">Check this if the bot is disabled so it will no longer be listed in the site until it is re-enabled.</label>
                 </div>
               </div>
             </div>
@@ -225,6 +243,8 @@
           $('#accepts_steem').prop('checked', config.accepts_steem);
           $('#front_runner').val(config.pre_vote_group_url);
           $('#api_url').val(config.api_url);
+          $('#max_post_age').val(config.max_post_age);
+          $('#is_disabled').prop('checked', config.is_disabled);
         }
       });
     }
@@ -255,7 +275,9 @@
           'refunds': $('#auto_refunds')[0].checked,
           'accepts_steem': $('#accepts_steem')[0].checked,
           'pre_vote_group_url': $('#front_runner').val(),
-          'api_url': $('#api_url').val()
+          'api_url': $('#api_url').val(),
+          'max_post_age': $('#max_post_age').val(),
+          'is_disabled': $('#is_disabled')[0].checked
         };
 
         steem.broadcast.accountUpdate($('#active_wif').val(), account.name, account.memo_key, json_metadata, function(err, result) {
