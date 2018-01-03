@@ -173,7 +173,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
           try {
             result.sort(function (a, b) { return getVoteValue(100, b) - getVoteValue(100, a); });
 
@@ -202,7 +202,7 @@ $(function () {
             }
         });
 
-      setTimeout(loadAccountInfo, 60 * 1000);
+      setTimeout(loadAccountInfo, 60 * 10 * 1000);
     }
 
     var first_load = true;
@@ -269,7 +269,7 @@ $(function () {
                       return;
                     }
 
-                    steem.api.getAccountHistory(account.name, -1, (first_load) ? 500 : 10, function (err, result) {
+                    steem.api.getAccountHistory(account.name, -1, (first_load) ? 500 : 20, function (err, result) {
                         if (err) return;
 
                         if (!bot.rounds)
@@ -378,26 +378,41 @@ $(function () {
       return (memo.lastIndexOf('/') >= 0 && memo.lastIndexOf('@') >= 0);
     }
 
-    function checkPost(bot, transId, memo) {
-        var permLink = memo.substr(memo.lastIndexOf('/') + 1);
-        var author = memo.substring(memo.lastIndexOf('@') + 1, memo.lastIndexOf('/'));
+    function checkPost(bot, memo, amount, currency, callback) {
+      if (currency == 'STEEM' && !bot.accepts_steem) {
+        callback('This bot does not accept STEEM bids!');
+        return;
+      }
+      else if (currency == 'STEEM' && parseFloat(amount) < bot.min_bid_steem) {
+        callback('Bid is below the minimum, please bid ' + bot.min_bid_steem + ' STEEM or more!');
+        return;
+      }
+      else if (currency == 'SBD' && parseFloat(amount) < bot.min_bid) {
+        callback('Bid is below the minimum, please bid ' + bot.min_bid + ' SBD or more!');
+        return;
+      }
 
-        steem.api.getContent(author, permLink, function (err, result) {
-            if (!err && result && result.id > 0) {
-                var created = new Date(result.created + 'Z');
+      var permLink = memo.substr(memo.lastIndexOf('/') + 1);
+      var author = memo.substring(memo.lastIndexOf('@') + 1, memo.lastIndexOf('/'));
 
-                var votes = result.active_votes.filter(function(vote) { return vote.voter == bot.name; });
-                var already_voted = false; //votes.length > 0 && (new Date() - new Date(votes[0].time + 'Z') > 20 * 60 * 1000);
+      steem.api.getContent(author, permLink, function (err, result) {
+        if (!err && result && result.id > 0) {
+          var created = new Date(result.created + 'Z');
 
-                if(already_voted || (new Date() - created) >= ((6 * 24 + 8) * 60 * 60 * 1000)) {
-                    // This post is already voted on by this bot or the post is too old to be voted on
-                    removePost(bot, transId);
-                }
-            } else {
-                // Invalid memo
-                removePost(bot, transId);
-            }
-        });
+          var votes = result.active_votes.filter(function (vote) { return vote.voter == bot.name; });
+          var already_voted = votes.length > 0 && (new Date() - new Date(votes[0].time + 'Z') > 20 * 60 * 1000);
+
+          if (already_voted) {
+            // This post is already voted on by this bot
+            callback("This bot has already voted on this post!");
+          } else if ((new Date() - created) >= (bot.max_post_age * 24 * 60 * 60 * 1000)) {
+            // This post is too old
+            callback("This post is past the max age accepted by this bot!");
+          } else
+            callback(null); // Post is ok!
+        } else
+          callback("There was an error loading this post, please check the URL.");
+      });
     }
 
     function removePost(bot, transId) {
@@ -548,6 +563,12 @@ $(function () {
         td = $(document.createElement('td'));
         var link = $('<a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a>');
         link.click(function (e) { showBotDetails(bot); });
+        td.append(link);
+        row.append(td);
+
+        td = $(document.createElement('td'));
+        var link = $('<a href="javascript:void(0);"><i class="fa fa-upload mr5"></i>Send Bid</a>');
+        link.click(function (e) { sendBid(bot); });
         td.append(link);
         row.append(td);
 
@@ -723,6 +744,41 @@ $(function () {
         });
     }
 
+    var _dialog = null;
+
+    function sendBid(bot) {
+      $('#bid_details_dialog_bot_name').text(bot.name);
+      $('#bid_details_error').hide();
+      $('#bid_details_btn_submit').click(submitBid);
+      $('#bid_details_post_url').val('');
+      _dialog = $('#bid_details_dialog').modal();
+      _dialog.off('hidden.bs.modal');
+      _dialog.bot = bot;
+    }
+
+    function submitBid() {
+      var to = $('#bid_details_dialog_bot_name').text();
+      var from = $('#bid_details_account_name').val();
+      var amount = $('#bid_details_bid_amount').val();
+      var currency = $('#bid_details_bid_currency').val();
+      var url = $('#bid_details_post_url').val();
+
+      checkPost(_dialog.bot, url, amount, currency, function (error) {
+        if (error) {
+          $('#bid_details_error').html('<b>Error:</b> ' + error);
+          $('#bid_details_error').show();
+        } else {
+          _dialog.on('hidden.bs.modal', function (e) {
+            $('#bid_dialog_bot_name').text(to);
+            $('#bid_dialog_frame').attr('src', 'https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url);
+            _dialog = $('#bid_dialog').modal();
+          });
+
+          _dialog.modal('hide');
+        }
+      });
+    }
+
     setTimeout(loadBotInfo, 5 * 1000);
     setTimeout(loadAccountInfo, 5 * 1000);
     setInterval(updateTimers, 1000);
@@ -800,3 +856,4 @@ $(function () {
     // Show disclaimer message
     setTimeout(function () { $('#disclaimer').modal(); }, 2000);
 });
+

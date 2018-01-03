@@ -567,6 +567,9 @@ Icon packs
 .fa-eye:before {
   content: "\f06e";
 }
+.fa-up:before {
+  content: "\e133";
+}
 .fa-eye-slash:before {
   content: "\f070";
 }

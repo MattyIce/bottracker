@@ -19,7 +19,7 @@ function toTimer(ts) {
   var h = Math.floor(ts / HOURS);
   var m = Math.floor((ts % HOURS) / 60000);
   var s = Math.floor((ts % 60000) / 1000);
-  return padLeft(h, 2) + ':' + padLeft(m, 2) + ':' + padLeft(s, 2);
+  return h + ':' + padLeft(m, 2) + ':' + padLeft(s, 2);
 }
 
 function padLeft(v, d) {

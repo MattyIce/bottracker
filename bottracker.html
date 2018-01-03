@@ -34,7 +34,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
 
-    <script src="scripts/bottracker.min.js?v=8"></script>
+    <script src="scripts/bottracker.min.js?v=9"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -103,7 +103,7 @@
         <p>Welcome to the Steem Upvote Bot Tracker, the #1 place for information on voting bots and other options to <strong style="color: green;">profitably</strong> promote your posts on Steem!</p>
         <p>If you like what you see here, you can find more great info by following me on SteemIt at <a target="_blank" href="http://www.steemit.com/@yabapmatt">@yabapmatt</a>.
         </p>
-        <p>I don't charge anything or make any money off of this tool so I would appreciate your support by voting for me for Steem witness! Go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and enter "yabapmatt" in the vote box at the bottom of the page.
+        <p>I don't charge anything or make any money off of this tool so I would appreciate your support by voting for @yabapmatt for Steem witness! To vote for me you can <a href="https://v2.steemconnect.com/sign/account-witness-vote?witness=yabapmatt&approve=1">Click Here</a> or go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and find @yabapmatt in the list and click the upvote icon!.
         <p>
           <a class="btn btn-primary btn-lg" href="#bid" role="button">Bid-Based Voting Bots</a>
           <a class="btn btn-primary btn-lg" href="#paid" role="button">Promotion Services</a>
@@ -323,8 +323,8 @@
                 <div class="col-lg-8 col-md-6">
                   <div style="margin-top: 7px;">
                     <b>$0&nbsp;&nbsp;</b>
-                    <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="0"/>
-                    <b>&nbsp;&nbsp;$500</b>
+                    <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="2" data-slider-value="0"/>
+                    <b>&nbsp;&nbsp;$1,000</b>
                   </div>
                 </div>
               </div>
@@ -335,7 +335,8 @@
 
         <div class="bs-callout bs-callout-info fade in">
             <h4>Vote for Witness!</h4>
-            <p>Help support me and the bot tracker by voting for me for Steem witness! Go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> to vote. Thank you!</p>
+            <p>Help support me and the bot tracker by voting for @yabapmatt for Steem witness! To vote, click the button below or go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and find @yabapmatt in the list and click the upvote icon. Thank you!</p>
+            <button class="btn btn-success" onclick="window.open('https://v2.steemconnect.com/sign/account-witness-vote?witness=yabapmatt&approve=1');">Vote for @yabapmatt!</button>
         </div>
 
         <div class="bs-callout bs-callout-danger fade in">
@@ -373,10 +374,12 @@
                 <th>Last Vote</th>
                 <th>Next Vote</th>
                 <th>Details</th>
+                <th>Send Bid</th>
               </tr>
             </thead>
             <tbody>
               <tr>
+                <td>Loading...</td>
                 <td>Loading...</td>
                 <td>Loading...</td>
                 <td>Loading...</td>
@@ -722,7 +725,67 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade modal-style2 modal-center" id="bid_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel" style="text-align: center;">Send a bid to @<span id="bid_dialog_bot_name"></span>!</h4>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <iframe id="bid_dialog_frame" frameborder="0" src="" style="border: none; width: 95%;" height="560"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <div class="modal fade modal-style2 modal-center" id="bid_details_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel" style="text-align: center;">Send a bid to @<span id="bid_details_dialog_bot_name"></span>!</h4>
+        </div>
+        <div class="modal-body" style="margin: 20px 50px;">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label for="bid_details_account_name">Your Steem Account Name</label>
+              <div class="input-group">
+                <span class="input-group-addon">@</span>
+                <input type="text" class="form-control" id="bid_details_account_name" placeholder="Account Name">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bid_details_bid_amount">Bid Amount</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="bid_details_bid_amount" placeholder="0.5" value="0.5" style="display: inline; width: 75px;">
+                <select id="bid_details_bid_currency" class="form-control" style="display: inline; width: 100px; margin-left: 5px;">
+                  <option value="SBD">SBD</option>
+                  <option value="STEEM">STEEM</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bid_details_post_url">Your post URL</label>
+              <input type="url" class="form-control" id="bid_details_post_url" placeholder="Post URL">
+            </div>
+
+            <div class="alert alert-danger" id="bid_details_error"></div>
+
+            <div class="form-group" style="text-align: center;">
+              <button id="bid_details_btn_submit" class="btn btn-default">Check and Submit!</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="footer" class="clearfix white-bg"><!-- Start #footer  -->
     <p class="pull-left">
       Copyright &copy; 2017 <a href="http://www.steemit.com/@yabapmatt" class="color-blue strong" target="_blank">Yabapmatt</a>. All rights reserved.
