@@ -34,7 +34,7 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
 
-    <script src="scripts/bottracker.min.js?v=9"></script>
+    <script src="scripts/bottracker.min.js?v=10"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
@@ -54,7 +54,7 @@
         }
       }
 
-    .slider.slider-horizontal { width: 80%; }
+    .slider.slider-horizontal { width: 70%; }
     </style>
 </head>
 <body>
@@ -317,17 +317,6 @@
                   </div>
                 </div>
               </div>
-
-              <div class="form-group">
-                <label class="col-lg-4 col-md-6 control-label text-left"> Only show bots with vote value greater than:</label>
-                <div class="col-lg-8 col-md-6">
-                  <div style="margin-top: 7px;">
-                    <b>$0&nbsp;&nbsp;</b>
-                    <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="2" data-slider-value="0"/>
-                    <b>&nbsp;&nbsp;$1,000</b>
-                  </div>
-                </div>
-              </div>
             </div>
 
           </div>
@@ -354,6 +343,29 @@
                 Current Prices: 1 STEEM = $<span id="steem_price">loading...</span> | 1 SBD = $<span id="sbd_price">loading...</span>
               </p>
             </h4>
+        </div>
+
+        <div class="panel panel-primary plain">
+          <div class="panel-body" style="font-size: 1.2em;">
+            <label class="col-lg-3 col-md-4 control-label text-left">
+              Filters:
+              <img id="filter_verified" src="img/verified.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that provide a bid API so the data shown is guaranteed to be accurate." />
+              <img id="filter_refund" src="img/refund.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that automatically refund invalid bids." />
+              <img id="filter_steem" src="img/steem.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that accept STEEM bids." />
+              <img id="filter_frontrunner" src="img/frontrunner.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that have a pre-vote / front-runner group." />
+            </label>
+
+            
+            
+            <div class="col-lg-9 col-md-8" style="margin-top: 5px;">
+              <label class="control-label text-left" style="float: left; margin-right: 20px;">Vote Value: </label>
+              <div>
+                <b>$0&nbsp;&nbsp;</b>
+                <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="5" data-slider-value="0" />
+                <b>&nbsp;&nbsp;$1,000</b>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="bid_bot_error" style="display: none;" class="alert alert-danger" role="alert">

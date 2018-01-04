@@ -35,7 +35,8 @@ $(function () {
       { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
       { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
       { name: 'sleeplesswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false },
-      { name: 'minnowvotes', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true }
+      { name: 'minnowvotes', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
+      { name: 'steembloggers', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -452,6 +453,10 @@ $(function () {
         if(bot.vote_usd < MIN_VOTE || !bot.vote || !bot.rounds || bot.rounds.length == 0 || bot.is_disabled)
           return;
 
+        // Don't show bots that are filtered out
+        if ((_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.frontrunner && !bot.pre_vote_group_url))
+          return;
+
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
         //bot.rounds[bot.rounds.length - 1].bids.forEach(function(bid) { checkPost(bot, bid.id, bid.data.memo); });
 
@@ -855,5 +860,17 @@ $(function () {
 
     // Show disclaimer message
     setTimeout(function () { $('#disclaimer').modal(); }, 2000);
+
+    $('#filter_verified').click(function () { toggleFilter('verified'); });
+    $('#filter_refund').click(function () { toggleFilter('refund'); });
+    $('#filter_steem').click(function () { toggleFilter('steem'); });
+    $('#filter_frontrunner').click(function () { toggleFilter('frontrunner'); });
+
+    var _filter = {};
+    function toggleFilter(filter) {
+      _filter[filter] = !_filter[filter];
+      $('#filter_' + filter).css('border', _filter[filter] ? '2px solid green' : 'none');
+      showBotInfo();
+    }
 });
 
