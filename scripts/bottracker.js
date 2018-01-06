@@ -36,7 +36,8 @@ $(function () {
       { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
       { name: 'sleeplesswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false },
       { name: 'minnowvotes', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'steembloggers', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true }
+      { name: 'steembloggers', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true },
+      { name: 'adriatik', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -83,7 +84,7 @@ $(function () {
 
     var smartsteem_loaded = false;
     function loadAccountInfo() {
-      steem.api.getAccounts(['smartsteem', 'randowhale'], function (err, result) {
+      steem.api.getAccounts(['smartsteem', 'randowhale', 'minnowbooster'], function (err, result) {
           try {
               var account = result[0];
               var bar = $('#smartsteem-progress div');
@@ -106,9 +107,11 @@ $(function () {
               {
                 status.removeClass('label-success')
                 status.addClass('label-default');
+                $('#randowhale-submit').attr('disabled', 'disabled');
               } else {
                 status.removeClass('label-default')
                 status.addClass('label-success');
+                $('#randowhale-submit').removeAttr('disabled');
               }
 
               $('#randowhale-fee').text(config.fee_sbd.formatMoney() + ' SBD');
@@ -120,6 +123,15 @@ $(function () {
               bar.text(power + '%');
               $('#randowhale-vote').text('$' + getVoteValue(100, account).formatMoney());
               $('#rw_bot_error').css('display', 'none');
+
+              account = result[2];
+              var bar = $('#minnowbooster-progress div');
+              var power = getVotingPower(account) / 100;
+              bar.attr('aria-valuenow', power);
+              bar.css('width', power + '%');
+              bar.text(power + '%');
+              $('#minnowbooster-vote').text('$' + getVoteValue(100, account).formatMoney());
+              $('#mb_bot_error').css('display', 'none');
           } catch (err) {
               $('#ss_bot_error').css('display', 'block');
           }
@@ -143,28 +155,8 @@ $(function () {
         });
       }
 
-        steem.api.getAccounts(['minnowbooster'], function (err, result) {
-            try {
-                var account = result[0];
-                var bar = $('#minnowbooster-progress div');
-                var power = getVotingPower(account) / 100;
-                bar.attr('aria-valuenow', power);
-                bar.css('width', power + '%');
-                bar.text(power + '%');
-                //var vote = getVoteValue(100, account, STEEMIT_100_PERCENT);
-                //var weight = 2.5 / vote;
-                //$('#minnowbooster-vote').text('$' + (vote * weight * (power / 100)).formatMoney());
-                $('#minnowbooster-vote').text('$1.60');
-                $('#mb_bot_error').css('display', 'none');
-            } catch (err) {
-                $('#mb_bot_error').css('display', 'block');
-            }
-        });
-
         $.get('https://www.minnowbooster.net/api/global', function (data) {
             $('#minnowbooster-min').text('$' + data.min_upvote + ' SBD');
-            $('#minnowbooster-day').text('$' + data.daily_limit + ' SBD');
-            $('#minnowbooster-week').text('$' + data.weekly_limit + ' SBD');
         });
 
         $.get('https://www.minnowbooster.net/upvotes.json', function (data) {
@@ -270,7 +262,11 @@ $(function () {
                       return;
                     }
 
-                    steem.api.getAccountHistory(account.name, -1, (first_load) ? 500 : 20, function (err, result) {
+                    var transactions = 20;
+                    if (first_load)
+                      transactions = 2000;
+
+                    steem.api.getAccountHistory(account.name, -1, transactions, function (err, result) {
                         if (err) return;
 
                         if (!bot.rounds)
@@ -281,7 +277,7 @@ $(function () {
                             round = { last_vote_time: 0, bids: [], total: 0, total_usd: 0 };
                             bot.rounds.push(round);
                         } else
-                            round = bot.rounds[bot.rounds.length - 1];
+                          round = bot.rounds[bot.rounds.length - 1];
 
                         result.forEach(function(trans) {
                             var op = trans[1].op;
@@ -311,12 +307,12 @@ $(function () {
                                     }
                                 }
                             } else if (op[0] == 'vote' && op[1].voter == account.name) {
-                                round = bot.rounds.filter(function (r) { return r.last_vote_time >= (ts - 60 * 60 * 1000); })[0];
+                              round = bot.rounds.filter(function (r) { return r.last_vote_time >= (ts - 120 * 60 * 1000); })[0];
 
-                                if (round == null) {
-                                    round = { last_vote_time: ts, bids: [], total: 0, total_usd: 0 };
-                                    bot.rounds.push(round);
-                                }
+                              if (round == null) {
+                                  round = { last_vote_time: ts, bids: [], total: 0, total_usd: 0 };
+                                  bot.rounds.push(round);
+                              }
                             }
                         });
 
@@ -435,11 +431,6 @@ $(function () {
       if(bots.length == 0 || !bots[0].vote)
         return;
 
-      bots.forEach(function(bot) {
-        bot.last += 1000;
-        bot.next = Math.max(bot.next - 1000, 0);
-      });
-
       $('#bots_table tbody').empty();
 
       bots.sort(function(a, b) {
@@ -472,7 +463,7 @@ $(function () {
         link.attr('target', '_blank');
         var text = '@' + bot.name;
 
-        if(bot.power == 100 && bot.last > 3 * HOURS || bot.power < 90)
+        if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
           text += ' (DOWN)';
 
         link.html("<img class='userpic' src='https://steemitimages.com/u/" + bot.name + "/avatar'></img>" + text);
@@ -566,13 +557,13 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
-        var link = $('<a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a>');
+        var link = $('<button type="button" class="btn btn-info btn-xs"><i class="fa fa-eye mr5"></i>Details</button>');
         link.click(function (e) { showBotDetails(bot); });
         td.append(link);
         row.append(td);
 
         td = $(document.createElement('td'));
-        var link = $('<a href="javascript:void(0);"><i class="fa fa-upload mr5"></i>Send Bid</a>');
+        var link = $('<button type="button" class="btn btn-warning btn-xs"><i class="fa fa-upload mr5"></i>Send Bid</button>');
         link.click(function (e) { sendBid(bot); });
         td.append(link);
         row.append(td);
@@ -587,7 +578,7 @@ $(function () {
         } else
             bot.notif = false;
 
-        if(bot.power == 100 && bot.last > 3 * HOURS || bot.power < 90)
+        if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
           row.addClass('red-light-bg');
 
         $('#bots_table tbody').append(row);
@@ -872,5 +863,9 @@ $(function () {
       $('#filter_' + filter).css('border', _filter[filter] ? '2px solid green' : 'none');
       showBotInfo();
     }
+
+    $('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
+    $('#randowhale-submit').click(function () { sendBid({ name: 'randowhale', min_bid: 1, max_post_age: 6.3 }); });
+    $('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
 });
 
