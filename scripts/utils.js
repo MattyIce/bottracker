@@ -83,6 +83,7 @@ var n = this,
 
      setTimeout(updateSteemVariables, 180 * 1000)
  }
+ steem.api.setOptions({ url: 'https://api.steemit.com' });
  updateSteemVariables();
 
  function getVotingPower(account) {
