@@ -37,7 +37,8 @@ $(function () {
       { name: 'sleeplesswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false },
       { name: 'minnowvotes', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
       { name: 'steembloggers', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'adriatik', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 }
+      { name: 'adriatik', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
+      { name: 'ipromote', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.5, refunds: true, max_post_age: 5 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
@@ -166,7 +167,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['red-rose', 'microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
           try {
             result.sort(function (a, b) { return getVoteValue(100, b) - getVoteValue(100, a); });
 
