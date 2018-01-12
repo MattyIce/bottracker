@@ -174,6 +174,7 @@ $(function () {
             result.sort(function (a, b) { return getVoteValue(100, b) - getVoteValue(100, a); });
 
             var container = $('#other_table tbody');
+            container.empty();
 
             result.forEach(function (account) {
               var row = $(document.createElement('tr'));
