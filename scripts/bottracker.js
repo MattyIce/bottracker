@@ -751,6 +751,8 @@ $(function () {
       $('#bid_details_error').hide();
       $('#bid_details_btn_submit').click(submitBid);
       $('#bid_details_post_url').val('');
+      $('#bid_details_bid_amount').val(bot.min_bid)
+      $('#bid_details_bid_amount').attr("min", bot.min_bid);
       _dialog = $('#bid_details_dialog').modal();
       _dialog.off('hidden.bs.modal');
       _dialog.bot = bot;
