@@ -34,7 +34,8 @@
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
 
-    <script src="scripts/utils.js"></script>
+    <!-- This will go back to the bottracker.min.js before the PR is merged -->
+    <script src="scripts/utils.js"></script> 
     <script src="scripts/bottracker.js"></script>
 
     <script type="text/javascript">
@@ -766,6 +767,11 @@
             <div class="form-group">
               <label for="bid_details_post_url">Your post URL</label>
               <input type="url" class="form-control" id="bid_details_post_url" placeholder="Post URL">
+            </div>
+
+            <div class="form-group">
+              <label for="bid_details_post_url">Your Recent Posts</label>
+              <span id="bid_details_recent_posts">None Found</span>
             </div>
 
             <div class="alert alert-danger" id="bid_details_error"></div>
