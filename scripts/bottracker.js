@@ -808,6 +808,15 @@ $(function () {
 
     $('#min_vote_slider').slider();
 
+    //remember Steemit username
+    if (localStorage.hasOwnProperty('bid_details_account_name')) {
+      $('#bid_details_account_name').val(localStorage.getItem('bid_details_account_name'));
+    }
+
+    $('#bid_details_account_name').on("change", function(e) {
+      localStorage.setItem('bid_details_account_name', $('#bid_details_account_name').val())
+    });
+
     //remember slider choice
     if (!localStorage.hasOwnProperty('min_vote_slider')) {
       localStorage.setItem('min_vote_slider', 0);
