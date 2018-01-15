@@ -33,13 +33,20 @@
     <script src="scripts/bootstrap-slider.min.js"></script>
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+    <script src="https://steemit.github.io/sc2-angular/sc2.min.js"></script>
 
-    <!-- This will go back to the bottracker.min.js before the PR is merged -->
-    <script src="scripts/utils.js"></script> 
-    <script src="scripts/bottracker.js"></script>
+    <script src="scripts/bottracker.min.js"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
+
+        sc2.init({
+          baseURL: 'https://v2.steemconnect.com',
+          app: 'bottracker.app',
+          accessToken: getURLParameter('access_token'),
+          callbackURL: 'https://steembottracker.com',
+          scope: ['login', 'vote']
+        });
     </script>
 
     <!-- Dynamic admin theme -->
@@ -492,6 +499,8 @@
                 <dd><span id="randowhale-fee">Loading...</span></dd>
                 <dt>Vote Value:</dt>
               <dd><span id="randowhale-vote">Loading...</span></dd>
+              <dt>Max Post Age:</dt>
+              <dd>3.5 Days</dd>
               <dt>Comment Voting:</dt>
               <dd>Disabled</dd>
               <dt>Voting Power:</dt>

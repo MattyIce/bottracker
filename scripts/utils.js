@@ -8,6 +8,10 @@ function getCurrency(amount) {
   return amount.substr(amount.indexOf(' ') + 1);
 }
 
+function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
+}
+
 function getUsdValue(bid) {
   if(bid.currency)
     return parseFloat(bid.amount) * ((bid.currency == 'SBD') ? sbd_price : steem_price);

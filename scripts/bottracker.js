@@ -778,7 +778,7 @@ $(function () {
       var cutoff = new Date().getTime() - ((_dialog.bot.max_post_age ? _dialog.bot.max_post_age : 6) * 24 * 60 * 60 * 1000);
 
       steem.api.getDiscussionsByAuthorBeforeDate(author, null, new Date().toISOString().split('.')[0], 5, function (err, result) {
-        var posts = result.filter(p => new Date(p.created).getTime() > cutoff);
+        var posts = result.filter(function(p) { return new Date(p.created).getTime() > cutoff });
 
         if (posts.length > 0) {
           holder.empty()
@@ -788,10 +788,10 @@ $(function () {
 
         posts.forEach(function(post) {
           var linktext = post.title.length > 25 ? post.title.substring(0,22) + '...' : post.title;
-          var button = $(`<button type="button" class="btn btn-info btn-xs" style="margin: 0 5px;">${linktext}</button>`);
+          var button = $('<button type="button" class="btn btn-info btn-xs" style="margin: 0 5px;">' + linktext + '</button>');
           holder.append(button);
           button.click(function() {
-            $("#bid_details_post_url").val(`https://steemit.com${post.url}`);
+            $("#bid_details_post_url").val('https://steemit.com' + post.url);
           })
         })
       });
@@ -892,6 +892,6 @@ $(function () {
     }
 
     $('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
-    $('#randowhale-submit').click(function () { sendBid({ name: 'randowhale', min_bid: 1, max_post_age: 6.3 }); });
+    $('#randowhale-submit').click(function () { sendBid({ name: 'randowhale', min_bid: 1, max_post_age: 3.5 }); });
     $('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
 });
