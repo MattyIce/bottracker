@@ -3,8 +3,6 @@ $(function () {
     var AUTHOR_REWARDS = 0.75;
     var MIN_VOTE = 0;
     var CURRENCY = 'USD';
-    var MAX_TX_LOOKBACK_COUNT = 3000;
-    var CUTOFF_TIME = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
 
     var bots = [
       { name: 'booster', interval: 1.2, accepts_steem: true, comments: true, max_post_age: 5.5, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
@@ -534,21 +532,6 @@ $(function () {
 
         row.append(td);
 
-/*
-        td = $(document.createElement('td'));
-        var bar = $('#minnowbooster-progress div').clone();
-        var pct = (bot.power - 90) * 10;
-        bar.attr('aria-valuenow', pct);
-        bar.css('width', pct + '%');
-        bar.text(bot.power.formatMoney());
-
-        var div = $(document.createElement('div'));
-        div.addClass('progress flat');
-        div.append(bar);
-        td.append(div);
-        row.append(td);
-*/
-
         td = $(document.createElement('td'));
         td.addClass('timer');
         td.attr('dir', 'up');
@@ -758,6 +741,12 @@ $(function () {
       _dialog = $('#bid_details_dialog').modal();
       _dialog.off('hidden.bs.modal');
       _dialog.bot = bot;
+
+      //remember Steemit username
+      if (localStorage.hasOwnProperty('bid_details_account_name')) {
+        $('#bid_details_account_name').val(localStorage.getItem('bid_details_account_name'));
+        loadRecentPosts();
+      }
     }
 
     function submitBid() {
@@ -786,34 +775,23 @@ $(function () {
     function loadRecentPosts() {
       var author =  $('#bid_details_account_name').val();
       var holder = $("#bid_details_recent_posts");
-      steem.api.getAccountHistory(author, -1, MAX_TX_LOOKBACK_COUNT, function (err, response) {
-        var post_links = Array.from(response)
-            .filter(d=>d[1].op[0] == 'comment' && d[1].op[1].parent_author == "") // Posts only
-            .filter(d=> new Date(d[1].timestamp).getTime() > CUTOFF_TIME) // Less than 1 Week Old
-            .map(d=>d[1].op[1].permlink);
+      var cutoff = new Date().getTime() - ((_dialog.bot.max_post_age ? _dialog.bot.max_post_age : 6) * 24 * 60 * 60 * 1000);
 
-        // Get the 5 newest elements that aren't duplicates. Editing a post creates a new post transaction so duplicates may occur.
-        var seen = new Set();
-        var newest = [];
-        for (var i = post_links.length - 1; i >= 0 && newest.length < 5; i--) {
-          if(!seen.has(post_links[i])) {
-            newest.push(post_links[i]);
-            seen.add(post_links[i]);
-          }
-        }
+      steem.api.getDiscussionsByAuthorBeforeDate(author, null, new Date().toISOString().split('.')[0], 5, function (err, result) {
+        var posts = result.filter(p => new Date(p.created).getTime() > cutoff);
 
-        if (newest.length > 0) {
+        if (posts.length > 0) {
           holder.empty()
         } else {
           holder.html('None Found');
         }
 
-        newest.forEach(function(link) {
-          var linktext = link.length > 25 ? link.substring(0,22) + '...' : link;
+        posts.forEach(function(post) {
+          var linktext = post.title.length > 25 ? post.title.substring(0,22) + '...' : post.title;
           var button = $(`<button type="button" class="btn btn-info btn-xs" style="margin: 0 5px;">${linktext}</button>`);
           holder.append(button);
           button.click(function() {
-            $("#bid_details_post_url").val(`https://steemit.com/@${author}/${link}`);
+            $("#bid_details_post_url").val(`https://steemit.com${post.url}`);
           })
         })
       });
@@ -847,12 +825,6 @@ $(function () {
     });
 
     $('#min_vote_slider').slider();
-
-    //remember Steemit username
-    if (localStorage.hasOwnProperty('bid_details_account_name')) {
-      $('#bid_details_account_name').val(localStorage.getItem('bid_details_account_name'));
-      loadRecentPosts();
-    }
 
     $('#bid_details_account_name').on("change", function(e) {
       localStorage.setItem('bid_details_account_name', $('#bid_details_account_name').val());
