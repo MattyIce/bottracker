@@ -742,9 +742,9 @@ $(function () {
       _dialog.off('hidden.bs.modal');
       _dialog.bot = bot;
 
-      //remember Steemit username
-      if (localStorage.hasOwnProperty('bid_details_account_name')) {
-        $('#bid_details_account_name').val(localStorage.getItem('bid_details_account_name'));
+      var account_name = user ? user.name : localStorage.getItem('bid_details_account_name');
+      if (account_name) {
+        $('#bid_details_account_name').val(account_name);
         loadRecentPosts();
       }
     }
@@ -894,4 +894,36 @@ $(function () {
     $('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
     $('#randowhale-submit').click(function () { sendBid({ name: 'randowhale', min_bid: 1, max_post_age: 3.5 }); });
     $('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
+
+    // Initialize and try to log in with SteemConnect V2
+    var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
+    sc2.init({
+      baseURL: 'https://v2.steemconnect.com',
+      app: 'bottracker.app',
+      accessToken: token,
+      callbackURL: 'https://steembottracker.com',
+      scope: ['login', 'vote']
+    });
+
+    var user = null;
+    sc2.me(function (err, result) {
+      if (result && !err) {
+        console.log(result);
+        user = result.account;
+        $('#btn_login').hide();
+        $('#btn_logout').show();
+        $('#login_info').show();
+        $('#login_info').text('Logged in as: @' + user.name);
+        localStorage.setItem('access_token', token);
+      } else {
+        $('#btn_login').show();
+        $('#btn_logout').hide();
+        $('#login_info').hide();
+      }
+    });
+
+    $('#btn_logout').click(function () {
+      localStorage.removeItem('access_token');
+      window.location.href = window.location.pathname;
+    });
 });

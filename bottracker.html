@@ -35,18 +35,11 @@
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="https://steemit.github.io/sc2-angular/sc2.min.js"></script>
 
-    <script src="scripts/bottracker.min.js"></script>
+  <script src="scripts/utils.js"></script>
+    <script src="scripts/bottracker.js"></script>
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
-
-        sc2.init({
-          baseURL: 'https://v2.steemconnect.com',
-          app: 'bottracker.app',
-          accessToken: getURLParameter('access_token'),
-          callbackURL: 'https://steembottracker.com',
-          scope: ['login', 'vote']
-        });
     </script>
 
     <!-- Dynamic admin theme -->
@@ -68,530 +61,555 @@
     </style>
 </head>
 <body>
-
-  <!-- .page-navbar -->
   <div id="header" class="page-navbar header-fixed">
+    <nav class="navbar navbar-default" style="margin-bottom: 0;">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+          <a href="#" class="navbar-brand">
+            <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
+            Steem Bot Tracker
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-android mr10"></i>
+                Voting Bots <span class="caret"></span>
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="#bid"><i class="l-basic-hammer mr10"></i> Bid-Based Voting Bots</a></li>
+                <li><a href="#paid"><i class="l-banknote mr10"></i> Promotion Services</a></li>
+                <li><a href="#free"><i class="fa fa-android mr10"></i> Other Bots</a></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-wrench mr10"></i>
+                Tools <span class="caret"></span>
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
+                <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <p id="login_info" class="navbar-text"></p>
+              <button id="btn_logout" type="button" class="btn btn-default navbar-btn" style="display: none;">Log Out</button>
+              <button id="btn_login" type="button" class="btn btn-default navbar-btn" onclick="window.location.href=sc2.getLoginURL();">Log in</button>              
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+  </div>
+
+
     <div class="container">
 
-     <!-- .navbar-brand -->
-      <a href="bottracker.html" class="navbar-brand">
-         <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
-         Steem Bot Tracker
-      </a>
-      <!-- / navbar-brand -->
-
-      <nav class="nav navbar-nav">
-
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-
-        <!-- .no-collapse -->
-        <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#bid"><i class="l-basic-hammer mr10"></i> Bid-Based Voting Bots</a></li>
-            <li><a href="#paid"><i class="l-banknote mr10"></i> Promotion Services</a></li>
-            <li><a href="#free"><i class="fa fa-android mr10"></i> Other Bots</a></li>
-            <li><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
-            <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
-          </ul>
+      <div class="panel panel-info plain">
+        <div class="panel-body">
+          <h1>Steem Upvote Bot Tracker</h1>
+          <p>Welcome to the Steem Upvote Bot Tracker, the #1 place for information on voting bots and other options to <strong style="color: green;">profitably</strong> promote your posts on Steem!</p>
+          <p>
+            If you like what you see here, you can find more great info by following me on SteemIt at <a target="_blank" href="http://www.steemit.com/@yabapmatt">@yabapmatt</a>.
+          </p>
+          <p>I don't charge anything or make any money off of this tool so I would appreciate your support by voting for @yabapmatt for Steem witness! To vote for me you can <a href="https://v2.steemconnect.com/sign/account-witness-vote?witness=yabapmatt&approve=1">Click Here</a> or go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and find @yabapmatt in the list and click the upvote icon!.
+          <p>
+            <a class="btn btn-primary btn-lg" href="#bid" role="button">Bid-Based Voting Bots</a>
+            <a class="btn btn-primary btn-lg" href="#paid" role="button">Promotion Services</a>
+            <a class="btn btn-primary btn-lg" href="#free" role="button">Other Bots</a>
+          </p>
         </div>
-
-      </nav>
-    </div>
-  </div>
-  <!-- / page-navbar -->
-
-  <div class="container">
-
-    <div class="panel panel-info plain">
-      <div class="panel-body">
-        <h1>Steem Upvote Bot Tracker</h1>
-        <p>Welcome to the Steem Upvote Bot Tracker, the #1 place for information on voting bots and other options to <strong style="color: green;">profitably</strong> promote your posts on Steem!</p>
-        <p>If you like what you see here, you can find more great info by following me on SteemIt at <a target="_blank" href="http://www.steemit.com/@yabapmatt">@yabapmatt</a>.
-        </p>
-        <p>I don't charge anything or make any money off of this tool so I would appreciate your support by voting for @yabapmatt for Steem witness! To vote for me you can <a href="https://v2.steemconnect.com/sign/account-witness-vote?witness=yabapmatt&approve=1">Click Here</a> or go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and find @yabapmatt in the list and click the upvote icon!.
-        <p>
-          <a class="btn btn-primary btn-lg" href="#bid" role="button">Bid-Based Voting Bots</a>
-          <a class="btn btn-primary btn-lg" href="#paid" role="button">Promotion Services</a>
-          <a class="btn btn-primary btn-lg" href="#free" role="button">Other Bots</a>
-        </p>
       </div>
-    </div>
 
-    <!--
-    <div class="panel panel-default">
-      <div class="panel-heading"><h4 class="panel-title"><a name="sponsored"></a><i class="l-banknote mr10"></i>Sponsored Upvote Services</h4></div>
-      <div class="panel-body">
-        <div class="panel panel-success">
-          <div class="panel-heading">
-            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randofish">@randofish</a></h3>
-          </div>
-          <div class="panel-body">
-              <div id="ss_bot_error" style="display: none;" class="alert alert-danger" role="alert">
-                  There was an error loading bot info. Please try again in a little bit.
-              </div>
-
-            <div>
-              <div style="float:left;"><a href="http://www.steemit.com/@randofish" target="_blank"><img src="https://steemitimages.com/u/randofish/avatar"/></a></div>
-              <div style="padding-top: 40px;">
-                <div style="font-size: 1.5em; text-align: center;" id="randofish-desc-x">
-                  Send 0.25 SBD for random Upvote (20-80%)<br/>
-                  If you want a full 100% randofish Upvote just send 1 SBD to @randofish1
-                </div>
-              </div>
+      <!--
+      <div class="panel panel-default">
+        <div class="panel-heading"><h4 class="panel-title"><a name="sponsored"></a><i class="l-banknote mr10"></i>Sponsored Upvote Services</h4></div>
+        <div class="panel-body">
+          <div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randofish">@randofish</a></h3>
             </div>
+            <div class="panel-body">
+                <div id="ss_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+                    There was an error loading bot info. Please try again in a little bit.
+                </div>
 
-            <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
-              <dt>Vote Value:</dt>
-              <dd><span id="randofish-vote">Loading...</span></dd>
-              <dt>Voting Power:</dt>
-              <dd>
-                <div class="progress flat" id="randofish-progress">
-                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                    Loading...
+              <div>
+                <div style="float:left;"><a href="http://www.steemit.com/@randofish" target="_blank"><img src="https://steemitimages.com/u/randofish/avatar"/></a></div>
+                <div style="padding-top: 40px;">
+                  <div style="font-size: 1.5em; text-align: center;" id="randofish-desc-x">
+                    Send 0.25 SBD for random Upvote (20-80%)<br/>
+                    If you want a full 100% randofish Upvote just send 1 SBD to @randofish1
                   </div>
                 </div>
-              </dd>
-            </dl>
+              </div>
 
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingOne">
-                        <h4 class="panel-title">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#rf-howto" aria-expanded="true" aria-controls="collapseOne">
-                                <i class="l-arrows-question mr10"></i>How To Use
-                            </a>
-                        </h4>
+              <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
+                <dt>Vote Value:</dt>
+                <dd><span id="randofish-vote">Loading...</span></dd>
+                <dt>Voting Power:</dt>
+                <dd>
+                  <div class="progress flat" id="randofish-progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                      Loading...
                     </div>
-                    <div id="rf-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                        <div class="panel-body">
-                            <ul id="randofish-how-to">
-                              <li>@randofish can be used to upvote your post or comment around the clock 24/7</li>
-                              <li>For an upvote send 0.25 SBD with URL as memo to @randofish - You will receive a random Upvote from randofish (20 - 80%) OR an Upvote from randofish1 (90 - 100%)</li>
-                              <li>For a full 100% Upvote from randofish just send 1 SBD to @randofish1</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                  </div>
+                </dd>
+              </dl>
+
+              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                  <div class="panel panel-default">
+                      <div class="panel-heading" role="tab" id="headingOne">
+                          <h4 class="panel-title">
+                              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#rf-howto" aria-expanded="true" aria-controls="collapseOne">
+                                  <i class="l-arrows-question mr10"></i>How To Use
+                              </a>
+                          </h4>
+                      </div>
+                      <div id="rf-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                          <div class="panel-body">
+                              <ul id="randofish-how-to">
+                                <li>@randofish can be used to upvote your post or comment around the clock 24/7</li>
+                                <li>For an upvote send 0.25 SBD with URL as memo to @randofish - You will receive a random Upvote from randofish (20 - 80%) OR an Upvote from randofish1 (90 - 100%)</li>
+                                <li>For a full 100% Upvote from randofish just send 1 SBD to @randofish1</li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-      -->
+        -->
 
-    <div class="bs-callout bs-callout-info fade in">
-      <h4>Vote for Witness!</h4>
-      <p>Help support me and the bot tracker by voting for @yabapmatt for Steem witness! To vote, click the button below or go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and find @yabapmatt in the list and click the upvote icon. Thank you!</p>
-      <button class="btn btn-success btn-lg" onclick="window.open('https://v2.steemconnect.com/sign/account-witness-vote?witness=yabapmatt&approve=1');">Vote for @yabapmatt!</button>
-    </div>
+      <div class="bs-callout bs-callout-info fade in">
+        <h4>Vote for Witness!</h4>
+        <p>Help support me and the bot tracker by voting for @yabapmatt for Steem witness! To vote, click the button below or go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and find @yabapmatt in the list and click the upvote icon. Thank you!</p>
+        <button class="btn btn-success btn-lg" onclick="window.open('https://v2.steemconnect.com/sign/account-witness-vote?witness=yabapmatt&approve=1');">Vote for @yabapmatt!</button>
+      </div>
 
-    <div class="panel panel-info">
-      <!-- Default panel contents -->
-      <div class="panel-heading"><h4 class="panel-title"><a name="bid"></a><i class="l-basic-hammer mr10"></i>Bid-Based Voting Bots</h4></div>
-      <div class="panel-body">
-        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingOne">
-              <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                  <i class="l-arrows-question mr10"></i>How Bid-Based Voting Bots Work
+      <div class="panel panel-info">
+        <!-- Default panel contents -->
+        <div class="panel-heading"><h4 class="panel-title"><a name="bid"></a><i class="l-basic-hammer mr10"></i>Bid-Based Voting Bots</h4></div>
+        <div class="panel-body">
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <i class="l-arrows-question mr10"></i>How Bid-Based Voting Bots Work
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <p>
+                    Bid-based voting bots work on a bidding system. You can send any amount of SBD above the minimum (minimums vary for each bot) and once the bot account reaches 100% voting power it splits a 100% upvote between all of the bids based on each bid's % of the total amount bid during that period.
+                  </p>
+                  <p>
+                    It takes 2.4 hours for voting power to return to 100% after a 100% upvote so each bidding period typically lasts roughly 2.4 hours. Recently some bots have switched to giving out a 50% upvote every 1.2 hours instead. You can see this indicated next to the "Vote Value" in the table below.
+                  </p>
+                  <p>
+                    Take the following example: With a 2.4 hour bidding period user A sends $1 to a voting bot and user B sends $3. The total bid is $4 so that means that user A will get a 25% upvote on their post and user B will get a 75% upvote. If the bot's 100% upvote is worth more than $4 then both user A and B will receive an upvote worth more than they have spent.
+                  </p>
+                  <p>
+                    Please note that vote values are based on the current value of STEEM. As STEEM prices rise or fall the value of votes will too. Additionally 25% of the value of votes cast more than 30 minutes after a post has been made go to the curation rewards, so for a $0.75 payment you would need at least a $1.00 upvote to be profitable if you are taking curation rewards into account.
+                  </p>
+                  <p>
+                    Each voting bot has their own quirks and rules and those can change at any time. I do the best I can to keep this site up to date however <strong>it is your responsibility to check each voting bot before you use it</strong>. You can click on the links in the table below to go to the SteemIt profile page for each bot.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                  <h3 class="panel-title"><i class="fa fa-calculator mr5"></i> Vote Calculator</h3>
                 </a>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel">
+                <div class="panel-body">
+                  <p>Calculate how much of an upvote you could receive*</p>
+                  <form class="form-inline">
+                    <div class="form-group">
+                      <select id="bot_list" class="form-control"><option value="">Choose a bot</option></select>
+                    </div>
+                    <div class="form-group">
+                      <input id="bid_amount" type="text" class="form-control" placeholder="Bid Amount">
+                    </div>
+                    <div class="form-group">
+                      <select id="calc_currency" class="form-control">
+                        <option value="SBD">SBD</option>
+                        <option value="STEEM">STEEM</option>
+                      </select>
+                    </div>
+                    <button id="calculate_vote" class="btn btn-default">Calculate</button>
+                    <div class="form-group">
+                      <dl class="dl-horizontal values">
+                        <dt>Bid Dollar Value:</dt>
+                        <dd><span class="value" id="bid_value">$0.00</span></dd>
+                        <dt>Total Vote Value:</dt>
+                        <dd><span class="value" id="vote_value">$0.00</span></dd>
+                        <dt>After 25% Curation:</dt>
+                        <dd><span class="value" id="vote_value_net">$0.00</span></dd>
+                      </dl>
+                    </div>
+                  </form>
+
+                  <div class="alert alert-warning fade in mt20">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <i class="glyphicon glyphicon-warning-sign alert-icon "></i>
+                    <strong>Note!</strong> Actual vote value may differ substantially from what is shown here! This is an informational tool, use at your own risk.
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="bs-callout bs-callout-danger fade in">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+              <h3>IMPORTANT UPDATE - PLEASE READ!</h3>
+              <h4>
+                Due to the broken SBD peg and some bots now accepting SBD and STEEM:<br /><br />
+                <ul>
+                  <li style="margin-bottom: 5px;">All vote and total bid values are now shown in USD by default based on the current exchange rates for STEEM and SBDs.</li>
+                  <li style="margin-bottom: 5px;">Profitability calculations now also take into account the exchange rates of the two currencies.</li>
+                  <li style="margin-bottom: 5px;">If you want to view numbers in a different currency you can choose a currency in the settings section above.</li>
+                  <li style="margin-bottom: 5px;">To view the numbers how they were originally, choose the "POST REWARDS" currency which matches what is shown on steemit.com.</li>
+                </ul>
+                <p>
+                  Current Prices: 1 STEEM = $<span id="steem_price">loading...</span> | 1 SBD = $<span id="sbd_price">loading...</span>
+                </p>
               </h4>
             </div>
-            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-              <div class="panel-body">
-                <p>
-                  Bid-based voting bots work on a bidding system. You can send any amount of SBD above the minimum (minimums vary for each bot) and once the bot account reaches 100% voting power it splits a 100% upvote between all of the bids based on each bid's % of the total amount bid during that period.
-                </p>
-                <p>
-                  It takes 2.4 hours for voting power to return to 100% after a 100% upvote so each bidding period typically lasts roughly 2.4 hours. Recently some bots have switched to giving out a 50% upvote every 1.2 hours instead. You can see this indicated next to the "Vote Value" in the table below.
-                </p>
-                <p>
-                  Take the following example: With a 2.4 hour bidding period user A sends $1 to a voting bot and user B sends $3. The total bid is $4 so that means that user A will get a 25% upvote on their post and user B will get a 75% upvote. If the bot's 100% upvote is worth more than $4 then both user A and B will receive an upvote worth more than they have spent.
-                </p>
-                <p>
-                  Please note that vote values are based on the current value of STEEM. As STEEM prices rise or fall the value of votes will too. Additionally 25% of the value of votes cast more than 30 minutes after a post has been made go to the curation rewards, so for a $0.75 payment you would need at least a $1.00 upvote to be profitable if you are taking curation rewards into account.
-                </p>
-                <p>
-                  Each voting bot has their own quirks and rules and those can change at any time. I do the best I can to keep this site up to date however <strong>it is your responsibility to check each voting bot before you use it</strong>. You can click on the links in the table below to go to the SteemIt profile page for each bot.
-                </p>
-              </div>
-            </div>
-          </div>
 
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingTwo">
-              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                <h3 class="panel-title"><i class="fa fa-calculator mr5"></i> Vote Calculator</h3>
-              </a>
-            </div>
-            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel">
-              <div class="panel-body">
-                <p>Calculate how much of an upvote you could receive*</p>
-                <form class="form-inline">
-                  <div class="form-group">
-                    <select id="bot_list" class="form-control"><option value="">Choose a bot</option></select>
-                  </div>
-                  <div class="form-group">
-                    <input id="bid_amount" type="text" class="form-control" placeholder="Bid Amount">
-                  </div>
-                  <div class="form-group">
-                    <select id="calc_currency" class="form-control">
+            <div class="panel panel-primary plain">
+              <div class="panel-body" style="font-size: 1.2em;">
+
+                <div class="row">
+                  <label class="col-lg-2 col-md-2 control-label" style="margin-top: 5px; text-align: right;">Display Currency:</label>
+                  <div class="col-lg-4 col-md-4">
+                    <select id="currency_list" class="form-control">
+                      <option value="USD">USD</option>
                       <option value="SBD">SBD</option>
                       <option value="STEEM">STEEM</option>
+                      <option value="POST REWARDS">POST REWARDS (What is shown on steemit.com)</option>
                     </select>
                   </div>
-                  <button id="calculate_vote" class="btn btn-default">Calculate</button>
-                  <div class="form-group">
-                    <dl class="dl-horizontal values">
-                      <dt>Bid Dollar Value:</dt>
-                      <dd><span class="value" id="bid_value">$0.00</span></dd>
-                      <dt>Total Vote Value:</dt>
-                      <dd><span class="value" id="vote_value">$0.00</span></dd>
-                      <dt>After 25% Curation:</dt>
-                      <dd><span class="value" id="vote_value_net">$0.00</span></dd>
-                    </dl>
+
+                  <label class="col-lg-3 col-md-3 control-label" style="margin-top: 5px; text-align: right;"> Include 25% curation:</label>
+                  <div class="col-lg-3 col-md-3">
+                    <div class="toggle-custom">
+                      <label class="toggle" data-on="ON" data-off="OFF">
+                        <input type="checkbox" id="curation_option" name="curation_option" checked>
+                        <span class="button-checkbox"></span>
+                      </label>
+                      <label for="fixed-header-toggle"></label>
+                    </div>
                   </div>
-                </form>
-
-                <div class="alert alert-warning fade in mt20">
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                  <i class="glyphicon glyphicon-warning-sign alert-icon "></i>
-                  <strong>Note!</strong> Actual vote value may differ substantially from what is shown here! This is an informational tool, use at your own risk.
                 </div>
 
-            </div>
-          </div>
-        </div>
+                <hr style="margin-top: 0;" />
 
-        <div class="bs-callout bs-callout-danger fade in">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            <h3>IMPORTANT UPDATE - PLEASE READ!</h3>
-            <h4>
-              Due to the broken SBD peg and some bots now accepting SBD and STEEM:<br/><br/>
-              <ul>
-                <li style="margin-bottom: 5px;">All vote and total bid values are now shown in USD by default based on the current exchange rates for STEEM and SBDs.</li>
-                <li style="margin-bottom: 5px;">Profitability calculations now also take into account the exchange rates of the two currencies.</li>
-                <li style="margin-bottom: 5px;">If you want to view numbers in a different currency you can choose a currency in the settings section above.</li>
-                <li style="margin-bottom: 5px;">To view the numbers how they were originally, choose the "POST REWARDS" currency which matches what is shown on steemit.com.</li>
-              </ul>
-              <p>
-                Current Prices: 1 STEEM = $<span id="steem_price">loading...</span> | 1 SBD = $<span id="sbd_price">loading...</span>
-              </p>
-            </h4>
-        </div>
-
-        <div class="panel panel-primary plain">
-          <div class="panel-body" style="font-size: 1.2em;">
-
-            <div class="row">
-              <label class="col-lg-2 col-md-2 control-label" style="margin-top: 5px; text-align: right;">Display Currency:</label>
-              <div class="col-lg-4 col-md-4">
-                <select id="currency_list" class="form-control">
-                  <option value="USD">USD</option>
-                  <option value="SBD">SBD</option>
-                  <option value="STEEM">STEEM</option>
-                  <option value="POST REWARDS">POST REWARDS (What is shown on steemit.com)</option>
-                </select>
-              </div>
-
-              <label class="col-lg-3 col-md-3 control-label" style="margin-top: 5px; text-align: right;"> Include 25% curation:</label>
-              <div class="col-lg-3 col-md-3">
-                <div class="toggle-custom">
-                  <label class="toggle" data-on="ON" data-off="OFF">
-                    <input type="checkbox" id="curation_option" name="curation_option" checked>
-                    <span class="button-checkbox"></span>
+                <div class="row">
+                  <label class="col-lg-3 col-md-4 control-label text-left">
+                    Filters:
+                    <img id="filter_verified" src="img/verified.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that provide a bid API so the data shown is guaranteed to be accurate." />
+                    <img id="filter_refund" src="img/refund.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that automatically refund invalid bids." />
+                    <img id="filter_steem" src="img/steem.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that accept STEEM bids." />
+                    <img id="filter_frontrunner" src="img/frontrunner.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that have a pre-vote / front-runner group." />
                   </label>
-                  <label for="fixed-header-toggle"></label>
+
+
+
+                  <div class="col-lg-9 col-md-8" style="margin-top: 5px;">
+                    <label class="control-label text-left" style="float: left; margin-right: 20px;">Vote Value: </label>
+                    <div>
+                      <b>$0&nbsp;&nbsp;</b>
+                      <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="5" data-slider-value="0" />
+                      <b>&nbsp;&nbsp;$1,000</b>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <hr style="margin-top: 0;"/>
-
-            <div class="row">
-              <label class="col-lg-3 col-md-4 control-label text-left">
-                Filters:
-                <img id="filter_verified" src="img/verified.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that provide a bid API so the data shown is guaranteed to be accurate." />
-                <img id="filter_refund" src="img/refund.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that automatically refund invalid bids." />
-                <img id="filter_steem" src="img/steem.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that accept STEEM bids." />
-                <img id="filter_frontrunner" src="img/frontrunner.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that have a pre-vote / front-runner group." />
-              </label>
-
-
-
-              <div class="col-lg-9 col-md-8" style="margin-top: 5px;">
-                <label class="control-label text-left" style="float: left; margin-right: 20px;">Vote Value: </label>
-                <div>
-                  <b>$0&nbsp;&nbsp;</b>
-                  <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="5" data-slider-value="0" />
-                  <b>&nbsp;&nbsp;$1,000</b>
-                </div>
-              </div>
+            <div id="bid_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+              <i class="glyphicon glyphicon-ban-circle alert-icon "></i>
+              There was an error loading bot info. Please try again in a little bit.
             </div>
+
+            <div class="table-responsive">
+              <table id="bots_table" class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Bot Name</th>
+                    <th>Vote Value</th>
+                    <th>Min Bid</th>
+                    <th>Max Post Age</th>
+                    <th>Total Bids</th>
+                    <th>Max Profitable Bid</th>
+                    <th>Last Vote</th>
+                    <th>Next Vote</th>
+                    <th>Details</th>
+                    <th>Send Bid</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
           </div>
         </div>
-
-        <div id="bid_bot_error" style="display: none;" class="alert alert-danger" role="alert">
-            <i class="glyphicon glyphicon-ban-circle alert-icon "></i>
-            There was an error loading bot info. Please try again in a little bit.
-        </div>
-
-        <div class="table-responsive">
-          <table id="bots_table" class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Bot Name</th>
-                <th>Vote Value</th>
-                <th>Min Bid</th>
-                <th>Max Post Age</th>
-                <th>Total Bids</th>
-                <th>Max Profitable Bid</th>
-                <th>Last Vote</th>
-                <th>Next Vote</th>
-                <th>Details</th>
-                <th>Send Bid</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-                <td>Loading...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
       </div>
-    </div>
-    </div>
 
-    <div class="panel panel-info">
-      <!-- Default panel contents -->
-      <div class="panel-heading"><h4 class="panel-title"><a name="paid"></a><i class="l-banknote mr10"></i>Content Promotion Services</h4></div>
-      <div class="panel-body">
+      <div class="panel panel-info">
+        <!-- Default panel contents -->
+        <div class="panel-heading"><h4 class="panel-title"><a name="paid"></a><i class="l-banknote mr10"></i>Content Promotion Services</h4></div>
+        <div class="panel-body">
 
-        <div class="panel panel-success">
-          <div class="panel-heading">
-            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a></h3>
-          </div>
-          <div class="panel-body">
+          <div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a></h3>
+            </div>
+            <div class="panel-body">
               <div id="mb_bot_error" style="display: none;" class="alert alert-danger" role="alert">
-                  There was an error loading bot info. Please try again in a little bit.
+                There was an error loading bot info. Please try again in a little bit.
               </div>
 
-            <div style="margin-bottom: 20px;">
-              <div style="float:left; margin-right: 40px;"><a href="https://minnowbooster.net" target="_blank"><img src="https://www.minnowbooster.net/minnowbannericon.jpg" style="height: 128px;" /></a></div>
-              <div style="padding: 0 40px; text-align: center;">
-                <div style="font-size: 2em;">
-                  Send at least 0.01 SBD to @minnowbooster with the post link as the memo and receive a guaranteed profitable upvote!<br/>
-                  <span style="font-size: 0.8em;">See <a href="https://www.minnowbooster.net" target="_blank">minnowbooster.net</a> for more details.</span>
+              <div style="margin-bottom: 20px;">
+                <div style="float:left; margin-right: 40px;"><a href="https://minnowbooster.net" target="_blank"><img src="https://www.minnowbooster.net/minnowbannericon.jpg" style="height: 128px;" /></a></div>
+                <div style="padding: 0 40px; text-align: center;">
+                  <div style="font-size: 2em;">
+                    Send at least 0.01 SBD to @minnowbooster with the post link as the memo and receive a guaranteed profitable upvote!<br />
+                    <span style="font-size: 0.8em;">See <a href="https://www.minnowbooster.net" target="_blank">minnowbooster.net</a> for more details.</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div style="margin: 20px 0; text-align: center;">
-              <button type="button" class="btn btn-warning btn-lg" id="minnowbooster-submit">Promote your post with @minnowbooster now!</button>
-            </div>
+              <div style="margin: 20px 0; text-align: center;">
+                <button type="button" class="btn btn-warning btn-lg" id="minnowbooster-submit">Promote your post with @minnowbooster now!</button>
+              </div>
 
-            <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
+              <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
                 <dt>Min Payment:</dt>
                 <dd><span id="minnowbooster-min">Loading...</span></dd>
-              <dt>Vote Value:</dt>
-              <dd><span id="minnowbooster-vote">Loading...</span></dd>
+                <dt>Vote Value:</dt>
+                <dd><span id="minnowbooster-vote">Loading...</span></dd>
                 <dt>Comment Voting:</dt>
                 <dd>Disabled</dd>
-              <dt>Voting Power:</dt>
-              <dd>
-                <div class="progress flat" id="minnowbooster-progress">
-                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                    Loading...
+                <dt>Voting Power:</dt>
+                <dd>
+                  <div class="progress flat" id="minnowbooster-progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                      Loading...
+                    </div>
+                  </div>
+                </dd>
+                <dt>Additional Features:</dt>
+                <dd>SP Delegation Market, Steem Voter, Sell Your Vote and earn SBD &amp; Curation!</dd>
+              </dl>
+
+              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#mb-howto" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="l-arrows-question mr10"></i>How To Use
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="mb-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                      <ul>
+                        <li><a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> is always available and can be used at any time.</li>
+                        <li>Send at least the Min Payment amount specified to <a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> with your post URL as the memo.</li>
+                        <li>You will receive an profitable upvote on your post based on the amount of your payment.</li>
+                        <li>See <a target="_blank" href="http://minnowbooster.net">http://minnowbooster.net</a> for more details!</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </dd>
-              <dt>Additional Features:</dt>
-              <dd>SP Delegation Market, Steem Voter, Sell Your Vote and earn SBD &amp; Curation!</dd>
-            </dl>
 
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingOne">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#mb-howto" aria-expanded="true" aria-controls="collapseOne">
-                      <i class="l-arrows-question mr10"></i>How To Use
-                    </a>
-                  </h4>
-                </div>
-                <div id="mb-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                  <div class="panel-body">
-                    <ul>
-                      <li><a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> is always available and can be used at any time.</li>
-                      <li>Send at least the Min Payment amount specified to <a target="_blank" href="http://www.steemit.com/@minnowbooster">@minnowbooster</a> with your post URL as the memo.</li>
-                      <li>You will receive an profitable upvote on your post based on the amount of your payment.</li>
-                      <li>See <a target="_blank" href="http://minnowbooster.net">http://minnowbooster.net</a> for more details!</li>
-                    </ul>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#mb-votes" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="fa fa-chevron-circle-up mr10"></i>Recent MinnowBooster Upvotes
+                      </a>
+                    </h4>
                   </div>
-                </div>
-              </div>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingOne">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#mb-votes" aria-expanded="true" aria-controls="collapseOne">
-                      <i class="fa fa-chevron-circle-up mr10"></i>Recent MinnowBooster Upvotes
-                    </a>
-                  </h4>
-                </div>
-                <div id="mb-votes" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                  <div class="panel-body">
-                    <ol>
-                      <li id="mb-upvote-0">Loading...</li>
-                      <li id="mb-upvote-1">Loading...</li>
-                      <li id="mb-upvote-2">Loading...</li>
-                      <li id="mb-upvote-3">Loading...</li>
-                      <li id="mb-upvote-4">Loading...</li>
-                    </ol>
+                  <div id="mb-votes" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                      <ol>
+                        <li id="mb-upvote-0">Loading...</li>
+                        <li id="mb-upvote-1">Loading...</li>
+                        <li id="mb-upvote-2">Loading...</li>
+                        <li id="mb-upvote-3">Loading...</li>
+                        <li id="mb-upvote-4">Loading...</li>
+                      </ol>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div id="randowhale-panel" class="panel panel-success">
-          <div class="panel-heading">
-            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
-          </div>
-          <div class="panel-body">
+          <div id="randowhale-panel" class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
+            </div>
+            <div class="panel-body">
               <div id="rw_bot_error" style="display: none;" class="alert alert-danger" role="alert">
-                  There was an error loading bot info. Please try again in a little bit.
+                There was an error loading bot info. Please try again in a little bit.
               </div>
 
               <div>
-                <div style="float:left;"><a href="https://steemit.com/@randowhale" target="_blank"><img src="https://steemitimages.com/u/randowhale/avatar"/></a></div>
+                <div style="float:left;"><a href="https://steemit.com/@randowhale" target="_blank"><img src="https://steemitimages.com/u/randowhale/avatar" /></a></div>
                 <div style="padding-top: 40px;">
                   <div style="font-size: 2em; text-align: center;" id="randowhale-desc"></div>
                 </div>
               </div>
 
-            <div style="margin: 20px 0; text-align: center;">
-              <button type="button" class="btn btn-warning btn-lg" id="randowhale-submit">Promote your post with @randowhale now!</button>
-            </div>
+              <div style="margin: 20px 0; text-align: center;">
+                <button type="button" class="btn btn-warning btn-lg" id="randowhale-submit">Promote your post with @randowhale now!</button>
+              </div>
 
-            <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
-              <dt>Status:</dt>
-              <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
+              <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
+                <dt>Status:</dt>
+                <dd><span id="randowhale-status" class="label label-default">Sleeping</span></dd>
 
                 <dt>Fee:</dt>
                 <dd><span id="randowhale-fee">Loading...</span></dd>
                 <dt>Vote Value:</dt>
-              <dd><span id="randowhale-vote">Loading...</span></dd>
-              <dt>Max Post Age:</dt>
-              <dd>3.5 Days</dd>
-              <dt>Comment Voting:</dt>
-              <dd>Disabled</dd>
-              <dt>Voting Power:</dt>
-              <dd>
-                <div class="progress flat" id="randowhale-progress" style="margin-top: 7px;">
-                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                    Loading...
+                <dd><span id="randowhale-vote">Loading...</span></dd>
+                <dt>Max Post Age:</dt>
+                <dd>3.5 Days</dd>
+                <dt>Comment Voting:</dt>
+                <dd>Disabled</dd>
+                <dt>Voting Power:</dt>
+                <dd>
+                  <div class="progress flat" id="randowhale-progress" style="margin-top: 7px;">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                      Loading...
+                    </div>
+                  </div>
+                </dd>
+              </dl>
+
+              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#rw-howto" aria-expanded="true" aria-controls="collapseOne">
+                        How To Use
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="rw-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                      <ul>
+                        <li>Check the Status to see if <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> is sleeping or awake.</li>
+                        <li>Send <strong>EXACTLY</strong> the Fee amount specified to <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> with your post URL as the memo.</li>
+                        <li>You will receive an upvote worth the Vote Value shown below - sometimes you can randomly receive a larger vote as a surprise! I once received a $10 upvote for $0.5 SBD!</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </dd>
-            </dl>
-
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingOne">
-                        <h4 class="panel-title">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#rw-howto" aria-expanded="true" aria-controls="collapseOne">
-                                How To Use
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="rw-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                        <div class="panel-body">
-                            <ul>
-                                <li>Check the Status to see if <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> is sleeping or awake.</li>
-                                <li>Send <strong>EXACTLY</strong> the Fee amount specified to <a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a> with your post URL as the memo.</li>
-                                <li>You will receive an upvote worth the Vote Value shown below - sometimes you can randomly receive a larger vote as a surprise! I once received a $10 upvote for $0.5 SBD!</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel panel-success">
-          <div class="panel-heading">
-            <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@smartsteem">@smartmarket</a></h3>
-          </div>
-          <div class="panel-body">
-            <div id="ss_bot_error" style="display: none;" class="alert alert-danger" role="alert">
-              There was an error loading bot info. Please try again in a little bit.
-            </div>
-
-            <div>
-              <div style="float:left;"><a href="https://smartsteem.com" target="_blank"><img src="https://steemitimages.com/u/smartsteem/avatar" /></a></div>
-              <div style="padding-top: 40px;">
-                <div style="font-size: 2em;" id="smartsteem-desc"></div>
               </div>
             </div>
+          </div>
 
-            <div style="margin: 20px 0; text-align: center;">
-              <button type="button" class="btn btn-warning btn-lg" id="smartsteem-submit">Promote your post with @smartmarket now!</button>
+          <div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@smartsteem">@smartmarket</a></h3>
             </div>
+            <div class="panel-body">
+              <div id="ss_bot_error" style="display: none;" class="alert alert-danger" role="alert">
+                There was an error loading bot info. Please try again in a little bit.
+              </div>
 
-            <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
-              <dt>Profit:</dt>
-              <dd><span id="smartsteem-profit">Loading...</span></dd>
-              <dt>Payment:</dt>
-              <dd><span id="smartsteem-payment">Loading...</span></dd>
-              <dt>Daily Limit:</dt>
-              <dd><span id="smartsteem-daily">Loading...</span></dd>
-              <dt>Weekly Limit:</dt>
-              <dd><span id="smartsteem-weekly">Loading...</span></dd>
-              <dt>Vote Value:</dt>
-              <dd><span id="smartsteem-vote">Loading...</span></dd>
-              <dt>Voting Power:</dt>
-              <dd>
-                <div class="progress flat" id="smartsteem-progress">
-                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                    Loading...
+              <div>
+                <div style="float:left;"><a href="https://smartsteem.com" target="_blank"><img src="https://steemitimages.com/u/smartsteem/avatar" /></a></div>
+                <div style="padding-top: 40px;">
+                  <div style="font-size: 2em;" id="smartsteem-desc"></div>
+                </div>
+              </div>
+
+              <div style="margin: 20px 0; text-align: center;">
+                <button type="button" class="btn btn-warning btn-lg" id="smartsteem-submit">Promote your post with @smartmarket now!</button>
+              </div>
+
+              <dl class="dl-horizontal" style="font-size: 1.3em; clear: both;">
+                <dt>Profit:</dt>
+                <dd><span id="smartsteem-profit">Loading...</span></dd>
+                <dt>Payment:</dt>
+                <dd><span id="smartsteem-payment">Loading...</span></dd>
+                <dt>Daily Limit:</dt>
+                <dd><span id="smartsteem-daily">Loading...</span></dd>
+                <dt>Weekly Limit:</dt>
+                <dd><span id="smartsteem-weekly">Loading...</span></dd>
+                <dt>Vote Value:</dt>
+                <dd><span id="smartsteem-vote">Loading...</span></dd>
+                <dt>Voting Power:</dt>
+                <dd>
+                  <div class="progress flat" id="smartsteem-progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                      Loading...
+                    </div>
                   </div>
-                </div>
-              </dd>
+                </dd>
 
-              <dt>Additional Features:</dt>
-              <dd><span id="smartsteem-features">Loading...</span></dd>
-            </dl>
+                <dt>Additional Features:</dt>
+                <dd><span id="smartsteem-features">Loading...</span></dd>
+              </dl>
 
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingOne">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#ss-howto" aria-expanded="true" aria-controls="collapseOne">
-                      <i class="l-arrows-question mr10"></i>How To Use
-                    </a>
-                  </h4>
-                </div>
-                <div id="ss-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                  <div class="panel-body">
-                    <ul id="smartsteem-howto"></ul>
+              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#ss-howto" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="l-arrows-question mr10"></i>How To Use
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="ss-howto" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                      <ul id="smartsteem-howto"></ul>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -599,209 +617,207 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="panel panel-info">
-      <!-- Default panel contents -->
-      <div class="panel-heading"><h4 class="panel-title"><a name="free"></a><i class="fa fa-android mr10"></i>Other Bots</h4></div>
-      <div class="panel-body">
+      <div class="panel panel-info">
+        <!-- Default panel contents -->
+        <div class="panel-heading"><h4 class="panel-title"><a name="free"></a><i class="fa fa-android mr10"></i>Other Bots</h4></div>
+        <div class="panel-body">
           <div id="other_bot_error" style="display: none;" class="alert alert-danger" role="alert">
-              There was an error loading bot info. Please try again in a little bit.
+            There was an error loading bot info. Please try again in a little bit.
           </div>
 
           <div class="table-responsive">
 
             <table id="other_table" class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Bot Name</th>
-                        <th>Vote Value</th>
-                        <th>Description</th>
-                        <th>Website</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
+              <thead>
+                <tr>
+                  <th>Bot Name</th>
+                  <th>Vote Value</th>
+                  <th>Description</th>
+                  <th>Website</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
             </table>
           </div>
+        </div>
       </div>
-    </div>
 
       <div class="modal fade modal-style2 modal-center" id="bid_details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                      <h4 class="modal-title" id="myModalLabel">@<span id="bid_details_bot"></span> Bidding Round Details</h4>
-                  </div>
-                  <div class="modal-body">
-                      <div class="tabs">
-                        <ul class="nav nav-tabs">
-                          <li role="presentation" class="active"><a id="cur_round_show" href="javascript:void(0);">Current Round</a></li>
-                          <li role="presentation"><a id="last_round_show" href="javascript:void(0);">Last Round</a></li>
-                        </ul>
-                      </div>
-
-                      <div id="cur_round">
-                        <dl class="dl-horizontal" style="margin: 10px 0;">
-                            <dt>Total Vote Value:</dt>
-                            <dd><span id="cur_round_vote"></span></dd>
-                            <dt>Total Bids:</dt>
-                            <dd><span id="cur_round_bids"></span></dd>
-                            <dt>Total Bid Value:</dt>
-                            <dd><span id="cur_round_value"></span></dd>
-                            <dt>Current ROI:</dt>
-                            <dd><span id="cur_round_roi"></span></dd>
-                        </dl>
-
-                        <div class="table-responsive">
-                          <table id="bid_details_table_cur" class="table table-striped table-responsive">
-                            <thead>
-                                <tr>
-                                    <th>Sender</th>
-                                    <th style="text-align: right;">Bid</th>
-                                    <th style="text-align: right;">Bid Value (USD)</th>
-                                    <th style="text-align: right;">Vote %</th>
-                                    <th style="text-align: right;">Vote Value</th>
-                                    <th>Memo</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                          </table>
-                        </div>
-
-                      </div>
-
-                      <div id="last_round" style="display: none;">
-                          <dl class="dl-horizontal" style="margin: 10px 0;">
-                              <dt>Total Vote Value:</dt>
-                              <dd><span id="last_round_vote"></span></dd>
-                              <dt>Total Bids:</dt>
-                              <dd><span id="last_round_bids"></span></dd>
-                              <dt>Total Bid Value:</dt>
-                              <dd><span id="last_round_value"></span></dd>
-                              <dt>ROI:</dt>
-                              <dd><span id="last_round_roi"></span></dd>
-                          </dl>
-
-                          <div class="table-responsive">
-                            <table id="bid_details_table_last" class="table table-striped">
-                              <thead>
-                                  <tr>
-                                      <th>Sender</th>
-                                      <th style="text-align: right;">Bid</th>
-                                      <th style="text-align: right;">Bid Value (USD)</th>
-                                      <th style="text-align: right;">Vote %</th>
-                                      <th style="text-align: right;">Vote Value</th>
-                                      <th>Memo</th>
-                                  </tr>
-                              </thead>
-                              <tbody></tbody>
-                            </table>
-                          </div>
-
-                      </div>
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">@<span id="bid_details_bot"></span> Bidding Round Details</h4>
+            </div>
+            <div class="modal-body">
+              <div class="tabs">
+                <ul class="nav nav-tabs">
+                  <li role="presentation" class="active"><a id="cur_round_show" href="javascript:void(0);">Current Round</a></li>
+                  <li role="presentation"><a id="last_round_show" href="javascript:void(0);">Last Round</a></li>
+                </ul>
               </div>
+
+              <div id="cur_round">
+                <dl class="dl-horizontal" style="margin: 10px 0;">
+                  <dt>Total Vote Value:</dt>
+                  <dd><span id="cur_round_vote"></span></dd>
+                  <dt>Total Bids:</dt>
+                  <dd><span id="cur_round_bids"></span></dd>
+                  <dt>Total Bid Value:</dt>
+                  <dd><span id="cur_round_value"></span></dd>
+                  <dt>Current ROI:</dt>
+                  <dd><span id="cur_round_roi"></span></dd>
+                </dl>
+
+                <div class="table-responsive">
+                  <table id="bid_details_table_cur" class="table table-striped table-responsive">
+                    <thead>
+                      <tr>
+                        <th>Sender</th>
+                        <th style="text-align: right;">Bid</th>
+                        <th style="text-align: right;">Bid Value (USD)</th>
+                        <th style="text-align: right;">Vote %</th>
+                        <th style="text-align: right;">Vote Value</th>
+                        <th>Memo</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+
+              </div>
+
+              <div id="last_round" style="display: none;">
+                <dl class="dl-horizontal" style="margin: 10px 0;">
+                  <dt>Total Vote Value:</dt>
+                  <dd><span id="last_round_vote"></span></dd>
+                  <dt>Total Bids:</dt>
+                  <dd><span id="last_round_bids"></span></dd>
+                  <dt>Total Bid Value:</dt>
+                  <dd><span id="last_round_value"></span></dd>
+                  <dt>ROI:</dt>
+                  <dd><span id="last_round_roi"></span></dd>
+                </dl>
+
+                <div class="table-responsive">
+                  <table id="bid_details_table_last" class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Sender</th>
+                        <th style="text-align: right;">Bid</th>
+                        <th style="text-align: right;">Bid Value (USD)</th>
+                        <th style="text-align: right;">Vote %</th>
+                        <th style="text-align: right;">Vote Value</th>
+                        <th>Memo</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
           </div>
+        </div>
       </div>
 
-    <div class="modal fade modal-style2 modal-center" id="disclaimer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" id="myModalLabel" style="text-align: center;">NOTICE - PLEASE READ!</h4>
+      <div class="modal fade modal-style2 modal-center" id="disclaimer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel" style="text-align: center;">NOTICE - PLEASE READ!</h4>
+            </div>
+            <div class="modal-body" style="text-align: center; font-size: 1.4em;">
+              <ol>
+                <li>Vote values shown on this site are ESTIMATES based on the available information at the current time.<br /><br /></li>
+                <li>For bid-based voting bots, bids often come in right before the round ends which affect the payouts.<br /><br /></li>
+                <li>Please make sure you understand how the bots work and that any payouts estimated here are not guaranteed!</li>
+              </ol>
+            </div>
+            <div class="modal-footer" style="text-align: center;">
+              <button type="button" class="btn btn-default" data-dismiss="modal" style="font-size: 18px;">I Understand</button>
+            </div>
           </div>
-          <div class="modal-body" style="text-align: center; font-size: 1.4em;">
-            <ol>
-              <li>Vote values shown on this site are ESTIMATES based on the available information at the current time.<br/><br/></li>
-              <li>For bid-based voting bots, bids often come in right before the round ends which affect the payouts.<br /><br /></li>
-              <li>Please make sure you understand how the bots work and that any payouts estimated here are not guaranteed!</li>
-            </ol>
-          </div>
-          <div class="modal-footer" style="text-align: center;">
-            <button type="button" class="btn btn-default" data-dismiss="modal" style="font-size: 18px;">I Understand</button>
+        </div>
+      </div>
+
+      <div class="modal fade modal-style2 modal-center" id="bid_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel" style="text-align: center;">Send a bid to @<span id="bid_dialog_bot_name"></span>!</h4>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+              <iframe id="bid_dialog_frame" frameborder="0" src="" style="border: none; width: 95%;" height="560"></iframe>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="modal fade modal-style2 modal-center" id="bid_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade modal-style2 modal-center" id="bid_details_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel" style="text-align: center;">Send a bid to @<span id="bid_dialog_bot_name"></span>!</h4>
+            <h4 class="modal-title" id="myModalLabel" style="text-align: center;">Send a bid to @<span id="bid_details_dialog_bot_name"></span>!</h4>
           </div>
-          <div class="modal-body" style="text-align: center;">
-            <iframe id="bid_dialog_frame" frameborder="0" src="" style="border: none; width: 95%;" height="560"></iframe>
+          <div class="modal-body" style="margin: 20px 50px;">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label for="bid_details_account_name">Your Steem Account Name</label>
+                <div class="input-group">
+                  <span class="input-group-addon">@</span>
+                  <input type="text" class="form-control" id="bid_details_account_name" placeholder="Account Name">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="bid_details_bid_amount">Bid Amount</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="bid_details_bid_amount" placeholder="0.5" value="0.5" style="display: inline; width: 75px;">
+                  <select id="bid_details_bid_currency" class="form-control" style="display: inline; width: 100px; margin-left: 5px;">
+                    <option value="SBD">SBD</option>
+                    <option value="STEEM">STEEM</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="bid_details_post_url">Your post URL</label>
+                <input type="url" class="form-control" id="bid_details_post_url" placeholder="Post URL">
+              </div>
+
+              <div class="form-group">
+                <label for="bid_details_post_url">Your Recent Posts</label>
+                <span id="bid_details_recent_posts">None Found</span>
+              </div>
+
+              <div class="alert alert-danger" id="bid_details_error"></div>
+
+              <div class="form-group" style="text-align: center;">
+                <button id="bid_details_btn_submit" class="btn btn-default">Check and Submit!</button>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade modal-style2 modal-center" id="bid_details_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel" style="text-align: center;">Send a bid to @<span id="bid_details_dialog_bot_name"></span>!</h4>
-        </div>
-        <div class="modal-body" style="margin: 20px 50px;">
-          <div class="form-horizontal">
-            <div class="form-group">
-              <label for="bid_details_account_name">Your Steem Account Name</label>
-              <div class="input-group">
-                <span class="input-group-addon">@</span>
-                <input type="text" class="form-control" id="bid_details_account_name" placeholder="Account Name">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="bid_details_bid_amount">Bid Amount</label>
-              <div class="input-group">
-                <input type="text" class="form-control" id="bid_details_bid_amount" placeholder="0.5" value="0.5" style="display: inline; width: 75px;">
-                <select id="bid_details_bid_currency" class="form-control" style="display: inline; width: 100px; margin-left: 5px;">
-                  <option value="SBD">SBD</option>
-                  <option value="STEEM">STEEM</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="bid_details_post_url">Your post URL</label>
-              <input type="url" class="form-control" id="bid_details_post_url" placeholder="Post URL">
-            </div>
-
-            <div class="form-group">
-              <label for="bid_details_post_url">Your Recent Posts</label>
-              <span id="bid_details_recent_posts">None Found</span>
-            </div>
-
-            <div class="alert alert-danger" id="bid_details_error"></div>
-
-            <div class="form-group" style="text-align: center;">
-              <button id="bid_details_btn_submit" class="btn btn-default">Check and Submit!</button>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="footer" class="clearfix white-bg"><!-- Start #footer  -->
-    <p class="pull-left">
-      Copyright &copy; 2017 <a href="http://www.steemit.com/@yabapmatt" class="color-blue strong" target="_blank">Yabapmatt</a>. All rights reserved.
-    </p>
-    <p class="pull-right">
-      Bootstrap theme by <a href="http://www.steemit.com/@suggeelson" class="color-blue strong" target="_blank">SuggeElson</a>
-    </p>
-  </div><!-- End #footer  -->
+    <div id="footer" class="clearfix white-bg">
+      <!-- Start #footer  -->
+      <p class="pull-left">
+        Copyright &copy; 2017 <a href="http://www.steemit.com/@yabapmatt" class="color-blue strong" target="_blank">Yabapmatt</a>. All rights reserved.
+      </p>
+      <p class="pull-right">
+        Bootstrap theme by <a href="http://www.steemit.com/@suggeelson" class="color-blue strong" target="_blank">SuggeElson</a>
+      </p>
+    </div><!-- End #footer  -->
 </body>
 </html>
