@@ -170,7 +170,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['resteemable', 'fresteem', 'red-rose', 'microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['siditech', 'earthnation-bot', 'resteemr', 'ebargains', 'photocontests', 'steemlike', 'resteemable', 'fresteem', 'red-rose', 'microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
           try {
             result.sort(function (a, b) { return getVoteValue(100, b) - getVoteValue(100, a); });
 
@@ -952,7 +952,7 @@ $(function () {
 
               if (num_loaded >= bids.length) {
                 console.log(bids);
-                populateUserBids(bids);                
+                populateUserBids(bids);
               }
             });
           } else if (op[0] == 'transfer' && bot_names.indexOf(op[1].from) >= 0) {
@@ -970,7 +970,7 @@ $(function () {
       var permLink = bid.memo.substr(bid.memo.lastIndexOf('/') + 1);
       var author = bid.memo.substring(bid.memo.lastIndexOf('@') + 1, bid.memo.lastIndexOf('/'));
 
-      steem.api.getContent(author, permLink, function (err, result) {        
+      steem.api.getContent(author, permLink, function (err, result) {
 
         if (!err && result && result.id > 0) {
           var vote = result.active_votes.find(function (v) { return v.voter == bid.to });
@@ -1055,4 +1055,148 @@ $(function () {
         table.append(row);
       });
     }
+
+    function loadFrontRunnerPosts() {
+      var big_bots = bots.filter(function(b) { return b.vote >= 100; });
+      var posts = [];
+      var l = big_bots.length;
+
+      for (var i = 0; i < l; i++) {
+        var bot = big_bots[i];
+        var bids = bot.rounds[bot.rounds.length - 1].bids.filter(function(b) { return parseFloat(b.data.amount) >= 10; });
+
+        for (var j = 0; j < bids.length; j++) {
+          var bid = bids[j];
+          var post = posts.find(function(p) { return p.memo == bid.data.memo; });
+
+          var bid_value = getUsdValue(bid.data);
+          var vote_value = bot.vote * (bid_value / (bot.vote_usd * AUTHOR_REWARDS));
+
+          if (post) {
+            if(!post.currency)
+              post.currency = getCurrency(post.amount);
+
+            post.amount = parseFloat(post.amount) + parseFloat(bid.data.amount);
+            post.bots.push(bot.name);
+            post.vote_value += vote_value;
+          } else {
+            bid.data.bots = [bot.name];
+            bid.data.vote_value = vote_value;
+            posts.push(bid.data);
+          }
+        }
+      }
+
+      var num_loaded = 0;
+      posts.forEach(function (post) {
+        var permLink = post.memo.substr(post.memo.lastIndexOf('/') + 1);
+        var author = post.memo.substring(post.memo.lastIndexOf('@') + 1, post.memo.lastIndexOf('/'));
+
+        steem.api.getContent(author, permLink, function (err, result) {
+          if (!err && result && result.id > 0) {
+            post.created = new Date(result.created + 'Z');
+            post.payout = parseFloat(result.pending_payout_value);
+            post.title = result.title;
+            post.author = result.author;
+            post.permlink = result.permlink;
+            post.curation_reward = (Math.sqrt((post.payout + 1) * 0.25) - Math.sqrt(post.payout * 0.25)) * Math.sqrt((post.payout + 1 + post.vote_value) * 0.25);
+
+            if(user) {
+              post.voted = (result.active_votes.find(function(v) { return v.voter == user.name; }) != null);
+            }
+          }
+
+          num_loaded++;
+
+          if(num_loaded >= posts.length) {
+            posts.sort(function (a, b) { return parseFloat(b.curation_reward) - parseFloat(a.curation_reward) });
+            populateFrontRunnerPosts(posts);
+          }
+        });
+      });
+    }
+
+    function populateFrontRunnerPosts(posts) {
+      var table = $('#front_runner_table tbody');
+      table.empty();
+
+      posts.forEach(function (post) {
+        if (!post.title)
+          return;
+
+        var row = $(document.createElement('tr'));
+
+        var td = $(document.createElement('td'));
+        var link = $(document.createElement('a'));
+        link.attr('href', 'https://steemit.com/@' + post.author);
+        link.attr('target', '_blank');
+        link.text('@' + post.author);
+        td.append(link);
+        row.append(td);
+
+        var td = $(document.createElement('td'));
+        var link = $(document.createElement('a'));
+        link.attr('href', post.memo);
+        link.attr('target', '_blank');
+        link.text(post.title.length > 40 ? post.title.substr(0, 40) + '...' : post.title);
+        td.append(link);
+        row.append(td);
+
+        var td = $(document.createElement('td'));
+        td.text('$' + post.payout.formatMoney());
+        td.css('text-align', 'right');
+        row.append(td);
+
+        var td = $(document.createElement('td'));
+        td.text('$' + parseFloat(post.amount).formatMoney());
+        td.css('text-align', 'right');
+        row.append(td);
+
+        var td = $(document.createElement('td'));
+        td.text('$' + post.vote_value.formatMoney());
+        td.css('text-align', 'right');
+        row.append(td);
+
+        var td = $(document.createElement('td'));
+        td.text(((post.curation_reward - 1) * 100).formatMoney() + '%');
+        td.css('text-align', 'right');
+        row.append(td);
+
+        td = $(document.createElement('td'));
+        if(post.voted) {
+          td.text('Voted');
+        } else {
+          var link = $('<button type="button" class="btn btn-info btn-xs"><i class="fa fa-thumbs-up mr5"></i>Upvote</button>');
+          link.click(function (e) {
+            if(!user)
+              window.location.href=sc2.getLoginURL();
+            else {
+              td.empty();
+              td.text('Voting...');
+              sc2.vote(user.name, post.author, post.permlink, 10000, function(err, result) {
+                console.log(err, result);
+
+                if(result && !err) {
+                  td.text('Success!');
+                } else {
+                  td.empty();
+                  td.append(link);
+                }
+              });
+            }
+          });
+          td.append(link);
+        }
+
+        td.css('text-align', 'center');
+        row.append(td);
+
+        table.append(row);
+      });
+    }
+
+    $('#btn_front_run').click(function() {
+      loadFrontRunnerPosts();
+      $('#front_runner_dialog').modal();
+    });
 });

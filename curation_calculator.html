@@ -35,6 +35,7 @@
 
     <script type="text/javascript">
         steem.api.setOptions({ url: 'https://api.steemit.com' });
+        updateSteemVariables();
     </script>
 
      <!-- Dynamic admin theme -->
@@ -126,13 +127,10 @@
 
     </div>
 
-    <div class="alert alert-info">
-      <h4>
-        <marquee>
-          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-          Help support me and my development efforts by voting for me for Steem witness! Go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and enter "yabapmatt" in the vote box at the bottom of the page. Thank you!
-        </marquee>
-      </h4>
+    <div class="bs-callout bs-callout-info fade in">
+      <h4>Vote for Witness!</h4>
+      <p>Help support me and the bot tracker by voting for @yabapmatt for Steem witness! To vote, click the button below or go to <a href="https://steemit.com/~witnesses" target="_blank">https://steemit.com/~witnesses</a> and find @yabapmatt in the list and click the upvote icon. Thank you!</p>
+      <button class="btn btn-success btn-lg" onclick="window.open('https://v2.steemconnect.com/sign/account-witness-vote?witness=yabapmatt&approve=1');">Vote for @yabapmatt!</button>
     </div>
 
     <div id="result" class="well white-bg" style="display: none;"><a name="result"></a>
