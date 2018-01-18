@@ -71,6 +71,7 @@ var n = this,
  var votePowerReserveRate;
  var totalVestingFund;
  var totalVestingShares;
+ var steem_per_mvests;
  function updateSteemVariables() {
      steem.api.getRewardFund("post", function (e, t) {
          rewardBalance = parseFloat(t.reward_balance.replace(" STEEM", ""));
@@ -83,6 +84,10 @@ var n = this,
          votePowerReserveRate = t.vote_power_reserve_rate;
          totalVestingFund = parseFloat(t.total_vesting_fund_steem.replace(" STEEM", ""));
          totalVestingShares = parseFloat(t.total_vesting_shares.replace(" VESTS", ""));
+
+         var tVFS = t.total_vesting_fund_steem.replace(' STEEM', '');
+         var tVS = t.total_vesting_shares.replace(' VESTS', '');
+         steem_per_mvests = ((tVFS / tVS) * 1000000);
      });
 
      setTimeout(updateSteemVariables, 180 * 1000)

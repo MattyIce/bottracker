@@ -170,7 +170,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['siditech', 'earthnation-bot', 'resteemr', 'ebargains', 'photocontests', 'steemlike', 'resteemable', 'fresteem', 'red-rose', 'microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(['earnmoresteem', 'shares', 'siditech', 'earthnation-bot', 'resteemr', 'ebargains', 'photocontests', 'steemlike', 'resteemable', 'fresteem', 'red-rose', 'microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
           try {
             result.sort(function (a, b) { return getVoteValue(100, b) - getVoteValue(100, a); });
 
