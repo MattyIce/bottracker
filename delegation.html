@@ -188,13 +188,13 @@
                     </div>
                     <div class="col-lg-8 col-md-6">
                       (<span id="max_delegation_amount"></span> SP Available)&nbsp;&nbsp;
-                      <button class="btn btn-default" onclick="return delegateMax();">Delegate Max</button>
+                      <button class="btn btn-info" onclick="return delegateMax();">Delegate Max</button>
                     </div>
                   </div>
 
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                      <button id="btn_submit" class="btn btn-default" onclick="delegate($('#delegator').val(), $('#delegatee').val(), $('#amount').val()); return false;">Delegate!</button>
+                      <button id="btn_submit" class="btn btn-success" onclick="delegate($('#delegator').val(), $('#delegatee').val(), $('#amount').val()); return false;">Delegate!</button>
                     </div>
                   </div>
                 </div>
@@ -374,6 +374,7 @@
 
       if(getURLParameter('delegator')){
         $('#delegator').val(getURLParameter('delegator'));
+
         checkAccount('delegator', function() {
           if(getURLParameter('delegatee')){
             $('#delegatee').val(getURLParameter('delegatee'));
@@ -383,6 +384,14 @@
                 $('#amount').val((parseFloat(getURLParameter('amount')) + existing_sp).formatMoney(3));
               }
             });
+          }
+        });
+      } else if(getURLParameter('delegatee')) {
+        $('#delegatee').val(getURLParameter('delegatee'));
+        checkAccount('delegatee', function() {
+          if(getURLParameter('amount')){
+            var existing_sp = (existing_delegation ? parseFloat(existing_delegation.vesting_shares) / 1000000 * steem_per_mvests : 0);
+            $('#amount').val((parseFloat(getURLParameter('amount')) + existing_sp).formatMoney(3));
           }
         });
       }
