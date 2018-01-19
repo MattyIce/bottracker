@@ -243,7 +243,7 @@
       });
     }
 
-    function checkAccount(id) {
+    function checkAccount(id, callback) {
       loadAccount($('#' + id).val(), function (account) {
         var ok = $('#' + id + '_ok');
         var bad = $('#' + id + '_bad');
@@ -255,7 +255,7 @@
 
           if(id == 'delegator') {
             delegator = account;
-            loadDelegations($('#delegator').val());
+            loadDelegations($('#delegator').val(), callback);
             $('#details').show();
             delegator.available_sp = Math.max((parseFloat(account.vesting_shares) - parseFloat(account.delegated_vesting_shares)) / 1000000 * steem_per_mvests - 6, 0);
             $('#max_delegation_amount').text(delegator.available_sp.formatMoney(3));
@@ -265,20 +265,24 @@
             if(existing_delegation) {
               $('#amount').val((parseFloat(existing_delegation.vesting_shares) / 1000000 * steem_per_mvests).formatMoney(3));
             }
+
+            if(callback) {
+              callback();
+            }
           }
         } else
           bad.show();
-
-        if(id == 'delegator')
-          delegator = account;
       });
     }
 
-    function loadDelegations(account) {
+    function loadDelegations(account, callback) {
       steem.api.getVestingDelegations(account, -1, 100, function(err, result) {
         delegations = result;
         result.sort(function(a, b) { return parseFloat(b.vesting_shares) - parseFloat(a.vesting_shares); });
         populateDelegations(result);
+
+        if(callback)
+          callback();
       });
     }
 
@@ -367,6 +371,21 @@
         localStorage.removeItem('access_token');
         window.location.href = window.location.pathname;
       });
+
+      if(getURLParameter('delegator')){
+        $('#delegator').val(getURLParameter('delegator'));
+        checkAccount('delegator', function() {
+          if(getURLParameter('delegatee')){
+            $('#delegatee').val(getURLParameter('delegatee'));
+            checkAccount('delegatee', function() {
+              if(getURLParameter('amount')){
+                var existing_sp = (existing_delegation ? parseFloat(existing_delegation.vesting_shares) / 1000000 * steem_per_mvests : 0);
+                $('#amount').val((parseFloat(getURLParameter('amount')) + existing_sp).formatMoney(3));
+              }
+            });
+          }
+        });
+      }
     });
   </script>
 </body>
