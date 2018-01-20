@@ -34,14 +34,16 @@ $(function () {
       { name: 'yourwhale', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
       { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
       { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'sleeplesswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false },
+      //{ name: 'sleeplesswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false },
       { name: 'minnowvotes', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
       { name: 'steembloggers', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true },
       { name: 'adriatik', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
       { name: 'ipromote', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.5, refunds: true, max_post_age: 5 },
       { name: 'seakraken', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.5, refunds: true, max_post_age: 6 },
       { name: 'voterunner', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.5, refunds: true, max_post_age: 6 },
-      { name: 'bid4joy', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 3.5 }
+      { name: 'bid4joy', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 3.5 },
+      { name: 'getboost', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false, max_post_age: 6.3 },
+      { name: 'naod.bot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 3.5 }
       /*{ name: 'khoa', interval: 2.4 },
       { name: 'polsza', interval: 2.4 },
       { name: 'drotto', interval: 2.4 }*/
