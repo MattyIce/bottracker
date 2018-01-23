@@ -3,57 +3,20 @@ $(function () {
     var AUTHOR_REWARDS = 0.75;
     var MIN_VOTE = 0;
     var CURRENCY = 'USD';
-
-    var bots = [
-      { name: 'booster', interval: 1.2, accepts_steem: true, comments: true, max_post_age: 5.5, pre_vote_group_url: 'https://steemit.com/@frontrunner', min_bid: 0.1 },
-      { name: 'buildawhale', interval: 2.4, accepts_steem: false, comments: true, max_post_age: 6.33, pre_vote_group_url: 'https://steemit.com/buildawhale/@buildawhale/announcing-the-buildawhale-prevote-club', min_bid: 1 },
-      { name: 'boomerang', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      { name: 'minnowhelper', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1 },
-      { name: 'discordia', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      { name: 'lovejuice', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      { name: 'sneaky-ninja', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05, max_post_age: 6 },
-      //{ name: 'voter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      { name: 'appreciator', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05, max_post_age: 6 },
-      { name: 'pushup', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05, max_post_age: 6 },
-      { name: 'aksdwi', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, max_bid: 5 },
-      { name: 'msp-bidbot', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, max_post_age: 6 },
-      { name: 'kittybot', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.05 },
-      { name: 'upmyvote', interval: 2.4, accepts_steem: false, comments: false, min_bid: 1, max_post_age: 6.33 },
-      { name: 'upme', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'postpromoter', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'mrswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, min_bid_steem: 0.5, is_disabled: true },
-      { name: 'hellowhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
-      { name: 'moneymatchgaming', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.05 },
-      { name: 'votebuster', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.01, max_post_age: 6 },
-      { name: 'levitation', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1 },
-      { name: 'upgoater', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'allaz', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'jerrybanfield', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'smartsteem', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'upyou', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'yourwhale', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'mercurybot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'upmewhale', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      //{ name: 'sleeplesswhale', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false },
-      { name: 'minnowvotes', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true },
-      { name: 'steembloggers', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true },
-      { name: 'adriatik', interval: 2.4, accepts_steem: true, comments: true, min_bid: 0.1, refunds: true, max_post_age: 6 },
-      { name: 'ipromote', interval: 2.4, accepts_steem: false, comments: true, min_bid: 0.5, refunds: true, max_post_age: 5 },
-      { name: 'seakraken', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.5, refunds: true, max_post_age: 6 },
-      { name: 'voterunner', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.5, refunds: true, max_post_age: 6 },
-      { name: 'bid4joy', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 3.5 },
-      { name: 'getboost', interval: 2.4, accepts_steem: false, comments: false, min_bid: 0.1, refunds: false, max_post_age: 6.3 },
-      { name: 'nado.bot', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 3.5 },
-      { name: 'shares', interval: 2.4, accepts_steem: true, comments: false, min_bid: 0.1, refunds: true, max_post_age: 3.5 }
-      /*{ name: 'khoa', interval: 2.4 },
-      { name: 'polsza', interval: 2.4 },
-      { name: 'drotto', interval: 2.4 }*/
-    ];
+    var bots = [];
     var bot_names = [];
-    bots.forEach(function (bot) {
-      bot_names.push(bot.name);
-      $('#bot_list').append('<option value="' + bot.name + '">' + bot.name + '</option>');
+    var other_bots = [];
+
+    $.get('https://steembottracker.com/bidbots.json', function (data) {
+      bots = data;
+
+      bots.forEach(function (bot) {
+        bot_names.push(bot.name);
+        $('#bot_list').append('<option value="' + bot.name + '">' + bot.name + '</option>');
+      });
     });
+
+    $.get('https://steembottracker.com/otherbots.json', function (data) { other_bots = data; });
 
     try {
         if (Notification && Notification.permission !== "granted")
@@ -173,7 +136,7 @@ $(function () {
             }
         });
 
-        steem.api.getAccounts(['earnmoresteem', 'shares', 'siditech', 'earthnation-bot', 'resteemr', 'ebargains', 'photocontests', 'steemlike', 'resteemable', 'fresteem', 'red-rose', 'microbot', 'hottopic', 'bumper', 'echowhale', 'tipu', 'randofish', 'lays', 'thehumanbot', 'steemvote', 'upvotewhale', 'withsmn', 'minnowpond', 'resteembot', 'originalworks', 'treeplanter', 'followforupvotes', 'steemthat', 'frontrunner', 'steemvoter', 'morwhale', 'moonbot', 'drotto', 'blockgators', 'superbot'], function (err, result) {
+        steem.api.getAccounts(other_bots, function (err, result) {
           try {
             result.sort(function (a, b) { return getVoteValue(100, b) - getVoteValue(100, a); });
 
