@@ -14,7 +14,7 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="img/favicon3.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon_no_smile_32px-high.ico" type="image/x-icon">
     <meta property="og:title" content="Curation Reward Estimator">
     <meta property="og:description" content="Enter a Steem account name and a link to a post or comment to estimate the curation rewards that will be received!">
     <meta property="og:image" content="https://i.imgur.com/t0Gk94V.jpg">
@@ -31,6 +31,7 @@
     <script src="scripts/bootstrap-slider.min.js"></script>
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+    <script src="https://steemit.github.io/sc2-angular/sc2.min.js"></script>
     <script src="scripts/utils.js?v=5"></script>
 
     <script type="text/javascript">
@@ -47,41 +48,72 @@
 
 </head>
 <body>
-   <!-- .page-navbar -->
   <div id="header" class="page-navbar header-fixed">
-    <div class="container">
+    <nav class="navbar navbar-default" style="margin-bottom: 0;">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
 
-     <!-- .navbar-brand -->
-      <a href="bottracker.html" class="navbar-brand">
-         <img alt="Steem Post Promoter" src="img/logo.png" height="24" width="24">
-         Steem Bot Tracker
-      </a>
-      <!-- / navbar-brand -->
-
-      <nav class="nav navbar-nav">
-
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-
-        <!-- .no-collapse -->
-        <div id="navbar-no-collapse" class="navbar-no-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="bottracker.html#bid"><i class="l-basic-hammer mr10"></i> Bid-Based Voting Bots</a></li>
-            <li><a href="bottracker.html#paid"><i class="l-banknote mr10"></i> Paid Upvote Bots</a></li>
-            <li><a href="bottracker.html#free"><i class="fa fa-android mr10"></i> Other Bots</a></li>
-            <li><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
-            <li class="active"><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
-          </ul>
+          <a href="bottracker.html" class="navbar-brand">
+            <img alt="Steem Post Promoter" src="img/header_logo.png" height="44" style="margin-top: -10px;">
+          </a>
         </div>
 
-      </nav>
-    </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-android mr10"></i>
+                Voting Bots <span class="caret"></span>
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="bottracker.html#bid"><i class="l-basic-hammer mr10"></i> Bid-Based Voting Bots</a></li>
+                <li><a href="bottracker.html#paid"><i class="l-banknote mr10"></i> Promotion Services</a></li>
+                <li><a href="bottracker.html#free"><i class="fa fa-android mr10"></i> Other Bots</a></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-wrench mr10"></i>
+                Tools <span class="caret"></span>
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
+                <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
+                <li><a href="delegation.html"><i class="fa fa-retweet mr10"></i> Delegation Manager</a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown" id="user_info">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <span id="login_info"></span>
+                <span class="caret"></span>
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="#" id="btn_logout"><i class="fa fa-calculator mr10"></i> Log Out</a></li>
+              </ul>
+            </li>
+            <li id="btn_login">
+              <button type="button" class="btn btn-default navbar-btn" onclick="window.location.href=sc2.getLoginURL();">Log in</button>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
   </div>
-  <!-- / page-navbar -->
 
   <div class="container">
 
@@ -168,6 +200,7 @@
       Copyrights &copy; 2017 <a href="http://www.steemit.com/@yabapmatt" class="color-blue strong" target="_blank">Yabapmatt</a>. All rights reserved.
     </p>
     <p class="pull-right">
+      Logo by <a href="http://www.steemit.com/@creativista" class="color-blue strong" target="_blank">Creativista</a> | 
       Bootstrap theme by <a href="http://www.steemit.com/@suggeelson" class="color-blue strong" target="_blank">SuggeElson</a>
     </p>
   </div><!-- End #footer  -->
@@ -370,6 +403,26 @@
 
       $('#result').show();
     }
+
+    var user = null;
+    sc2.me(function (err, result) {
+      if (result && !err) {
+        console.log(result);
+        user = result.account;
+        $('#btn_login').hide();
+        $('#user_info').show();
+        $('#login_info').text('@' + user.name);
+        localStorage.setItem('access_token', token);
+      } else {
+        $('#btn_login').show();
+        $('#user_info').hide();
+      }
+    });
+
+    $('#btn_logout').click(function () {
+      localStorage.removeItem('access_token');
+      window.location.href = window.location.pathname;
+    });
   </script>
 </body>
 </html>
