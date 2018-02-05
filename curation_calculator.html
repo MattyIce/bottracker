@@ -407,6 +407,16 @@
       $('#result').show();
     }
 
+    // Initialize and try to log in with SteemConnect V2
+    var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
+    sc2.init({
+      baseURL: 'https://v2.steemconnect.com',
+      app: 'bottracker.app',
+      accessToken: token,
+      callbackURL: 'https://steembottracker.com/curation_calculator.html',
+      scope: ['login', 'vote']
+    });
+
     var user = null;
     sc2.me(function (err, result) {
       if (result && !err) {
@@ -425,16 +435,6 @@
     $('#btn_logout').click(function () {
       localStorage.removeItem('access_token');
       window.location.href = window.location.pathname;
-    });
-
-    // Initialize and try to log in with SteemConnect V2
-    var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
-    sc2.init({
-      baseURL: 'https://v2.steemconnect.com',
-      app: 'bottracker.app',
-      accessToken: token,
-      callbackURL: 'https://steembottracker.com',
-      scope: ['login', 'vote']
     });
   </script>
 </body>

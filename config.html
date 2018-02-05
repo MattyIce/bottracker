@@ -299,7 +299,7 @@
 
         var account = result[0];
         var json_metadata = (account.json_metadata && account.json_metadata != '') ? JSON.parse(account.json_metadata) : {};
-        
+
         json_metadata.config = {
           'min_bid_sbd': parseFloat($('#min_bid').val()),
           'min_bid_steem': parseFloat($('#min_bid_steem').val()),
@@ -336,36 +336,35 @@
       result.text(message);
     }
 
+    // Initialize and try to log in with SteemConnect V2
+    var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
+    sc2.init({
+      baseURL: 'https://v2.steemconnect.com',
+      app: 'bottracker.app',
+      accessToken: token,
+      callbackURL: 'https://steembottracker.com/config.html',
+      scope: ['login', 'vote']
+    });
 
-        var user = null;
-        sc2.me(function (err, result) {
-          if (result && !err) {
-            console.log(result);
-            user = result.account;
-            $('#btn_login').hide();
-            $('#user_info').show();
-            $('#login_info').text('@' + user.name);
-            localStorage.setItem('access_token', token);
-          } else {
-            $('#btn_login').show();
-            $('#user_info').hide();
-          }
-        });
+    var user = null;
+    sc2.me(function (err, result) {
+      if (result && !err) {
+        console.log(result);
+        user = result.account;
+        $('#btn_login').hide();
+        $('#user_info').show();
+        $('#login_info').text('@' + user.name);
+        localStorage.setItem('access_token', token);
+      } else {
+        $('#btn_login').show();
+        $('#user_info').hide();
+      }
+    });
 
-        $('#btn_logout').click(function () {
-          localStorage.removeItem('access_token');
-          window.location.href = window.location.pathname;
-        });
-
-        // Initialize and try to log in with SteemConnect V2
-        var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
-        sc2.init({
-          baseURL: 'https://v2.steemconnect.com',
-          app: 'bottracker.app',
-          accessToken: token,
-          callbackURL: 'https://steembottracker.com',
-          scope: ['login', 'vote']
-        });
+    $('#btn_logout').click(function () {
+      localStorage.removeItem('access_token');
+      window.location.href = window.location.pathname;
+    });
   </script>
 </body>
 </html>
