@@ -46,6 +46,9 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/custom.css">
 
+    <style type="text/css">
+      .slider.slider-horizontal { width: 80%; }
+    </style>
 </head>
 <body>
   <div id="header" class="page-navbar header-fixed">
@@ -178,7 +181,7 @@
         <dt>Expected Total Payout: <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Use this slider to see what the curation reward will be for different total payout amounts for the post."></span></dt>
         <dd>
           <div id="reward_slider_group" style="display: none;">
-            <div><b id="slider_min_payout"></b>&nbsp;&nbsp;&nbsp;<input id="post_total_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="100"/>&nbsp;&nbsp;&nbsp;<b id="slider_max_payout">$500</b></div>
+            <div><b id="slider_min_payout"></b>&nbsp;&nbsp;&nbsp;<input id="post_total_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="2000" data-slider-step="1" data-slider-value="100"/>&nbsp;&nbsp;&nbsp;<b id="slider_max_payout">$2,000</b></div>
           </div>
           <span id="total_payout"></span>
         </dd>
@@ -200,7 +203,7 @@
       Copyrights &copy; 2017 <a href="http://www.steemit.com/@yabapmatt" class="color-blue strong" target="_blank">Yabapmatt</a>. All rights reserved.
     </p>
     <p class="pull-right">
-      Logo by <a href="http://www.steemit.com/@creativista" class="color-blue strong" target="_blank">Creativista</a> | 
+      Logo by <a href="http://www.steemit.com/@creativista" class="color-blue strong" target="_blank">Creativista</a> |
       Bootstrap theme by <a href="http://www.steemit.com/@suggeelson" class="color-blue strong" target="_blank">SuggeElson</a>
     </p>
   </div><!-- End #footer  -->
@@ -422,6 +425,16 @@
     $('#btn_logout').click(function () {
       localStorage.removeItem('access_token');
       window.location.href = window.location.pathname;
+    });
+
+    // Initialize and try to log in with SteemConnect V2
+    var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
+    sc2.init({
+      baseURL: 'https://v2.steemconnect.com',
+      app: 'bottracker.app',
+      accessToken: token,
+      callbackURL: 'https://steembottracker.com',
+      scope: ['login', 'vote']
     });
   </script>
 </body>
