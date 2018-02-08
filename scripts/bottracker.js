@@ -203,6 +203,9 @@ $(function () {
                         if(config.pre_vote_group_url && config.pre_vote_group_url != '')
                           bot.pre_vote_group_url = config.pre_vote_group_url;
 
+                        if (config.funding_url && config.funding_url != '')
+                          bot.funding_url = config.funding_url;
+
                         if(config.accepts_steem != undefined)
                           bot.accepts_steem = config.accepts_steem;
 
@@ -233,6 +236,24 @@ $(function () {
                     bot.last = (new Date() - last_vote_time);
                     bot.next = timeTilFullPower(account) * 1000;
                     bot.vote_usd = bot.vote / 2 * sbd_price + bot.vote / 2;
+
+                    // Don't load bots that are filtered out
+                    if (bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.frontrunner && !bot.pre_vote_group_url) || (_filter.funding && !bot.funding_url))
+                      return;
+
+                    // Set the frequency of reload based on how close to the end of the round the bot is
+                    var frequency = 300;
+                    if (bot.next < 5 * 60 * 1000)
+                      frequency = 10;
+                    else if (bot.next < 20 * 60 * 1000)
+                      frequency = 30;
+
+                    // Check if the bot is ready to be refreshed based on the above defined frequency.
+                    if (new Date() - bot.last_update < frequency * 1000)
+                      return;
+
+                    // Note when the bot was last updated.
+                    bot.last_update = new Date();
 
                     if(bot.api_url) {
                       loadFromApi(bot);
@@ -306,7 +327,7 @@ $(function () {
             }
 
             setTimeout(showBotInfo, 5 * 1000);
-            setTimeout(loadBotInfo, 30 * 1000);
+            setTimeout(loadBotInfo, 10 * 1000);
         });
     }
 
@@ -422,7 +443,7 @@ $(function () {
           return;
 
         // Don't show bots that are filtered out
-        if ((_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.frontrunner && !bot.pre_vote_group_url))
+        if ((_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.frontrunner && !bot.pre_vote_group_url) || (_filter.funding && !bot.funding_url))
           return;
 
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
@@ -469,6 +490,11 @@ $(function () {
         if (bot.api_url) {
           var guarantee = $('<img src="img/verified.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot provides a bid API so the data shown here is guaranteed to be accurate!" />');
           td.append(guarantee);
+        }
+
+        if (bot.funding_url) {
+          var icon = $('<a href="' + bot.funding_url + '" target="_blank"><img src="img/funding.png" style="width: 20px; margin-left: 5px;" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot uses a portion of its earnings to fund other projects and initiatives - Click for Details"/></a>');
+          td.append(icon);
         }
 
         row.append(td);
@@ -856,6 +882,7 @@ $(function () {
     $('#filter_refund').click(function () { toggleFilter('refund'); });
     $('#filter_steem').click(function () { toggleFilter('steem'); });
     $('#filter_frontrunner').click(function () { toggleFilter('frontrunner'); });
+    $('#filter_funding').click(function () { toggleFilter('funding'); });
 
     var _filter = {};
     function toggleFilter(filter) {
