@@ -1062,6 +1062,10 @@ $(function () {
 
       for (var i = 0; i < l; i++) {
         var bot = big_bots[i];
+
+        if (!bot.rounds || bot.rounds.length == 0)
+          continue;
+
         var bids = bot.rounds[bot.rounds.length - 1].bids.filter(function(b) { return parseFloat(b.data.amount) >= 10; });
 
         for (var j = 0; j < bids.length; j++) {
