@@ -151,15 +151,13 @@
 
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="min_bid" >Minimum Bid SBD</label>
-              <div class="col-lg-10 col-md-9">
+              <div class="col-lg-2 col-md-2">
                 <input type="text" class="form-control input-mini" id="min_bid" placeholder="0.5" value="0.5">
                 <span class="help-block text-info">Minimum bid in SBD</span>
               </div>
-            </div>
 
-            <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="min_bid_steem" >Minimum Bid STEEM</label>
-              <div class="col-lg-10 col-md-9">
+              <div class="col-lg-3 col-md-3">
                 <input type="text" class="form-control input-mini" id="min_bid_steem" placeholder="0.5" value="0.5">
                 <span class="help-block text-info">Minimum bid in STEEM</span>
               </div>
@@ -167,9 +165,23 @@
 
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="max_post_age">Max Post Age</label>
-              <div class="col-lg-10 col-md-9">
+              <div class="col-lg-2 col-md-2">
                 <input type="text" class="form-control input-mini" id="max_post_age" placeholder="3.5" value="3.5">
                 <span class="help-block text-info">Maximum age of posts (in days)</span>
+              </div>
+
+              <label class="col-lg-2 col-md-3 control-label" for="min_post_age">Min Post Age</label>
+              <div class="col-lg-2 col-md-2">
+                <input type="text" class="form-control input-mini" id="min_post_age" placeholder="20" value="20">
+                <span class="help-block text-info">Minimum age of posts (in minutes)</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="fill_limit">Round Fill Limit</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="text" class="form-control input-mini" id="fill_limit" placeholder="1.1" value="1.1">
+                <span class="help-block text-info">Round Fill Limit (1 = 100%)</span>
               </div>
             </div>
 
@@ -213,6 +225,16 @@
               </div>
             </div>
 
+          <div class="form-group">
+            <label class="col-lg-2 col-md-3 control-label" for="posts_comment">Posts Comment</label>
+            <div class="col-lg-10 col-md-9">
+              <div class="checkbox-custom">
+                <input type="checkbox" value="option1" id="posts_comment">
+                <label for="checkbox1">Does this bot leave an upvote comment?</label>
+              </div>
+            </div>
+          </div>
+
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="is_disabled">Disabled</label>
               <div class="col-lg-10 col-md-9">
@@ -231,10 +253,19 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label class="col-lg-2 col-md-3 control-label" for="tags">Blacklisted Tags</label>
+            <div class="col-lg-10 col-md-9">
+              <input type="url" class="form-control" id="tags" placeholder="Comma-separated list of blacklisted tags">
+              <div style="font-size: 80%; color: #888888;">Comma-separated list of post tags that the bot does not accept.</div>
+            </div>
+          </div>
+
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="api_url" >Bids API URL (<a href="https://postpromoter.com/api/postpromoter/bids" target="_blank">example</a>)</label>
               <div class="col-lg-10 col-md-9">
                 <input type="url" class="form-control" id="api_url" placeholder="URL of Bids API call (NOTE: Must use https)">
+                <div style="font-size: 80%; color: #888888;">URL of the bids API provided by the bot. URL must use https. This is not required but the information shown on the site may not be accurate without it.</div>
               </div>
             </div>
 
@@ -273,12 +304,16 @@
           $('#min_bid_steem').val(config.min_bid_steem);
           $('#bid_window').val(config.bid_window);
           $('#allows_comments').prop('checked', config.comments);
+          $('#posts_comment').prop('checked', config.posts_comment);
           $('#auto_refunds').prop('checked', config.refunds);
           $('#accepts_steem').prop('checked', config.accepts_steem);
           $('#funding').val(config.funding_url);
+          $('#tags').val(config.tags);
           $('#api_url').val(config.api_url);
           $('#max_post_age').val(config.max_post_age);
+          $('#min_post_age').val(config.min_post_age);
           $('#is_disabled').prop('checked', config.is_disabled);
+          $('#fill_limit').val(config.fill_limit);
         }
       });
     }
@@ -313,12 +348,16 @@
           'min_bid_steem': parseFloat($('#min_bid_steem').val()),
           'bid_window': parseFloat($('#bid_window').val()),
           'comments': $('#allows_comments')[0].checked,
+          'posts_comment': $('#posts_comment')[0].checked,
           'refunds': $('#auto_refunds')[0].checked,
           'accepts_steem': $('#accepts_steem')[0].checked,
           'funding_url': $('#funding').val(),
+          'tags': $('#tags').val(),
           'api_url': $('#api_url').val(),
           'max_post_age': $('#max_post_age').val(),
-          'is_disabled': $('#is_disabled')[0].checked
+          'min_post_age': $('#min_post_age').val(),
+          'is_disabled': $('#is_disabled')[0].checked,
+          'fill_limit': $('#fill_limit').val()
         };
 
         steem.broadcast.accountUpdate($('#active_wif').val(), account.name, account.memo_key, json_metadata, function(err, result) {
