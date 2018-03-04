@@ -198,6 +198,9 @@ $(function () {
                         if(config.min_bid_steem && parseFloat(config.min_bid_steem) > 0)
                           bot.min_bid_steem = parseFloat(config.min_bid_steem);
 
+                        if (config.fill_limit && parseFloat(config.fill_limit) > 0)
+                          bot.fill_limit = parseFloat(config.fill_limit);
+
                         if(config.bid_window && parseFloat(config.bid_window) > 0)
                           bot.interval = parseFloat(config.bid_window);
 
@@ -212,6 +215,9 @@ $(function () {
 
                         if(config.comments != undefined)
                           bot.comments = config.comments;
+
+                        if (config.posts_comment != undefined)
+                          bot.posts_comment = config.posts_comment;
 
                         if (config.is_disabled != undefined)
                           bot.is_disabled = config.is_disabled;
@@ -236,7 +242,7 @@ $(function () {
                     bot.vote_usd = bot.vote / 2 * sbd_price + bot.vote / 2;
 
                     // Don't load bots that are filtered out
-                    if (bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url))
+                    if (bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment)))
                       return;
 
                     // Set the frequency of reload based on how close to the end of the round the bot is
@@ -441,7 +447,7 @@ $(function () {
           return;
 
         // Don't show bots that are filtered out
-        if ((_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url))
+        if ((_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment)))
           return;
 
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
@@ -468,6 +474,11 @@ $(function () {
         if(bot.comments) {
             var icon = $('<span class="fa fa-comment-o ml5" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
             td.append(icon);
+        }
+
+        if (bot.posts_comment != undefined && !bot.posts_comment) {
+          var icon = $('<img src="img/no_comment.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot does not post a comment when it votes on a post." />');
+          td.append(icon);
         }
 
         if(bot.accepts_steem) {
@@ -509,7 +520,7 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
-        td.text((bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
+        td.text((bot.fill_limit ? ((1 - bot.fill_limit) * 100).toFixed() + '%' : 'none'));
         row.append(td);
 
         td = $(document.createElement('td'));
@@ -875,6 +886,7 @@ $(function () {
     $('#filter_refund').click(function () { toggleFilter('refund'); });
     $('#filter_steem').click(function () { toggleFilter('steem'); });
     $('#filter_funding').click(function () { toggleFilter('funding'); });
+    $('#filter_nocomment').click(function () { toggleFilter('nocomment'); });
 
     var _filter = {};
     function toggleFilter(filter) {

@@ -35,7 +35,8 @@
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/sc2.min.js"></script>
 
-    <script src="scripts/bottracker.min.js"></script>
+  <script src="scripts/utils.js"></script>
+    <script src="scripts/bottracker.js"></script>
 
     <script type="text/javascript">
       steem.api.setOptions({ transport: 'http', url: 'https://api.steemit.com' });
@@ -348,6 +349,7 @@
                     <img id="filter_verified" src="img/verified.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that provide a bid API so the data shown is guaranteed to be accurate." />
                     <img id="filter_refund" src="img/refund.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that automatically refund invalid bids." />
                     <img id="filter_steem" src="img/steem.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that accept STEEM bids." />
+                    <img id="filter_nocomment" src="img/no_comment.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that do not post a comment when the vote on a post." />
                     <img id="filter_funding" src="img/funding.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that use a portion of earnings to fund projects." />
                   </label>
 
@@ -377,7 +379,7 @@
                     <th>Bot Name</th>
                     <th>Vote Value</th>
                     <th>Min Bid</th>
-                    <th>Max Post Age</th>
+                    <th>ROI Limit</th>
                     <th>Total Bids</th>
                     <th>Max Suggested Bid</th>
                     <th>Last Vote</th>
