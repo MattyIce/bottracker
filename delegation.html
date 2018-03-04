@@ -129,13 +129,16 @@
         <div class="form-horizontal">
            <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="delegator">Delegator</label>
-              <div class="col-lg-10 col-md-9">
+              <div class="col-lg-9 col-md-8">
                 <div class="input-group">
                   <span class="input-group-addon">@</span>
                   <input type="text" class="form-control" id="delegator" placeholder="Delegator Account Name">
                   <span id="delegator_ok" class="fa fa-check validation-icon-ok color-green" aria-hidden="true" style="display: none;"></span>
                   <span id="delegator_bad" class="fa fa-times validation-icon-error color-red" aria-hidden="true" style="display: none;"></span>
                 </div>
+              </div>
+              <div class="col-lg-1 col-md-1">
+                <button id="btn_load" class="btn btn-success" onclick="">Load</button>
               </div>
             </div>
 
@@ -187,12 +190,13 @@
                     </div>
                     <div class="col-lg-8 col-md-6">
                       (<span id="max_delegation_amount"></span> SP Available)&nbsp;&nbsp;
-                      <button class="btn btn-info" onclick="return delegateMax();">Delegate Max</button>
+                      <button class="btn btn-info" onclick="return delegateMax();">Delegate Max</button>                      
                     </div>
                   </div>
 
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
+                      <div id="warning" style="color: red; display: none;">ERROR: You have chosen to delegate more than the maximum available. If you do not have enough SP in the account it will become unusable.</div>
                       <button id="btn_submit" class="btn btn-success" onclick="delegate($('#delegator').val(), $('#delegatee').val(), $('#amount').val()); return false;">Delegate!</button>
                     </div>
                   </div>
@@ -227,13 +231,20 @@
     var existing_delegation = null;
     var delegations = [];
 
-    function delegate(delegator, delegatee, amount) {
+    function delegate(delegator_name, delegatee, amount) {
       if (typeof amount === 'string' || amount instanceof String)
         amount = parseFloat(amount.replace(/,/g, ''));
 
+      $('#warning').hide();
+
+      if (amount > delegator.available_sp) {
+        $('#warning').show();
+        return;
+      }
+
       var vests = (parseFloat(amount) / steem_per_mvests * 1000000).formatMoney(6, '.', '');
 
-      var url = 'https://v2.steemconnect.com/sign/delegate-vesting-shares?delegator=' + delegator + '&delegatee=' + delegatee + '&vesting_shares=' + vests + ' VESTS';
+      var url = 'https://v2.steemconnect.com/sign/delegate-vesting-shares?delegator=' + delegator_name + '&delegatee=' + delegatee + '&vesting_shares=' + vests + ' VESTS';
       window.open(url);
     }
 
@@ -257,7 +268,8 @@
             delegator = account;
             loadDelegations($('#delegator').val(), callback);
             $('#details').show();
-            delegator.available_sp = Math.max((parseFloat(account.vesting_shares) - parseFloat(account.delegated_vesting_shares)) / 1000000 * steem_per_mvests - 6, 0);
+            var power_down = (parseFloat(account.to_withdraw) - parseFloat(account.withdrawn)) / 1000000;
+            delegator.available_sp = Math.max((parseFloat(account.vesting_shares) - parseFloat(account.delegated_vesting_shares) - power_down) / 1000000 * steem_per_mvests - 6, 0);
             $('#max_delegation_amount').text(delegator.available_sp.formatMoney(3));
           } else if(id == 'delegatee') {
             existing_delegation = delegations.find(function(d) { return d.delegatee == account.name; });

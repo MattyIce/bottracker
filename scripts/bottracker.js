@@ -1,11 +1,12 @@
 $(function () {
     var RETURN = 1;
     var AUTHOR_REWARDS = 0.75;
-    var MIN_VOTE = 0;
+    var MIN_VOTE = 20;
     var CURRENCY = 'USD';
     var bots = [];
     var bot_names = [];
     var other_bots = [];
+    var FULL_CURATION_TIME = 30 * 60 * 1000;
 
     $.get('https://steembottracker.com/bidbots.json', function (data) {
       bots = data;
@@ -200,9 +201,6 @@ $(function () {
                         if(config.bid_window && parseFloat(config.bid_window) > 0)
                           bot.interval = parseFloat(config.bid_window);
 
-                        if(config.pre_vote_group_url && config.pre_vote_group_url != '')
-                          bot.pre_vote_group_url = config.pre_vote_group_url;
-
                         if (config.funding_url && config.funding_url != '')
                           bot.funding_url = config.funding_url;
 
@@ -238,7 +236,7 @@ $(function () {
                     bot.vote_usd = bot.vote / 2 * sbd_price + bot.vote / 2;
 
                     // Don't load bots that are filtered out
-                    if (bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.frontrunner && !bot.pre_vote_group_url) || (_filter.funding && !bot.funding_url))
+                    if (bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url))
                       return;
 
                     // Set the frequency of reload based on how close to the end of the round the bot is
@@ -443,7 +441,7 @@ $(function () {
           return;
 
         // Don't show bots that are filtered out
-        if ((_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.frontrunner && !bot.pre_vote_group_url) || (_filter.funding && !bot.funding_url))
+        if ((_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url))
           return;
 
         // Check that each bid is valid (post age, already voted on, invalid memo, etc.)
@@ -469,11 +467,6 @@ $(function () {
 
         if(bot.comments) {
             var icon = $('<span class="fa fa-comment-o ml5" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
-            td.append(icon);
-        }
-
-        if (bot.pre_vote_group_url && bot.pre_vote_group_url != '') {
-          var icon = $('<a href="' + bot.pre_vote_group_url + '" target="_blank">&nbsp;<img src="img/frontrunner.png" style="width: 20px; margin-left: 5px;" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot has a Pre-Vote Group which will give you additional upvotes - Click for Details"/></a>');
             td.append(icon);
         }
 
@@ -832,7 +825,7 @@ $(function () {
 
     //remember slider choice
     if (!localStorage.hasOwnProperty('min_vote_slider')) {
-      localStorage.setItem('min_vote_slider', 0);
+      localStorage.setItem('min_vote_slider', MIN_VOTE);
     } else {
       $('#min_vote_slider').slider('setValue', localStorage.getItem('min_vote_slider'));
       MIN_VOTE = localStorage.getItem('min_vote_slider');
@@ -881,7 +874,6 @@ $(function () {
     $('#filter_verified').click(function () { toggleFilter('verified'); });
     $('#filter_refund').click(function () { toggleFilter('refund'); });
     $('#filter_steem').click(function () { toggleFilter('steem'); });
-    $('#filter_frontrunner').click(function () { toggleFilter('frontrunner'); });
     $('#filter_funding').click(function () { toggleFilter('funding'); });
 
     var _filter = {};
@@ -1102,7 +1094,9 @@ $(function () {
             post.title = result.title;
             post.author = result.author;
             post.permlink = result.permlink;
-            post.curation_reward = (Math.sqrt((post.payout + 1) * 0.25) - Math.sqrt(post.payout * 0.25)) * Math.sqrt((post.payout + 1 + post.vote_value) * 0.25);
+
+            var pre_30_min_pct = Math.min(new Date() - new Date(result.created + 'Z'), FULL_CURATION_TIME) / FULL_CURATION_TIME;
+            post.curation_reward = (Math.sqrt((post.payout + 1) * 0.25) - Math.sqrt(post.payout * 0.25)) * Math.sqrt((post.payout + 1 + post.vote_value) * 0.25) * pre_30_min_pct;
 
             if(user) {
               post.voted = (result.active_votes.find(function(v) { return v.voter == user.name; }) != null);
@@ -1161,7 +1155,7 @@ $(function () {
         row.append(td);
 
         var td = $(document.createElement('td'));
-        td.text(((post.curation_reward - 1) * 100).formatMoney() + '%');
+        td.text('$' + post.curation_reward.formatMoney() + ' / $1');
         td.css('text-align', 'right');
         row.append(td);
 

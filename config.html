@@ -114,7 +114,7 @@
       <p>This tool is for bid bot owners ONLY to be able to specify the settings for their bot in the "json_metadata" field of the bot account on the blockchain.</p>
       <p>The bot tracker tool will pick up these settings, if they are available, so bot owners will no longer need to message me to update the tracker and will make the tracker more accurate since it will update instantly as changes are made.</p>
       <p>The JSON format for these settings is:</p>
-      <p><code>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false, "pre_vote_group_url": 'https://steemit.com/@frontrunner' }</code></p>
+      <p><code>"config": { "min_bid_sbd": 0.5, "bid_window": 2.4, "comments": false, "accepts_steem": true }</code></p>
       <p>This tool was created to make it super easy for bot owners to set and update this information, but any tool can be used and the bot tracker will pick it up as long as the data is available in the correct format.</p>
     </div>
 
@@ -223,14 +223,6 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="col-lg-2 col-md-3 control-label" for="front_runner" >Front-Runner URL</label>
-              <div class="col-lg-10 col-md-9">
-                <input type="url" class="form-control" id="front_runner" placeholder="Front-Runner / Pre-Vote Club URL">
-                <div style="font-size: 80%; color: #888888;">Does your bot have a pre-vote group that front-runs the bots votes? If so you can include a link with the details here.</div>
-              </div>
-            </div>
-
           <div class="form-group">
             <label class="col-lg-2 col-md-3 control-label" for="funding">Funding Details URL</label>
             <div class="col-lg-10 col-md-9">
@@ -240,9 +232,9 @@
           </div>
 
             <div class="form-group">
-              <label class="col-lg-2 col-md-3 control-label" for="api_url" >Bids API URL (<a href="http://postpromoter.com/api/postpromoter/bids" target="_blank">example</a>)</label>
+              <label class="col-lg-2 col-md-3 control-label" for="api_url" >Bids API URL (<a href="https://postpromoter.com/api/postpromoter/bids" target="_blank">example</a>)</label>
               <div class="col-lg-10 col-md-9">
-                <input type="url" class="form-control" id="api_url" placeholder="URL of Bids API call">
+                <input type="url" class="form-control" id="api_url" placeholder="URL of Bids API call (NOTE: Must use https)">
               </div>
             </div>
 
@@ -283,7 +275,6 @@
           $('#allows_comments').prop('checked', config.comments);
           $('#auto_refunds').prop('checked', config.refunds);
           $('#accepts_steem').prop('checked', config.accepts_steem);
-          $('#front_runner').val(config.pre_vote_group_url);
           $('#funding').val(config.funding_url);
           $('#api_url').val(config.api_url);
           $('#max_post_age').val(config.max_post_age);
@@ -296,6 +287,13 @@
       $('#result').hide();
       $('#btn_submit').prop("disabled",true);
       $('#btn_submit').text('Updating...');
+
+      if ($('#api_url').val().startsWith('http://')) {
+        $('#btn_submit').prop("disabled", false);
+        $('#btn_submit').text('Update Profile');
+        showResult(false, 'API URL must use https in order to be picked up by the steem bot tracker website.');
+        return;
+      }
 
       steem.api.getAccounts([$('#account_name').val()], function (err, result) {
         console.log(err, result);
@@ -317,7 +315,6 @@
           'comments': $('#allows_comments')[0].checked,
           'refunds': $('#auto_refunds')[0].checked,
           'accepts_steem': $('#accepts_steem')[0].checked,
-          'pre_vote_group_url': $('#front_runner').val(),
           'funding_url': $('#funding').val(),
           'api_url': $('#api_url').val(),
           'max_post_age': $('#max_post_age').val(),

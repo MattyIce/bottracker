@@ -348,7 +348,6 @@
                     <img id="filter_verified" src="img/verified.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that provide a bid API so the data shown is guaranteed to be accurate." />
                     <img id="filter_refund" src="img/refund.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that automatically refund invalid bids." />
                     <img id="filter_steem" src="img/steem.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that accept STEEM bids." />
-                    <img id="filter_frontrunner" src="img/frontrunner.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that have a pre-vote / front-runner group." />
                     <img id="filter_funding" src="img/funding.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that use a portion of earnings to fund projects." />
                   </label>
 
@@ -358,8 +357,8 @@
                     <label class="control-label text-left" style="float: left; margin-right: 20px;">Vote Value: </label>
                     <div>
                       <b>$0&nbsp;&nbsp;</b>
-                      <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="5" data-slider-value="0" />
-                      <b>&nbsp;&nbsp;$1,000</b>
+                      <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="400" data-slider-step="2" data-slider-value="20" />
+                      <b>&nbsp;&nbsp;$400</b>
                     </div>
                   </div>
                 </div>
@@ -798,7 +797,7 @@
                         <th style="text-align: right;">Current Rewards</th>
                         <th style="text-align: right;">Total Bids</th>
                         <th style="text-align: right;">Est. Bot Vote</th>
-                        <th style="text-align: right;">Curation ROI</th>
+                        <th style="text-align: right;">Curation Per $1 Vote</th>
                         <th style="text-align: center;">Vote!</th>
                       </tr>
                     </thead>
