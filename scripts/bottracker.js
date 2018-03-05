@@ -524,6 +524,10 @@ $(function () {
         row.append(td);
 
         td = $(document.createElement('td'));
+        td.text((bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
+        row.append(td);
+
+        td = $(document.createElement('td'));
         td.text(formatCurrencyTotal(bot));
         row.append(td);
 
