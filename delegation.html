@@ -190,7 +190,7 @@
                     </div>
                     <div class="col-lg-8 col-md-6">
                       (<span id="max_delegation_amount"></span> SP Available)&nbsp;&nbsp;
-                      <button class="btn btn-info" onclick="return delegateMax();">Delegate Max</button>                      
+                      <button class="btn btn-info" onclick="return delegateMax();">Delegate Max</button>
                     </div>
                   </div>
 
@@ -237,7 +237,8 @@
 
       $('#warning').hide();
 
-      if (amount > delegator.available_sp) {
+      var existing_sp = (existing_delegation ? parseFloat(existing_delegation.vesting_shares) / 1000000 * steem_per_mvests : 0);
+      if ((amount - existing_sp) > delegator.available_sp) {
         $('#warning').show();
         return;
       }
