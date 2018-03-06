@@ -238,7 +238,7 @@
       $('#warning').hide();
 
       var existing_sp = (existing_delegation ? parseFloat(existing_delegation.vesting_shares) / 1000000 * steem_per_mvests : 0);
-      if ((amount - existing_sp) > delegator.available_sp) {
+      if ((amount - existing_sp) > (delegator.available_sp + 1)) {
         $('#warning').show();
         return;
       }
