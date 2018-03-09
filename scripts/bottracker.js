@@ -445,7 +445,7 @@ $(function () {
 
     function showBotInfo() {
 
-      if(bots.length == 0 || !bots[0].vote)
+      if(bots.length == 0)
         return;
 
       $('#bots_table tbody').empty();
