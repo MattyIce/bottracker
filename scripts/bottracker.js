@@ -178,7 +178,22 @@ $(function () {
 
     var first_load = true;
     function loadBotInfo() {
-        steem.api.getAccounts(bot_names, function (err, result) {
+      var bots_to_load = bot_names;
+
+      if (!first_load) {
+        bots_to_load = bots.filter(function (bot) {
+          if (bot.vote_usd == undefined || bot.vote_usd == null || isNaN(bot.vote_usd))
+            return false;
+
+          // Don't load bots that are filtered out
+          if (bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment)))
+            return false;
+
+          return true;
+        }).map(function (bot) { return bot.name });
+      }
+
+      steem.api.getAccounts(bots_to_load, function (err, result) {
             try {
                 result.forEach(function (account) {
                     var vote = getVoteValue(100, account);
@@ -331,7 +346,7 @@ $(function () {
             }
 
             setTimeout(showBotInfo, 5 * 1000);
-            setTimeout(loadBotInfo, 10 * 1000);
+            setTimeout(loadBotInfo, 30 * 1000);
         });
     }
 
