@@ -131,7 +131,7 @@ $(function () {
           smartsteem_loaded = true;
         });
       }
-
+/*
         $.get('https://www.minnowbooster.net/api/global', function (data) {
             $('#minnowbooster-min').text('$' + data.min_upvote + ' SBD');
         });
@@ -142,6 +142,7 @@ $(function () {
                 $('#mb-upvote-' + i).html('<a href="http://steemit.com/@' + vote.sender_name + '">' + vote.sender_name + '</a> received a <strong>$' + parseFloat(vote.value).formatMoney() + ' upvote for $' + parseFloat(vote.sbd).formatMoney() + ' SBD</strong> on <a href="' + vote.url + '">' + vote.url + '</a> at ' + new Date(vote.created_at).toLocaleDateString() + ' ' + new Date(vote.created_at).toLocaleTimeString());
             }
         });
+*/
 
         steem.api.getAccounts(other_bots, function (err, result) {
           try {
