@@ -668,8 +668,14 @@ $(function () {
         if (bot.rounds && bot.rounds.length > 1) {
           var round = bot.rounds[bot.rounds.length - 2];
           var weight = sumWeights(round);
+	  var last_vote = ((weight/100) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+          if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
+            last_vote = last_vote + ' ' + CURRENCY;
+          else
+            last_vote = '$' + last_vote;
+
           populateRoundDetailTable(last_table, bot, round, 1);
-          $('#last_round_vote').text(((weight/100) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney() + ' (' + weight.formatMoney() + '%)');
+          $('#last_round_vote').text(last_vote + ' (' + weight.formatMoney() + '%)');
           $('#last_round_bids').text(sumBids(round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(round, 'STEEM').formatMoney() + ' STEEM' : ''));
           $('#last_round_value').text('$' + round.total_usd.formatMoney());
           $('#last_round_roi').text((((bot.vote_usd * AUTHOR_REWARDS * (weight / 100) / round.total_usd) - 1) * 100).formatMoney() + '% (After Curation)');
