@@ -8,7 +8,7 @@ $(function () {
     var other_bots = [];
     var FULL_CURATION_TIME = 30 * 60 * 1000;
 
-    $.get('https://www.brupvoter.com/bottracker/bidbots.json', function (data) {
+    $.get('https://steembottracker.com/bidbots.json', function (data) {
       bots = data;
 
       bots.sort(function(a, b){
