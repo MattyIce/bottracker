@@ -668,7 +668,7 @@ $(function () {
         if (bot.rounds && bot.rounds.length > 1) {
           var round = bot.rounds[bot.rounds.length - 2];
           var weight = sumWeights(round);
-	  var last_vote = ((weight/100) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+          var last_vote = ((weight/100) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
           if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
             last_vote = last_vote + ' ' + CURRENCY;
           else
