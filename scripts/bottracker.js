@@ -152,21 +152,23 @@ $(function () {
             container.empty();
 
             result.forEach(function (account) {
-              var row = $(document.createElement('tr'));
-              var td = $('<td><a target="_blank" href="https://steemit.com/@' + account.name + '">@' + account.name + '</a></td>');
-              row.append(td);
+              try {
+                var row = $(document.createElement('tr'));
+                var td = $('<td><a target="_blank" href="https://steemit.com/@' + account.name + '">@' + account.name + '</a></td>');
+                row.append(td);
 
-              td = $('<td>$' + getVoteValue(100, account).formatMoney() + '</td>');
-              row.append(td);
+                td = $('<td>$' + getVoteValue(100, account).formatMoney() + '</td>');
+                row.append(td);
 
-              var metadata = JSON.parse(account.json_metadata);
+                var metadata = JSON.parse(account.json_metadata);
 
-              td = $('<td>' + (metadata.profile.about ? metadata.profile.about : '') + '</td>');
-              row.append(td);
+                td = $('<td>' + (metadata.profile.about ? metadata.profile.about : '') + '</td>');
+                row.append(td);
 
-              td = $('<td>' + (metadata.profile.website ? '<a target="_blank" href="' + metadata.profile.website + '">' + metadata.profile.website + '</a>' : '') + '</td>');
-              row.append(td);
-              container.append(row);
+                td = $('<td>' + (metadata.profile.website ? '<a target="_blank" href="' + metadata.profile.website + '">' + metadata.profile.website + '</a>' : '') + '</td>');
+                row.append(td);
+                container.append(row);
+              } catch (err) { console.log('Error showing other bot: ' + account + 'Error: ' + err); }
             });
             $('#other_bot_error').css('display', 'none');
             } catch (err) {
@@ -820,9 +822,18 @@ $(function () {
       });
     }
 
-    setTimeout(loadBotInfo, 5 * 1000);
-    setTimeout(loadAccountInfo, 5 * 1000);
-    setInterval(updateTimers, 1000);
+    setTimeout(start, 5000);
+
+    function start() {
+      console.log('Starting!');
+
+      if (steem_vars_loaded >= 3) {
+        loadBotInfo();
+        loadAccountInfo();
+        setInterval(updateTimers, 1000);
+      } else
+        setTimeout(start, 5000);
+    }
 
     $('#curation_option').on('change', function () {
         if(this.checked) {

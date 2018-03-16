@@ -72,18 +72,22 @@ var n = this,
  var totalVestingFund;
  var totalVestingShares;
  var steem_per_mvests;
+ var steem_vars_loaded = 0;
  function updateSteemVariables() {
      steem.api.getRewardFund("post", function (e, t) {
          rewardBalance = parseFloat(t.reward_balance.replace(" STEEM", ""));
          recentClaims = t.recent_claims;
+         steem_vars_loaded++;
      });
      steem.api.getCurrentMedianHistoryPrice(function (e, t) {
-         steemPrice = parseFloat(t.base.replace(" SBD", "")) / parseFloat(t.quote.replace(" STEEM", ""));
+       steemPrice = parseFloat(t.base.replace(" SBD", "")) / parseFloat(t.quote.replace(" STEEM", ""));
+       steem_vars_loaded++;
      });
      steem.api.getDynamicGlobalProperties(function (e, t) {
          votePowerReserveRate = t.vote_power_reserve_rate;
          totalVestingFund = parseFloat(t.total_vesting_fund_steem.replace(" STEEM", ""));
          totalVestingShares = parseFloat(t.total_vesting_shares.replace(" VESTS", ""));
+         steem_vars_loaded++;
 
          var tVFS = t.total_vesting_fund_steem.replace(' STEEM', '');
          var tVS = t.total_vesting_shares.replace(' VESTS', '');
