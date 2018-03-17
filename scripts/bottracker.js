@@ -634,6 +634,12 @@ $(function () {
       }
     }
 
+    function sumWeights(round) {
+      return round.bids.reduce(function(total, bid) {
+          return total + parseFloat(bid.data.weight)/100;
+      }, 0);
+    }
+
     function sumBids(round, currency) {
       return round.bids.reduce(function(total, bid) {
         if(getCurrency(bid.data.amount) == currency)
@@ -653,7 +659,7 @@ $(function () {
 
         if (bot.rounds && bot.rounds.length > 0) {
           var round = bot.rounds[bot.rounds.length - 1];
-          populateRoundDetailTable(cur_table, bot, round);
+          populateRoundDetailTable(cur_table, bot, round, 0);
 
           $('#cur_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
           $('#cur_round_bids').text(sumBids(round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(round, 'STEEM').formatMoney() + ' STEEM' : ''));
@@ -663,11 +669,18 @@ $(function () {
 
         if (bot.rounds && bot.rounds.length > 1) {
           var round = bot.rounds[bot.rounds.length - 2];
-          populateRoundDetailTable(last_table, bot, round);
-          $('#last_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+          var weight = sumWeights(round);
+          var last_vote = ((weight/100) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+          if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
+            last_vote = last_vote + ' ' + CURRENCY;
+          else
+            last_vote = '$' + last_vote;
+
+          populateRoundDetailTable(last_table, bot, round, 1);
+          $('#last_round_vote').text(last_vote + ' (' + weight.formatMoney() + '%)');
           $('#last_round_bids').text(sumBids(round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(round, 'STEEM').formatMoney() + ' STEEM' : ''));
           $('#last_round_value').text('$' + round.total_usd.formatMoney());
-          $('#last_round_roi').text((((bot.vote_usd * AUTHOR_REWARDS / round.total_usd) - 1) * 100).formatMoney() + '% (After Curation)');
+          $('#last_round_roi').text((((bot.vote_usd * AUTHOR_REWARDS * (weight / 100) / round.total_usd) - 1) * 100).formatMoney() + '% (After Curation)');
         }
 
         $('#cur_round_show').click(function (e) {
@@ -687,7 +700,7 @@ $(function () {
         $('#bid_details').modal();
     }
 
-    function populateRoundDetailTable(table, bot, round) {
+    function populateRoundDetailTable(table, bot, round, weight) {
         round.bids.forEach(function (bid) {
             var amount = parseFloat(bid.data.amount);
             var bid_value = getUsdValue(bid.data);
@@ -720,11 +733,17 @@ $(function () {
             row.append(td);
 
             var td = $(document.createElement('td'));
-            td.text((bid_value / round.total_usd * 100).formatMoney() + '%');
-            td.css('text-align', 'right');
-            row.append(td);
-
-            var value = ((bid_value / round.total_usd) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+            if(weight) {
+              td.text((bid.data.weight / 100).formatMoney() + '%');
+              td.css('text-align', 'right');
+              row.append(td);
+              var value = ((bid.data.weight / 10000) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+            } else {
+              td.text((bid_value / round.total_usd * 100).formatMoney() + '%');
+              td.css('text-align', 'right');
+              row.append(td);
+              var value = ((bid_value / round.total_usd) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+            }
 
             if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
               value = value + ' ' + CURRENCY;
