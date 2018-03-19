@@ -99,3 +99,95 @@ $(document).ready(function() {
     });
   });
 });
+
+var steemPrice;
+var rewardBalance;
+var recentClaims;
+var currentUserAccount;
+var votePowerReserveRate;
+var totalVestingFund;
+var totalVestingShares;
+var steem_per_mvests;
+
+function updateSteemVariables() {
+	 steem.api.getRewardFund("post", function (e, t) {
+			 rewardBalance = parseFloat(t.reward_balance.replace(" STEEM", ""));
+			 recentClaims = t.recent_claims;
+	 });
+	 steem.api.getCurrentMedianHistoryPrice(function (e, t) {
+			 steemPrice = parseFloat(t.base.replace(" SBD", "")) / parseFloat(t.quote.replace(" STEEM", ""));
+	 });
+	 steem.api.getDynamicGlobalProperties(function (e, t) {
+			 votePowerReserveRate = t.vote_power_reserve_rate;
+			 totalVestingFund = parseFloat(t.total_vesting_fund_steem.replace(" STEEM", ""));
+			 totalVestingShares = parseFloat(t.total_vesting_shares.replace(" VESTS", ""));
+
+			 var tVFS = t.total_vesting_fund_steem.replace(' STEEM', '');
+			 var tVS = t.total_vesting_shares.replace(' VESTS', '');
+			 steem_per_mvests = ((tVFS / tVS) * 1000000);
+	 });
+
+	 setTimeout(updateSteemVariables, 10 * 60 * 1000)
+}
+
+function getVotingPower(account) {
+	 var voting_power = account.voting_power;
+	 var last_vote_time = new Date((account.last_vote_time) + 'Z');
+	 var elapsed_seconds = (new Date() - last_vote_time) / 1000;
+	 var regenerated_power = Math.round((STEEMIT_100_PERCENT * elapsed_seconds) / STEEMIT_VOTE_REGENERATION_SECONDS);
+	 var current_power = Math.min(voting_power + regenerated_power, STEEMIT_100_PERCENT);
+	 return current_power;
+}
+
+function getVoteRShares(voteWeight, account, power) {
+	 if (!account) {
+			 return;
+	 }
+
+	 if (rewardBalance && recentClaims && steemPrice && votePowerReserveRate) {
+
+			 var effective_vesting_shares = Math.round(getVestingShares(account) * 1000000);
+			 var voting_power = account.voting_power;
+			 var weight = voteWeight * 100;
+			 var last_vote_time = new Date((account.last_vote_time) + 'Z');
+
+
+			 var elapsed_seconds = (new Date() - last_vote_time) / 1000;
+			 var regenerated_power = Math.round((STEEMIT_100_PERCENT * elapsed_seconds) / STEEMIT_VOTE_REGENERATION_SECONDS);
+			 var current_power = power || Math.min(voting_power + regenerated_power, STEEMIT_100_PERCENT);
+			 var max_vote_denom = votePowerReserveRate * STEEMIT_VOTE_REGENERATION_SECONDS / (60 * 60 * 24);
+			 var used_power = Math.round((current_power * weight) / STEEMIT_100_PERCENT);
+			 used_power = Math.round((used_power + max_vote_denom - 1) / max_vote_denom);
+
+			 var rshares = Math.round((effective_vesting_shares * used_power) / (STEEMIT_100_PERCENT))
+
+			 return rshares;
+
+	 }
+}
+
+function getVoteValue(voteWeight, account, power) {
+	 if (!account) {
+			 return;
+	 }
+	 if (rewardBalance && recentClaims && steemPrice && votePowerReserveRate) {
+			 var voteValue = getVoteRShares(voteWeight, account, power)
+				 * rewardBalance / recentClaims
+				 * steemPrice;
+
+			 return voteValue;
+
+	 }
+}
+
+function timeTilFullPower(account){
+	 var cur_power = getVotingPower(account);
+	 return (STEEMIT_100_PERCENT - cur_power) * STEEMIT_VOTE_REGENERATION_SECONDS / STEEMIT_100_PERCENT;
+}
+
+function getVestingShares(account) {
+	 var effective_vesting_shares = parseFloat(account.vesting_shares.replace(" VESTS", ""))
+		 + parseFloat(account.received_vesting_shares.replace(" VESTS", ""))
+		 - parseFloat(account.delegated_vesting_shares.replace(" VESTS", ""));
+	 return effective_vesting_shares;
+}

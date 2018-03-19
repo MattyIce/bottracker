@@ -318,66 +318,66 @@ $(function () {
 		$('#bid_details').modal();
 	}
 
-    function populateRoundDetailTable(table, bot, round) {
-			round.forEach(function (bid) {
-				var amount = parseFloat(bid.amount);
-				var bid_value = getUsdValue(bid);
-				var currency = bid.currency;
-				var row = $(document.createElement('tr'));
+	function populateRoundDetailTable(table, bot, round) {
+		round.forEach(function (bid) {
+			var amount = parseFloat(bid.amount);
+			var bid_value = getUsdValue(bid);
+			var currency = bid.currency;
+			var row = $(document.createElement('tr'));
 
-				var td = $(document.createElement('td'));
-				var link = $(document.createElement('a'));
-				link.attr('href', 'http://www.steemit.com/@' + bid.sender);
-				link.attr('target', '_blank');
-				link.text('@' + bid.sender);
+			var td = $(document.createElement('td'));
+			var link = $(document.createElement('a'));
+			link.attr('href', 'http://www.steemit.com/@' + bid.sender);
+			link.attr('target', '_blank');
+			link.text('@' + bid.sender);
 
-				td.append(link);
-				row.append(td);
+			td.append(link);
+			row.append(td);
 
-				var td = $(document.createElement('td'));
-				td.text(amount.formatMoney() + ' ' + currency);
-				td.css('text-align', 'right');
-				row.append(td);
+			var td = $(document.createElement('td'));
+			td.text(amount.formatMoney() + ' ' + currency);
+			td.css('text-align', 'right');
+			row.append(td);
 
-				var td = $(document.createElement('td'));
-				td.text('$' + bid_value.formatMoney());
-				td.css('text-align', 'right');
-				row.append(td);
+			var td = $(document.createElement('td'));
+			td.text('$' + bid_value.formatMoney());
+			td.css('text-align', 'right');
+			row.append(td);
 
-				var td = $(document.createElement('td'));
-				td.text((bid.weight ? (bid.weight / 100).formatMoney() : (bid_value / round.round_total * 100).formatMoney()) + '%');
-				td.css('text-align', 'right');
-				row.append(td);
+			var td = $(document.createElement('td'));
+			td.text((bid.weight ? (bid.weight / 100).formatMoney() : (bid_value / round.round_total * 100).formatMoney()) + '%');
+			td.css('text-align', 'right');
+			row.append(td);
 
-				var value = ((bid.weight ? (bid.weight / 10000) : (bid_value / round.round_total)) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+			var value = ((bid.weight ? (bid.weight / 10000) : (bid_value / round.round_total)) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
 
-				if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
-					value = value + ' ' + CURRENCY;
-				else
-					value = '$' + value;
+			if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
+				value = value + ' ' + CURRENCY;
+			else
+				value = '$' + value;
 
-				var td = $(document.createElement('td'));
-				td.text(value);
-				td.css('text-align', 'right');
-				row.append(td);
+			var td = $(document.createElement('td'));
+			td.text(value);
+			td.css('text-align', 'right');
+			row.append(td);
 
-				var td = $(document.createElement('td'));
-				var div = $(document.createElement('div'));
-				div.css('width', '250px');
-				div.css('overflow', 'hidden');
-				div.css('height', '23px');
+			var td = $(document.createElement('td'));
+			var div = $(document.createElement('div'));
+			div.css('width', '250px');
+			div.css('overflow', 'hidden');
+			div.css('height', '23px');
 
-				var link = $(document.createElement('a'));
-				link.attr('href', 'https://steemit.com' + bid.url);
-				link.attr('target', '_blank');
-				link.text(bid.url);
-				div.append(link);
-				td.append(div);
-				row.append(td);
+			var link = $(document.createElement('a'));
+			link.attr('href', 'https://steemit.com' + bid.url);
+			link.attr('target', '_blank');
+			link.text(bid.url);
+			div.append(link);
+			td.append(div);
+			row.append(td);
 
-				table.append(row);
-			});
-    }
+			table.append(row);
+		});
+	}
 
     var _dialog = null;
 
@@ -445,19 +445,6 @@ $(function () {
           })
         })
       });
-    }
-
-    //setTimeout(start, 5000);
-
-    function start() {
-      console.log('Starting!');
-
-      if (steem_vars_loaded >= 3) {
-        loadBotInfo();
-        loadAccountInfo();
-        setInterval(updateTimers, 1000);
-      } else
-        setTimeout(start, 5000);
     }
 
     $('#curation_option').on('change', function () {
