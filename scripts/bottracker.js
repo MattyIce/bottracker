@@ -25,6 +25,9 @@ $(function () {
 		loadBidBots();
 		setInterval(loadBidBots, 30 * 1000);
 		
+		updateSteemVariables(loadPromotionServices);
+		setInterval(loadPromotionServices, 10 * 60 * 1000);
+		
 		setInterval(updateTimers, 1000);
 	}
 
@@ -92,6 +95,81 @@ $(function () {
 			bots = data;
 			showBidBots();
 		});
+	}
+	
+	var smartsteem_loaded = false;
+	function loadPromotionServices() {
+		steem.api.getAccounts(['smartsteem', 'randowhale', 'minnowbooster'], function (err, result) {
+			try {
+				var account = result[0];
+				var bar = $('#smartsteem-progress div');
+				var power = getVotingPower(account) / 100;
+				bar.attr('aria-valuenow', power);
+				bar.css('width', power + '%');
+				bar.text(power + '%');
+				$('#smartsteem-vote').text('$' + getVoteValue(100, account).formatMoney());
+				$('#ss_bot_error').css('display', 'none');
+
+				account = result[1];
+				var metadata = JSON.parse(account.json_metadata);
+				$('#randowhale-desc').text(metadata.profile.about);
+
+				var config = metadata.config;
+				var status = $('#randowhale-status');
+				status.text(config.sleep ? 'Sleeping' : 'Awake!');
+
+				if(config.sleep)
+				{
+					status.removeClass('label-success')
+					status.addClass('label-default');
+					$('#randowhale-submit').attr('disabled', 'disabled');
+				} else {
+					status.removeClass('label-default')
+					status.addClass('label-success');
+					$('#randowhale-submit').removeAttr('disabled');
+				}
+
+				$('#randowhale-fee').text(config.fee_sbd.formatMoney() + ' SBD');
+
+				var bar = $('#randowhale-progress div');
+				var power = getVotingPower(account) / 100;
+				bar.attr('aria-valuenow', power);
+				bar.css('width', power + '%');
+				bar.text(power + '%');
+				$('#randowhale-vote').text('$' + getVoteValue(100, account).formatMoney());
+				$('#rw_bot_error').css('display', 'none');
+
+				account = result[2];
+				var bar = $('#minnowbooster-progress div');
+				var power = getVotingPower(account) / 100;
+				bar.attr('aria-valuenow', power);
+				bar.css('width', power + '%');
+				bar.text(power + '%');
+				$('#minnowbooster-vote').text('$' + getVoteValue(100, account).formatMoney());
+				$('#mb_bot_error').css('display', 'none');
+			} catch (err) {
+				console.log(err);
+				$('#ss_bot_error').css('display', 'block');
+			}
+		});
+
+		if (!smartsteem_loaded) {
+			$.get('https://smartsteem.com/api/general/bot_tracker', function (data) {
+				$('#smartsteem-desc').text(data.description);
+				$('#smartsteem-profit').text(data.profit);
+				$('#smartsteem-payment').text(data.payment);
+				$('#smartsteem-daily').text(data.daily_limit);
+				$('#smartsteem-weekly').text(data.weekly_limit);
+				$('#smartsteem-features').text(data.additional_features);
+				$('#smartsteem-howto').empty();
+
+				data.how_to.forEach(function (item) {
+					$('#smartsteem-howto').append($('<li>' + item + '</li>'));
+				});
+
+				smartsteem_loaded = true;
+			});
+		}
 	}
 	
 	function showBidBots() {

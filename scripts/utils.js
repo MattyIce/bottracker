@@ -1,3 +1,5 @@
+var STEEMIT_100_PERCENT = 10000;
+var STEEMIT_VOTE_REGENERATION_SECONDS = (5 * 60 * 60 * 24);
 var HOURS = 60 * 60 * 1000;
 var steem_price = 1;
 var sbd_price = 1;
@@ -109,24 +111,28 @@ var totalVestingFund;
 var totalVestingShares;
 var steem_per_mvests;
 
-function updateSteemVariables() {
-	 steem.api.getRewardFund("post", function (e, t) {
-			 rewardBalance = parseFloat(t.reward_balance.replace(" STEEM", ""));
-			 recentClaims = t.recent_claims;
-	 });
-	 steem.api.getCurrentMedianHistoryPrice(function (e, t) {
-			 steemPrice = parseFloat(t.base.replace(" SBD", "")) / parseFloat(t.quote.replace(" STEEM", ""));
-	 });
-	 steem.api.getDynamicGlobalProperties(function (e, t) {
-			 votePowerReserveRate = t.vote_power_reserve_rate;
-			 totalVestingFund = parseFloat(t.total_vesting_fund_steem.replace(" STEEM", ""));
-			 totalVestingShares = parseFloat(t.total_vesting_shares.replace(" VESTS", ""));
+function updateSteemVariables(callback) {
+	steem.api.getRewardFund("post", function (e, t) {
+		rewardBalance = parseFloat(t.reward_balance.replace(" STEEM", ""));
+		recentClaims = t.recent_claims;
 
-			 var tVFS = t.total_vesting_fund_steem.replace(' STEEM', '');
-			 var tVS = t.total_vesting_shares.replace(' VESTS', '');
-			 steem_per_mvests = ((tVFS / tVS) * 1000000);
-	 });
+		steem.api.getCurrentMedianHistoryPrice(function (e, t) {
+			steemPrice = parseFloat(t.base.replace(" SBD", "")) / parseFloat(t.quote.replace(" STEEM", ""));
+		
+			steem.api.getDynamicGlobalProperties(function (e, t) {
+				 votePowerReserveRate = t.vote_power_reserve_rate;
+				 totalVestingFund = parseFloat(t.total_vesting_fund_steem.replace(" STEEM", ""));
+				 totalVestingShares = parseFloat(t.total_vesting_shares.replace(" VESTS", ""));
 
+				 var tVFS = t.total_vesting_fund_steem.replace(' STEEM', '');
+				 var tVS = t.total_vesting_shares.replace(' VESTS', '');
+				 steem_per_mvests = ((tVFS / tVS) * 1000000);
+				 
+				 if(callback)
+					 callback();
+			});
+		});
+	});
 	 setTimeout(updateSteemVariables, 10 * 60 * 1000)
 }
 
