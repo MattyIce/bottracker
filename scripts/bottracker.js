@@ -884,7 +884,7 @@ $(function () {
 
 			var td = $(document.createElement('td'));
 			var link = $(document.createElement('a'));
-			link.attr('href', post.memo);
+			link.attr('href', 'https://steemit.com' + post.url);
 			link.attr('target', '_blank');
 			link.text(post.title.length > 40 ? post.title.substr(0, 40) + '...' : post.title);
 			td.append(link);
