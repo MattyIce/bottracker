@@ -7,7 +7,7 @@ $(function () {
 	var bot_names = [];
 	var other_bots = [];
 	var FULL_CURATION_TIME = 30 * 60 * 1000;
-	var api_url = 'http://localhost:3000';
+	var api_url = 'https://steembottracker.net';
 	var _filter = {};
 	var user = null;
 	var _dialog = null;
@@ -257,11 +257,13 @@ $(function () {
 			row.append(td);
 
 			td = $(document.createElement('td'));
-			td.text(formatCurrencyTotal(bot));
+			td.text(!isNaN(bot.total_usd) ? formatCurrencyTotal(bot) : '--');
 			row.append(td);
 
 			td = $(document.createElement('td'));
-			if (bot.accepts_steem)
+			if(isNaN(bot.total_usd)) {
+				td.text('unknown');
+			} else if (bot.accepts_steem)
 			  td.html(Math.max(bid_steem, 0).formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/> or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
 			else
 			  td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
@@ -282,9 +284,14 @@ $(function () {
 			row.append(td);
 
 			td = $(document.createElement('td'));
-			var link = $('<button type="button" class="btn btn-info btn-xs"><i class="fa fa-eye mr5"></i>Details</button>');
-			link.click(function (e) { showBotDetails(bot); });
-			td.append(link);
+			
+			if(!isNaN(bot.total_usd)) {
+				var link = $('<button type="button" class="btn btn-info btn-xs"><i class="fa fa-eye mr5"></i>Details</button>');
+				link.click(function (e) { showBotDetails(bot); });
+				td.append(link);
+			} else 
+				td.text('--');
+			
 			row.append(td);
 
 			td = $(document.createElement('td'));
