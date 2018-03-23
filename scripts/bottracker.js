@@ -629,10 +629,11 @@ $(function () {
 
       var currency = $('#calc_currency').val();
       var bid = parseFloat($('#bid_amount').val());
-      var value = bid / (bid + bot.total) * bot.vote_usd;
-      var value_sbd = (bid / (bid + bot.total) * bot.vote) / 2;
-      var value_steem = ((bid / (bid + bot.total) * bot.vote) / 2 / steem_price);
-      var bid_value = (currency == 'SBD') ? bid * sbd_price : bid * steem_price;
+			var bid_value = (currency == 'SBD') ? bid * sbd_price : bid * steem_price;
+			
+      var value = bid_value / (bid_value + bot.total_usd) * bot.vote_usd;
+      var value_sbd = (bid_value / (bid_value + bot.total_usd) * bot.vote) / 2;
+      var value_steem = ((bid_value / (bid_value + bot.total_usd) * bot.vote) / 2 / steem_price);
 
       $('#bid_value').text('$' + bid_value.formatMoney());
       $('#vote_value').text('$' + value.formatMoney() + ' = ' + value_sbd.formatMoney() + ' SBD + ' + value_steem.formatMoney() + ' STEEM');
