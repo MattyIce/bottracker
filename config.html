@@ -245,6 +245,14 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="rules">Rules / Terms of Service URL</label>
+              <div class="col-lg-10 col-md-9">
+                <input type="url" class="form-control" id="rules" placeholder="Rules / Terms of Service URL">
+                <div style="font-size: 80%; color: #888888;">Include a link to the rules / terms of service for your bot.</div>
+              </div>
+            </div>
+
           <div class="form-group">
             <label class="col-lg-2 col-md-3 control-label" for="funding">Funding Details URL</label>
             <div class="col-lg-10 col-md-9">
@@ -308,6 +316,7 @@
           $('#auto_refunds').prop('checked', config.refunds);
           $('#accepts_steem').prop('checked', config.accepts_steem);
           $('#funding').val(config.funding_url);
+          $('#rules').val(config.rules_url);
           $('#tags').val(config.tags);
           $('#api_url').val(config.api_url);
           $('#max_post_age').val(config.max_post_age);
@@ -352,6 +361,7 @@
           'refunds': $('#auto_refunds')[0].checked,
           'accepts_steem': $('#accepts_steem')[0].checked,
           'funding_url': $('#funding').val(),
+          'rules_url': $('#rules').val(),
           'tags': $('#tags').val(),
           'api_url': $('#api_url').val(),
           'max_post_age': $('#max_post_age').val(),
