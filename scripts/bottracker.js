@@ -11,6 +11,7 @@ $(function () {
 	var _filter = {};
 	var user = null;
 	var _dialog = null;
+	var notifications = {};
 
 	startup();
 
@@ -312,12 +313,12 @@ $(function () {
 			if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
 				row.addClass('green-bg');
 
-				if (!bot.notif) {
+				if (!notifications[bot.name]) {
 					sendNotification(bot.name, bid_sbd);
-					bot.notif = true;
+					notifications[bot.name] = true;
 				}
 			} else
-				bot.notif = false;
+				notifications[bot.name] = false;
 
 			if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
 			  row.addClass('red-light-bg');
