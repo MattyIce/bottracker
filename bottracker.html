@@ -34,7 +34,8 @@
 		<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/sc2.min.js"></script>
 
-    <script src="scripts/bottracker.min.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/bottracker.js"></script>
 
     <!-- Dynamic admin theme -->
     <link rel="stylesheet" href="css/icons.css">
@@ -56,8 +57,9 @@
         }
       }
 
-    .slider.slider-horizontal { width: 70%; }
-    .progress.flat { margin-top: 4px; }
+      .slider.slider-horizontal { width: 70%; }
+      .progress.flat { margin-top: 4px; }
+      ul.actions li a { color: #333333 !important; }
     </style>
 </head>
 <body>
@@ -107,6 +109,9 @@
                 <li><a href="javascript:void(0);" id="btn_front_run"><img src="img/frontrunner.png" style="height: 20px;margin-right: 7px;"/> Front Run the Bots</a></li>
               </ul>
             </li>
+
+            <li><a href="javascript:void(0);" style="font-size: 1.5em;"><div id="steem_price_container">STEEM - $<span id="steem_price">loading...</span></div></a></li>
+            <li><a href="javascript:void(0);" style="font-size: 1.5em;"><div id="sbd_price_container">SBD - $<span id="sbd_price">loading...</span></div></a></li>
           </ul>
 
           <ul class="nav navbar-nav navbar-right">
@@ -297,8 +302,8 @@
               </div>
             </div>
 
-            <div class="bs-callout bs-callout-danger fade in">
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <div class="bs-callout bs-callout-danger fade in" id="peg_msg">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="close_peg_msg">×</button>
               <h3>IMPORTANT UPDATE - PLEASE READ!</h3>
               <h4>
                 Due to the broken SBD peg and some bots now accepting SBD and STEEM:<br /><br />
@@ -308,13 +313,10 @@
                   <li style="margin-bottom: 5px;">If you want to view numbers in a different currency you can choose a currency in the settings section above.</li>
                   <li style="margin-bottom: 5px;">To view the numbers how they were originally, choose the "POST REWARDS" currency which matches what is shown on steemit.com.</li>
                 </ul>
-                <p>
-                  Current Prices: 1 STEEM = $<span id="steem_price">loading...</span> | 1 SBD = $<span id="sbd_price">loading...</span>
-                </p>
               </h4>
             </div>
 
-            <div class="panel panel-primary plain">
+            <div class="panel panel-primary plain" style="margin-top: 10px;">
               <div class="panel-body" style="font-size: 1.2em;">
 
                 <div class="row">

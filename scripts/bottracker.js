@@ -55,12 +55,14 @@ $(function () {
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) {
 			steem_price = parseFloat(data[0].price_usd);
 			$('#steem_price').text(steem_price.formatMoney());
+			$('#steem_price_container').css('color', (parseFloat(data[0].percent_change_1h) < 0) ? 'red' : 'green');
 		});
 
 		// Load the current prices of STEEM and SBD
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) {
 			sbd_price = parseFloat(data[0].price_usd);
 			$('#sbd_price').text(sbd_price.formatMoney());
+			$('#sbd_price_container').css('color', (parseFloat(data[0].percent_change_1h) < 0) ? 'red' : 'green');
 		});
 	}
 
@@ -286,7 +288,7 @@ $(function () {
 			td = $(document.createElement('td'));
 
 			var dropdown_container = $('<div class="dropdown"><button class="btn btn-xs btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Actions&nbsp;<span class="caret"></span></button></div>')
-			var dropdown = $('<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel"></ul>');
+			var dropdown = $('<ul class="actions dropdown-menu dropdown-menu-right" aria-labelledby="dLabel"></ul>');
 
 			if(!isNaN(bot.total_usd)) {
 				var link = $('<li><a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a></li>');
@@ -652,8 +654,21 @@ $(function () {
       return false;
     });
 
-    // Show disclaimer message
-    setTimeout(function () { $('#disclaimer').modal(); }, 2000);
+		$('#close_peg_msg').click(function() {
+			$('#peg_msg').hide();
+			localStorage.setItem('hide_peg_msg', true);
+		});
+
+		if (localStorage.hasOwnProperty('hide_peg_msg'))
+			$('#peg_msg').hide();
+
+		if (!localStorage.hasOwnProperty('accept_disclaimer')) {
+	    // Show disclaimer message
+	    setTimeout(function () {
+				$('#disclaimer').modal();
+				localStorage.setItem('accept_disclaimer', true);
+			}, 2000);
+		}
 
     $('#filter_verified').click(function () { toggleFilter('verified'); });
     $('#filter_refund').click(function () { toggleFilter('refund'); });
