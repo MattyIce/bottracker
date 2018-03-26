@@ -253,7 +253,7 @@ $(function () {
 			row.append(td);
 
 			td = $(document.createElement('td'));
-			td.text((bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
+			td.text((bot.min_post_age ? bot.min_post_age : 0) + ' mins / ' + (bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
 			row.append(td);
 
 			td = $(document.createElement('td'));
@@ -285,7 +285,7 @@ $(function () {
 
 			td = $(document.createElement('td'));
 
-			var dropdown_container = $('<div class="dropdown"><button class="btn btn-xs btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Actions&nbsp;<span class="caret"></span></button></div>')
+			var dropdown_container = $('<div class="dropdown"><button class="btn btn-xs btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Actions&nbsp;<span class="caret"></span></button></div>')
 			var dropdown = $('<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel"></ul>');
 
 			if(!isNaN(bot.total_usd)) {
