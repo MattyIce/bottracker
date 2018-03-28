@@ -152,13 +152,13 @@
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="min_bid" >Minimum Bid SBD</label>
               <div class="col-lg-2 col-md-2">
-                <input type="text" class="form-control input-mini" id="min_bid" placeholder="0.5" value="0.5">
+                <input type="text" class="form-control input-mini" id="min_bid" placeholder="0.5">
                 <span class="help-block text-info">Minimum bid in SBD</span>
               </div>
 
               <label class="col-lg-2 col-md-3 control-label" for="min_bid_steem" >Minimum Bid STEEM</label>
               <div class="col-lg-3 col-md-3">
-                <input type="text" class="form-control input-mini" id="min_bid_steem" placeholder="0.5" value="0.5">
+                <input type="text" class="form-control input-mini" id="min_bid_steem" placeholder="0.5">
                 <span class="help-block text-info">Minimum bid in STEEM</span>
               </div>
             </div>
@@ -166,22 +166,28 @@
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="max_post_age">Max Post Age</label>
               <div class="col-lg-2 col-md-2">
-                <input type="text" class="form-control input-mini" id="max_post_age" placeholder="3.5" value="3.5">
+                <input type="text" class="form-control input-mini" id="max_post_age" placeholder="3.5">
                 <span class="help-block text-info">Maximum age of posts (in days)</span>
               </div>
 
               <label class="col-lg-2 col-md-3 control-label" for="min_post_age">Min Post Age</label>
               <div class="col-lg-2 col-md-2">
-                <input type="text" class="form-control input-mini" id="min_post_age" placeholder="20" value="20">
+                <input type="text" class="form-control input-mini" id="min_post_age" placeholder="20">
                 <span class="help-block text-info">Minimum age of posts (in minutes)</span>
               </div>
             </div>
 
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="fill_limit">Round Fill Limit</label>
-              <div class="col-lg-10 col-md-9">
-                <input type="text" class="form-control input-mini" id="fill_limit" placeholder="1.1" value="1.1">
+              <div class="col-lg-2 col-md-2">
+                <input type="text" class="form-control input-mini" id="fill_limit" placeholder="1.1">
                 <span class="help-block text-info">Round Fill Limit (1 = 100%)</span>
+              </div>
+
+              <label class="col-lg-2 col-md-3 control-label" for="max_roi">Max ROI (%)</label>
+              <div class="col-lg-2 col-md-2">
+                <input type="text" class="form-control input-mini" id="max_roi" placeholder="10">
+                <span class="help-block text-info">Maximum ROI provided by the bot in %</span>
               </div>
             </div>
 
@@ -323,6 +329,7 @@
           $('#min_post_age').val(config.min_post_age);
           $('#is_disabled').prop('checked', config.is_disabled);
           $('#fill_limit').val(config.fill_limit);
+          $('#max_roi').val(config.max_roi);
         }
       });
     }
@@ -367,7 +374,8 @@
           'max_post_age': $('#max_post_age').val(),
           'min_post_age': $('#min_post_age').val(),
           'is_disabled': $('#is_disabled')[0].checked,
-          'fill_limit': $('#fill_limit').val()
+          'fill_limit': $('#fill_limit').val(),
+          'max_roi': $('#max_roi').val()
         };
 
         steem.broadcast.accountUpdate($('#active_wif').val(), account.name, account.memo_key, json_metadata, function(err, result) {

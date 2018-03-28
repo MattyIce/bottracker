@@ -12,6 +12,8 @@ $(function () {
 	var user = null;
 	var _dialog = null;
 	var notifications = {};
+	var favorites = [];
+	var hidden = [];
 
 	startup();
 
@@ -179,153 +181,218 @@ $(function () {
 	function showBidBots() {
 		$('#bots_table tbody').empty();
 
+		var favorite_bots = bots.filter(function(b) { return favorites.indexOf(b.name) >= 0; });
+		var others = bots.filter(function(b) { return favorites.indexOf(b.name) < 0; });
+
 		// Order the bots by their next vote time
-		bots.sort(function(a, b) {
+		favorite_bots.sort(function(a, b) {
 			var an = (a.power == 100 && a.last > 3 * HOURS || a.last < 60 * 1000) ? 9990000000 : a.next;
 			var bn = (b.power == 100 && b.last > 3 * HOURS || b.last < 60 * 1000) ? 9990000000 : b.next;
 			return an - bn;
 		});
 
-		bots.forEach(function(bot) {
-			// Don't show bots that are filtered out
-			if (bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment)))
-			  return;
-
-			var bid_sbd = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / sbd_price;
-			var bid_steem = bot.accepts_steem ? (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / steem_price : 0;
-
-			var row = $(document.createElement('tr'));
-
-			var td = $(document.createElement('td'));
-			var link = $(document.createElement('a'));
-			link.attr('href', 'http://www.steemit.com/@' + bot.name);
-			link.attr('target', '_blank');
-			var text = '@' + bot.name;
-
-			if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
-			  text += ' (DOWN)';
-
-			link.html("<img class='userpic' src='https://steemitimages.com/u/" + bot.name + "/avatar'></img>" + text);
-			td.append(link);
-
-			if(bot.comments) {
-				var icon = $('<span class="fa fa-comment-o ml5" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
-				td.append(icon);
-			}
-
-			if (bot.posts_comment != undefined && !bot.posts_comment) {
-			  var icon = $('<img src="img/no_comment.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot does not post a comment when it votes on a post." />');
-			  td.append(icon);
-			}
-
-			if(bot.accepts_steem) {
-			  var icon = $('<img src="img/steem.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot accepts STEEM bids!" />');
-			  td.append(icon);
-			}
-
-			if(bot.refunds) {
-				var icon = $('<img src="img/refund.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot automatically refunds invalid bids!" />');
-				td.append(icon);
-			}
-
-			if (bot.funding_url) {
-			  var icon = $('<a href="' + bot.funding_url + '" target="_blank"><img src="img/funding.png" style="width: 20px; margin-left: 5px;" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot uses a portion of its earnings to fund other projects and initiatives - Click for Details"/></a>');
-			  td.append(icon);
-			}
-
-			row.append(td);
-
-			td = $(document.createElement('td'));
-			td.text(formatCurrencyVote(bot));
-			row.append(td);
-
-			var steem_bid = '';
-			if(bot.accepts_steem){
-			  if(bot.min_bid_steem && bot.min_bid_steem != bot.min_bid)
-				steem_bid = ' or ' + bot.min_bid_steem.formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
-			  else
-				steem_bid = ' or <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
-			}
-
-			td = $(document.createElement('td'));
-			td.html(bot.min_bid.formatMoney() + ' SBD' + steem_bid);
-			row.append(td);
-
-			td = $(document.createElement('td'));
-			td.text((bot.fill_limit ? ((1 - bot.fill_limit) * 100).toFixed() + '%' : 'none'));
-			row.append(td);
-
-			td = $(document.createElement('td'));
-			td.text((bot.min_post_age ? bot.min_post_age : 0) + ' mins / ' + (bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
-			row.append(td);
-
-			td = $(document.createElement('td'));
-			td.text(!isNaN(bot.total_usd) ? formatCurrencyTotal(bot) : '--');
-			row.append(td);
-
-			td = $(document.createElement('td'));
-			if(isNaN(bot.total_usd)) {
-				td.text('unknown');
-			} else if (bot.accepts_steem)
-			  td.html(Math.max(bid_steem, 0).formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/> or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
-			else
-			  td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
-
-			row.append(td);
-
-			td = $(document.createElement('td'));
-			td.addClass('timer');
-			td.attr('dir', 'up');
-			td.attr('time', bot.last);
-			td.text(toTimer(bot.last));
-			row.append(td);
-
-			td = $(document.createElement('td'));
-			td.addClass('timer');
-			td.attr('time', bot.next);
-			td.text(toTimer(bot.next));
-			row.append(td);
-
-			td = $(document.createElement('td'));
-
-			var dropdown_container = $('<div class="dropdown"><button class="btn btn-xs btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Actions&nbsp;<span class="caret"></span></button></div>')
-			var dropdown = $('<ul class="actions dropdown-menu dropdown-menu-right" aria-labelledby="dLabel"></ul>');
-
-			if(!isNaN(bot.total_usd)) {
-				var link = $('<li><a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a></li>');
-				link.click(function (e) { showBotDetails(bot); });
-				dropdown.append(link);
-			}
-
-			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-upload mr5"></i>Send Bid</a></li>');
-			link.click(function (e) { sendBid(bot); });
-			dropdown.append(link);
-
-			if(bot.rules_url && bot.rules_url != '') {
-				var link = $('<li><a href="' + bot.rules_url + '"><i class="fa fa-list-alt mr5"></i>Terms of Service</a></li>');
-				dropdown.append(link);
-			}
-
-			dropdown_container.append(dropdown);
-			td.append(dropdown_container);
-			row.append(td);
-
-			if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
-				row.addClass('green-bg');
-
-				if (!notifications[bot.name]) {
-					sendNotification(bot.name, bid_sbd);
-					notifications[bot.name] = true;
-				}
-			} else
-				notifications[bot.name] = false;
-
-			if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
-			  row.addClass('red-light-bg');
-
-			$('#bots_table tbody').append(row);
-			$('[data-toggle="tooltip"]').tooltip();
+		others.sort(function(a, b) {
+			var an = (a.power == 100 && a.last > 3 * HOURS || a.last < 60 * 1000) ? 9990000000 : a.next;
+			var bn = (b.power == 100 && b.last > 3 * HOURS || b.last < 60 * 1000) ? 9990000000 : b.next;
+			return an - bn;
 		});
+
+		if(favorite_bots.length > 0) {
+			favorite_bots.forEach(showBot);
+			var row = $(document.createElement('tr'));
+			var td = $(document.createElement('td'));
+			td.attr('colspan', '10');
+			td.html('<hr style="margin: 0;"/>');
+			row.append(td);
+			$('#bots_table tbody').append(row);
+		}
+
+		others.forEach(showBot);
+
+		$('[data-toggle="tooltip"]').tooltip();
+
+		if(hidden.length > 0) {
+			$('#bots_hidden').text(hidden.length);
+			$('#unhide_link').show();
+		}
+	}
+
+	function showBot(bot) {
+		var isFavorite = favorites.indexOf(bot.name) >= 0;
+
+		// Don't show bots that are filtered out
+		if (!isFavorite && (hidden.indexOf(bot.name) >= 0 || bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment))))
+		  return;
+
+		var bid_sbd = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / sbd_price;
+		var bid_steem = bot.accepts_steem ? (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / steem_price : 0;
+
+		var row = $(document.createElement('tr'));
+
+		var td = $(document.createElement('td'));
+		var link = $(document.createElement('a'));
+		link.attr('href', 'http://www.steemit.com/@' + bot.name);
+		link.attr('target', '_blank');
+		var text = '@' + bot.name;
+
+		if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
+		  text += ' (DOWN)';
+
+		link.html("<img class='userpic' src='https://steemitimages.com/u/" + bot.name + "/avatar'></img>" + text);
+		td.append(link);
+
+		if(bot.comments) {
+			var icon = $('<span class="fa fa-comment-o ml5" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
+			td.append(icon);
+		}
+
+		if (bot.posts_comment != undefined && !bot.posts_comment) {
+		  var icon = $('<img src="img/no_comment.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot does not post a comment when it votes on a post." />');
+		  td.append(icon);
+		}
+
+		if(bot.accepts_steem) {
+		  var icon = $('<img src="img/steem.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot accepts STEEM bids!" />');
+		  td.append(icon);
+		}
+
+		if(bot.refunds) {
+			var icon = $('<img src="img/refund.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot automatically refunds invalid bids!" />');
+			td.append(icon);
+		}
+
+		if (bot.funding_url) {
+		  var icon = $('<a href="' + bot.funding_url + '" target="_blank"><img src="img/funding.png" style="width: 20px; margin-left: 5px;" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot uses a portion of its earnings to fund other projects and initiatives - Click for Details"/></a>');
+		  td.append(icon);
+		}
+
+		row.append(td);
+
+		td = $(document.createElement('td'));
+		td.text(formatCurrencyVote(bot));
+		row.append(td);
+
+		var steem_bid = '';
+		if(bot.accepts_steem){
+		  if(bot.min_bid_steem && bot.min_bid_steem != bot.min_bid)
+			steem_bid = ' or ' + bot.min_bid_steem.formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
+		  else
+			steem_bid = ' or <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
+		}
+
+		td = $(document.createElement('td'));
+		td.html(bot.min_bid.formatMoney() + ' SBD' + steem_bid);
+		row.append(td);
+
+		td = $(document.createElement('td'));
+		td.text((bot.fill_limit ? ((1 - bot.fill_limit) * 100).toFixed() + '%' : 'none'));
+		row.append(td);
+
+		td = $(document.createElement('td'));
+		td.text((bot.min_post_age ? bot.min_post_age : 0) + ' mins / ' + (bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
+		row.append(td);
+
+		td = $(document.createElement('td'));
+		td.text(!isNaN(bot.total_usd) ? formatCurrencyTotal(bot) : '--');
+		row.append(td);
+
+		td = $(document.createElement('td'));
+		if(isNaN(bot.total_usd)) {
+			td.text('unknown');
+		} else if (bot.accepts_steem)
+		  td.html(Math.max(bid_steem, 0).formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/> or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
+		else
+		  td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
+
+		row.append(td);
+
+		td = $(document.createElement('td'));
+		td.addClass('timer');
+		td.attr('dir', 'up');
+		td.attr('time', bot.last);
+		td.text(toTimer(bot.last));
+		row.append(td);
+
+		td = $(document.createElement('td'));
+		td.addClass('timer');
+		td.attr('time', bot.next);
+		td.text(toTimer(bot.next));
+		row.append(td);
+
+		td = $(document.createElement('td'));
+
+		var dropdown_container = $('<div class="dropdown"><button class="btn btn-xs btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Actions&nbsp;<span class="caret"></span></button></div>')
+		var dropdown = $('<ul class="actions dropdown-menu dropdown-menu-right" aria-labelledby="dLabel"></ul>');
+
+		if(!isNaN(bot.total_usd)) {
+			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a></li>');
+			link.click(function (e) { showBotDetails(bot); });
+			dropdown.append(link);
+		}
+
+		var link = $('<li><a href="javascript:void(0);"><i class="fa fa-upload mr5"></i>Send Bid</a></li>');
+		link.click(function (e) { sendBid(bot); });
+		dropdown.append(link);
+
+		if(isFavorite) {
+			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-heart mr5" style="color: red;"></i>Un-Favorite</a></li>');
+			link.click(function (e) {
+				favorites.splice(favorites.indexOf(bot.name), 1);
+				localStorage.setItem('favorites', favorites.join());
+				showBidBots();
+			});
+			dropdown.append(link);
+		} else {
+			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-heart mr5" style="color: red;"></i>Favorite</a></li>');
+			link.click(function (e) {
+				favorites.push(bot.name);
+				localStorage.setItem('favorites', favorites.join());
+				showBidBots();
+			});
+			dropdown.append(link);
+		}
+
+		if(hidden.indexOf(bot.name) >= 0) {
+			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-remove mr5"></i>Un-Hide</a></li>');
+			link.click(function (e) {
+				hidden.splice(hidden.indexOf(bot.name), 1);
+				localStorage.setItem('hidden', hidden.join());
+				showBidBots();
+			});
+			dropdown.append(link);
+		} else {
+			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-remove mr5"></i>Hide</a></li>');
+			link.click(function (e) {
+				hidden.push(bot.name);
+				localStorage.setItem('hidden', hidden.join());
+				showBidBots();
+			});
+			dropdown.append(link);
+		}
+
+		if(bot.rules_url && bot.rules_url != '') {
+			var link = $('<li><a href="' + bot.rules_url + '"><i class="fa fa-list-alt mr5"></i>Terms of Service</a></li>');
+			dropdown.append(link);
+		}
+
+		dropdown_container.append(dropdown);
+		td.append(dropdown_container);
+		row.append(td);
+
+		if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
+			row.addClass('green-bg');
+
+			if (!notifications[bot.name]) {
+				sendNotification(bot.name, bid_sbd);
+				notifications[bot.name] = true;
+			}
+		} else
+			notifications[bot.name] = false;
+
+		if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
+		  row.addClass('red-light-bg');
+
+		$('#bots_table tbody').append(row);
 	}
 
 	function formatCurrencyVote(bot) {
@@ -383,7 +450,12 @@ $(function () {
 				$('#cur_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
 				$('#cur_round_bids').text(sumBids(data.current_round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(data.current_round, 'STEEM').formatMoney() + ' STEEM' : ''));
 				$('#cur_round_value').text('$' + bot.total_usd.formatMoney());
-				$('#cur_round_roi').text((((bot.vote_usd * AUTHOR_REWARDS / data.current_round.round_total) - 1) * 100).formatMoney() + '% (After Curation)');
+
+				var roi = (((bot.vote_usd * AUTHOR_REWARDS / data.current_round.round_total) - 1) * 100);
+				if(bot.max_roi)
+					roi = Math.min(bot.max_roi, roi);
+
+				$('#cur_round_roi').text(roi.formatMoney() + '% (After Curation' + (bot.max_roi ? ' - Capped)' : ')'));
 			}
 
 			if (data && data.last_round) {
@@ -393,7 +465,12 @@ $(function () {
 				$('#last_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
 				$('#last_round_bids').text(sumBids(data.last_round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(data.last_round, 'STEEM').formatMoney() + ' STEEM' : ''));
 				$('#last_round_value').text('$' + data.last_round.round_total.formatMoney());
-				$('#last_round_roi').text((((bot.vote_usd * AUTHOR_REWARDS / data.last_round.round_total) - 1) * 100).formatMoney() + '% (After Curation)');
+
+				var roi = (((bot.vote_usd * AUTHOR_REWARDS / data.last_round.round_total) - 1) * 100);
+				if(bot.max_roi)
+					roi = Math.min(bot.max_roi, roi);
+
+				$('#last_round_roi').text(roi.formatMoney() + '% (After Curation' + (bot.max_roi ? ' - Capped)' : ')'));
 			}
 
 			$('#cur_round_show').click(function (e) {
@@ -587,6 +664,19 @@ $(function () {
         }
         showBidBots();
     });
+
+		if (localStorage.hasOwnProperty('favorites'))
+			favorites = localStorage.getItem('favorites').split(',');
+
+		if (localStorage.hasOwnProperty('hidden'))
+			hidden = localStorage.getItem('hidden').split(',');
+
+		$('#unhide_link a').click(function() {
+			hidden = [];
+			localStorage.setItem('hidden', '');
+			showBidBots();
+			$('#unhide_link').hide();
+		});
 
     //remember currency choice
     if (!localStorage.hasOwnProperty('currency_list')) {

@@ -34,7 +34,8 @@
 		<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="scripts/sc2.min.js"></script>
 
-    <script src="scripts/bottracker.min.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/bottracker.js"></script>
 
     <!-- Dynamic admin theme -->
     <link rel="stylesheet" href="css/icons.css">
@@ -402,6 +403,10 @@
                   </tr>
                 </tbody>
               </table>
+              <div id="unhide_link" style="display: none;">
+                <span id="bots_hidden">0</span> bot(s) hidden - 
+                <a href="javascript:void(0);">Unhide all bots</a>
+              </div>
             </div>
 
           </div>
@@ -500,6 +505,7 @@
             </div>
           </div>
 
+<!--
           <div id="randowhale-panel" class="panel panel-success">
             <div class="panel-heading">
               <h3 class="panel-title"><a target="_blank" href="http://www.steemit.com/@randowhale">@randowhale</a></h3>
@@ -564,6 +570,7 @@
               </div>
             </div>
           </div>
+-->
 
           <div class="panel panel-success">
             <div class="panel-heading">
