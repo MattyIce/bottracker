@@ -56,14 +56,14 @@ $(function () {
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) {
 			steem_price = parseFloat(data[0].price_usd);
 			$('#steem_price').text(steem_price.formatMoney());
-			$('#steem_price_container').css('color', (parseFloat(data[0].percent_change_1h) < 0) ? 'red' : 'green');
+			$('#steem_price_container').css('color', (parseFloat(data[0].percent_change_24h) < 0) ? 'red' : 'green');
 		});
 
 		// Load the current prices of STEEM and SBD
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) {
 			sbd_price = parseFloat(data[0].price_usd);
 			$('#sbd_price').text(sbd_price.formatMoney());
-			$('#sbd_price_container').css('color', (parseFloat(data[0].percent_change_1h) < 0) ? 'red' : 'green');
+			$('#sbd_price_container').css('color', (parseFloat(data[0].percent_change_24h) < 0) ? 'red' : 'green');
 		});
 	}
 
