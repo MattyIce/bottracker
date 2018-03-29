@@ -371,7 +371,7 @@ $(function () {
 		}
 
 		if(bot.rules_url && bot.rules_url != '') {
-			var link = $('<li><a href="' + bot.rules_url + '"><i class="fa fa-list-alt mr5"></i>Terms of Service</a></li>');
+			var link = $('<li><a href="' + bot.rules_url + '" target="_blank"><i class="fa fa-list-alt mr5"></i>Terms of Service</a></li>');
 			dropdown.append(link);
 		}
 
@@ -576,18 +576,15 @@ $(function () {
 		var amount = $('#bid_details_bid_amount').val();
 		var currency = $('#bid_details_bid_currency').val();
 		var url = $('#bid_details_post_url').val();
+		
+		var win = popupCenter('https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url, 'sc2-pay', 500, 560);
 
 		checkPost(_dialog.bot, url, amount, currency, function (error) {
 			if (error) {
 				$('#bid_details_error').html('<b>Error:</b> ' + error);
 				$('#bid_details_error').show();
+				win.close();
 			} else {
-				_dialog.on('hidden.bs.modal', function (e) {
-					$('#bid_dialog_bot_name').text(to);
-					$('#bid_dialog_frame').attr('src', 'https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url);
-					_dialog = $('#bid_dialog').modal();
-				});
-
 				_dialog.modal('hide');
 			}
 		});
