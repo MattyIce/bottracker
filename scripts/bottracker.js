@@ -677,7 +677,7 @@ $(function () {
 			favorites = localStorage.getItem('favorites').split(',');
 
 		if (localStorage.hasOwnProperty('hidden'))
-			hidden = localStorage.getItem('hidden').split(',');
+			hidden = localStorage.getItem('hidden').split(',').filter(b => b != '');
 
 		$('#unhide_link a').click(function() {
 			hidden = [];
