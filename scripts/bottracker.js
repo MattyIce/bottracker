@@ -435,9 +435,20 @@ $(function () {
 
 	function showBotDetails(bot) {
 		$('#bid_details_bot').text(bot.name);
-		console.log(bot);
+		$('#bid_details_table_cur tbody').empty();
+		$('#bid_details_table_last tbody').empty();
 
-		$.get(bot.api_url, function(data) {
+		$('#cur_round_vote').text('Loading...');
+		$('#cur_round_bids').text('Loading...');
+		$('#cur_round_value').text('Loading...');
+		$('#cur_round_roi').text('Loading...');
+
+		$('#last_round_vote').text('Loading...');
+		$('#last_round_bids').text('Loading...');
+		$('#last_round_value').text('Loading...');
+		$('#last_round_roi').text('Loading...');
+
+		$.get(api_url + '/bid_bots/' + bot.name, function(data) {
 			var cur_table = $('#bid_details_table_cur tbody');
 			cur_table.empty();
 			var last_table = $('#bid_details_table_last tbody');
@@ -576,7 +587,7 @@ $(function () {
 		var amount = $('#bid_details_bid_amount').val();
 		var currency = $('#bid_details_bid_currency').val();
 		var url = $('#bid_details_post_url').val();
-		
+
 		var win = popupCenter('https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url, 'sc2-pay', 500, 560);
 
 		checkPost(_dialog.bot, url, amount, currency, function (error) {
