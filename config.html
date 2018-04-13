@@ -279,7 +279,7 @@
               <label class="col-lg-2 col-md-3 control-label" for="api_url" >Bids API URL (<a href="https://postpromoter.com/api/postpromoter/bids" target="_blank">example</a>)</label>
               <div class="col-lg-10 col-md-9">
                 <input type="url" class="form-control" id="api_url" placeholder="URL of Bids API call (NOTE: Must use https)">
-                <div style="font-size: 80%; color: #888888;">URL of the bids API provided by the bot. URL must use https. This is not required but the information shown on the site may not be accurate without it.</div>
+                <div style="font-size: 80%; color: #888888;">URL of the bids API provided by the bot. This is not required but detailed bid information will not be shown on the site without it.</div>
               </div>
             </div>
 
@@ -338,13 +338,6 @@
       $('#result').hide();
       $('#btn_submit').prop("disabled",true);
       $('#btn_submit').text('Updating...');
-
-      if ($('#api_url').val().startsWith('http://')) {
-        $('#btn_submit').prop("disabled", false);
-        $('#btn_submit').text('Update Profile');
-        showResult(false, 'API URL must use https in order to be picked up by the steem bot tracker website.');
-        return;
-      }
 
       steem.api.getAccounts([$('#account_name').val()], function (err, result) {
         console.log(err, result);
