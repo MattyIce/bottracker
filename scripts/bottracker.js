@@ -285,7 +285,7 @@ $(function () {
 		row.append(td);
 
 		td = $(document.createElement('td'));
-		td.text((bot.fill_limit ? ((1 - bot.fill_limit) * 100).toFixed() + '%' : 'none'));
+		td.text((bot.fill_limit ? ((1 - bot.fill_limit) * 100).toFixed() + '%' : 'none') + ' / ' + (bot.max_roi ? bot.max_roi + '%' : 'none'));
 		row.append(td);
 
 		td = $(document.createElement('td'));
@@ -529,11 +529,22 @@ $(function () {
 			row.append(td);
 
 			var td = $(document.createElement('td'));
-			td.text((bid.weight ? (bid.weight / 100).formatMoney() : (bid_value / round.round_total * 100).formatMoney()) + '%');
+			
+			var vote_percent = 0;
+			if(bid.weight)
+				vote_percent = (bid.weight / 100);
+			else if(bot.max_roi) {
+				var min_total_bids_value_usd = bot.vote_usd * AUTHOR_REWARDS * ((100 - bot.max_roi) / 100 );
+				var adjusted_weight = (bot.total_usd < min_total_bids_value_usd) ? (bot.total_usd / min_total_bids_value_usd) : 1;
+				vote_percent = (bid_value / round.round_total * 100) * adjusted_weight;
+			} else
+				vote_percent = (bid_value / round.round_total * 100);
+			
+			td.text(vote_percent.formatMoney() + '%');
 			td.css('text-align', 'right');
 			row.append(td);
 
-			var value = ((bid.weight ? (bid.weight / 10000) : (bid_value / round.round_total)) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
+			var value = ((bid.weight ? (bid.weight / 10000) : (vote_percent / 100)) * parseFloat(formatCurrencyVote(bot).replace(/[$,]/g, ''))).formatMoney();
 
 			if(CURRENCY == 'SBD' || CURRENCY == 'STEEM')
 				value = value + ' ' + CURRENCY;
@@ -677,7 +688,7 @@ $(function () {
 			favorites = localStorage.getItem('favorites').split(',');
 
 		if (localStorage.hasOwnProperty('hidden'))
-			hidden = localStorage.getItem('hidden').split(',').filter(b => b != '');
+			hidden = localStorage.getItem('hidden').split(',').filter(function(b) { return b != ''; });
 
 		$('#unhide_link a').click(function() {
 			hidden = [];
