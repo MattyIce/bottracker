@@ -13,15 +13,11 @@ $(function () {
 	var notifications = {};
 	var favorites = [];
 	var hidden = [];
+	var notifications_enabled = true;
 
 	startup();
 
 	function startup() {
-		try {
-			if (Notification && Notification.permission !== "granted")
-				Notification.requestPermission();
-		} catch (err) { }
-
 		loadPrices();
 		setInterval(loadPrices, 30 * 1000);
 
@@ -40,16 +36,19 @@ $(function () {
 	}
 
 	function sendNotification(bot, bid) {
-			try {
-					if (Notification.permission !== "granted")
-							Notification.requestPermission();
-					else {
-							var notification = new Notification('Profitable Bidding Opportunity!', {
-									icon: 'https://i.imgur.com/SEm0LBl.jpg',
-									body: "@" + bot + ' is currently showing a profitable bidding opportunity! Max profitable bid is $' + bid.formatMoney() + ' SBD.'
-							});
-					}
-			} catch (err) { }
+		if(!notifications_enabled)
+			return;
+		
+		try {
+			if (Notification.permission !== "granted")
+				Notification.requestPermission();
+			else {
+				var notification = new Notification('Profitable Bidding Opportunity!', {
+					icon: 'https://steembottracker.com/img/bot_logo.png',
+					body: "@" + bot + ' is currently showing a profitable bidding opportunity! Max profitable bid is $' + bid.formatMoney() + ' SBD.'
+				});
+			}
+		} catch (err) { }
 	}
 
 	function loadPrices() {
@@ -682,6 +681,16 @@ $(function () {
         }
         showBidBots();
     });
+		
+		$('#notification_option').on('change', function () {
+        notifications_enabled = this.checked;
+				localStorage.setItem('notifications_enabled', this.checked);
+    });
+		
+		if (localStorage.hasOwnProperty('notifications_enabled')) {
+			notifications_enabled = localStorage.getItem('notifications_enabled') == 'true';
+			$('#notification_option').attr('checked', notifications_enabled);
+		}
 
 		if (localStorage.hasOwnProperty('favorites'))
 			favorites = localStorage.getItem('favorites').split(',');
