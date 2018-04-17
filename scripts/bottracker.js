@@ -4,7 +4,6 @@ $(function () {
 	var MIN_VOTE = 20;
 	var CURRENCY = 'USD';
 	var bots = [];
-	var bot_names = [];
 	var other_bots = [];
 	var FULL_CURATION_TIME = 30 * 60 * 1000;
 	var api_url = 'https://steembottracker.net';
@@ -846,9 +845,9 @@ $(function () {
 				var op = trans[1].op;
 				var bid = op[1];
 
-				if (op[0] == 'transfer' && bot_names.indexOf(bid.to) >= 0) {
+				if (op[0] == 'transfer' && bots.find(function(b) { return b.name == bid.to; })) {
 					// Check that the memo is a valid post or comment URL.
-					if (!checkMemo(bid.memo))
+					if (bid.memo.lastIndexOf('/') < 0 || bid.memo.lastIndexOf('@') < 0)
 						continue;
 
 					bids.push(bid);
@@ -860,7 +859,7 @@ $(function () {
 							populateUserBids(bids);
 						}
 					});
-				} else if (op[0] == 'transfer' && bot_names.indexOf(op[1].from) >= 0) {
+				} else if (op[0] == 'transfer' && bots.find(function(b) { return b.name == bid.from; })) {
 					// This means the bid was refunded
 					var bid = bids.find(function (b) { return b.to == op[1].from && b.amount == op[1].amount; });
 
