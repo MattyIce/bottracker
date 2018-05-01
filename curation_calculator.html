@@ -283,6 +283,7 @@
       data.rshares_before = 0;
       data.rshares_vote = 0;
       data.rshares_total = 0;
+      data.total_vote_weight = 0;
       data.pre_30_min_pct = 0;
       data.account_vote = null;
 
@@ -306,20 +307,25 @@
           var vote = votes[i];
           var vote_time = new Date(vote.time + 'Z');
           var rshares = parseInt(vote.rshares);
+          var max_weight = approx_sqrt(data.rshares_total + rshares) - approx_sqrt(data.rshares_total);
           vote.rshares_before = data.rshares_total;
           vote.pre_30_min_pct = Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
 
           if(vote.voter == data.account.name) {
             data.pre_30_min_pct = Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
             data.rshares_vote = rshares;
-            data.account_vote = vote;
+            data.weight_vote = vote.weight;
+            data.account_vote = vote;            
           }
 
           if(data.rshares_vote == 0)
             data.rshares_before += rshares;
-
+          
           data.rshares_total += rshares;
-
+          
+          if(vote.weight > 0)
+            data.total_vote_weight += max_weight;
+          
           //console.log(vote.voter + ' - rShares: ' + rshares.formatMoney(0) + ', value: ' + rSharesToSBD(rshares).formatMoney(3) + ', before: ' + (data.rshares_vote == 0) + ', author pct: ' + Math.min(vote_time - created, FULL_CURATION_TIME) / FULL_CURATION_TIME);
       }
 
@@ -337,6 +343,7 @@
         if (data.rshares_vote == 0) {
           data.rshares_vote = getVoteRShares(100, data.account);
           data.pre_30_min_pct = Math.min(new Date() - created, FULL_CURATION_TIME) / FULL_CURATION_TIME;
+          data.weight_vote = Math.round((approx_sqrt(data.rshares_total + data.rshares_vote) - approx_sqrt(data.rshares_total)) * data.pre_30_min_pct);
         }
       }
 
@@ -369,10 +376,12 @@
     }
 
     function showRewards() {
-      if(!data.post_paid_out)
+      if(!data.post_paid_out){
         data.rshares_total = parseInt($('#post_total_slider').val()) / steemPrice * recentClaims / rewardBalance;
+        data.total_vote_weight = approx_sqrt(data.rshares_total);
+      }
 
-      var curation_rshares = (Math.sqrt(data.rshares_before * CURATION_RATE + data.rshares_vote * CURATION_RATE) - Math.sqrt(data.rshares_before * CURATION_RATE)) * Math.sqrt(data.rshares_total * CURATION_RATE) * data.pre_30_min_pct * data.beneficiary_pct;
+      var curation_rshares = data.rshares_total * CURATION_RATE * data.weight_vote / data.total_vote_weight;
       var curation_steem = curation_rshares * rewardBalance / recentClaims;
       var curation_sbd = curation_steem * steemPrice;
 
@@ -406,7 +415,7 @@
 
       $('#result').show();
     }
-
+    
     // Initialize and try to log in with SteemConnect V2
     var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
     sc2.init({
@@ -436,6 +445,67 @@
       localStorage.removeItem('access_token');
       window.location.href = window.location.pathname;
     });
+    
+    //Functions for Approx SQRT (see https://github.com/steemit/steem/blob/5c787c5baa651858658caa2bd47473846b099c0a/doc/sqrt.md)
+    function approx_sqrt(x){
+      if(x == 0) return 0;
+      msb_x = find_msb(x);
+      msb_z = msb_x >> 1;
+  
+      msb_x_bit = shiftleft64(1,msb_x);
+      msb_z_bit = shiftleft64(1,msb_z);
+  
+      mantissa_mask = msb_x_bit - 1;
+      mantissa_x = and64(x,mantissa_mask);
+      mantissa_z_hi = and64(msb_x,1) ? msb_z_bit : 0;
+      mantissa_z_lo = shiftright64(mantissa_x , msb_x - msb_z);
+      mantissa_z = shiftright64(or64(mantissa_z_hi , mantissa_z_lo) , 1);
+      result = or64(msb_z_bit , mantissa_z);
+      
+      return result;
+    }
+
+    function find_msb(x){
+      return Math.floor(Math.log(x)/Math.log(2));
+    }
+
+    function hi_lo(x){
+      r = {};
+      r.hi = Math.floor(x / Math.pow(2,32));
+      r.lo = x % Math.pow(2,32);
+      return r;  
+    }
+
+    function and64(x,y){
+      x = hi_lo(x);
+      y = hi_lo(y);
+      hi = x.hi & y.hi;
+      lo = x.lo & y.lo;
+      return hi*Math.pow(2,32) + lo;
+    }
+
+    function or64(x,y){
+      x = hi_lo(x);
+      y = hi_lo(y);
+      hi = x.hi | y.hi;
+      lo = x.lo | y.lo;
+      return hi*Math.pow(2,32) + lo;
+    }
+
+    function shiftleft64(x,y){
+      x = hi_lo(x);  
+      hi = x.hi * Math.pow(2,y);
+      lo = x.lo * Math.pow(2,y);
+      return hi*Math.pow(2,32) + lo;
+    }
+
+    function shiftright64(x,y){
+      x = hi_lo(x);
+      hi = Math.floor(x.hi / Math.pow(2,y));
+      aux = x.hi % Math.pow(2,y);
+      lo = Math.floor(x.lo / Math.pow(2,y)) + aux * Math.pow(2,32-y);
+      return hi*Math.pow(2,32) + lo;
+    }   
   </script>
 </body>
 </html>
