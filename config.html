@@ -164,6 +164,20 @@
             </div>
 
             <div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="max_bid" >Maximum Bid</label>
+              <div class="col-lg-2 col-md-2">
+                <input type="text" class="form-control input-mini" id="max_bid" placeholder="50">
+                <span class="help-block text-info">Maximum bid</span>
+              </div>
+
+              <label class="col-lg-2 col-md-3 control-label" for="max_bid_wl" >Max Bid Whitelist</label>
+              <div class="col-lg-2 col-md-2">
+                <input type="text" class="form-control input-mini" id="max_bid_wl" placeholder="200">
+                <span class="help-block text-info">Max bid for whitelisted accounts</span>
+              </div>
+            </div>
+
+            <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="max_post_age">Max Post Age</label>
               <div class="col-lg-2 col-md-2">
                 <input type="text" class="form-control input-mini" id="max_post_age" placeholder="3.5">
@@ -315,6 +329,8 @@
           var config = JSON.parse(result[0].json_metadata).config;
 
           $('#min_bid').val(config.min_bid_sbd);
+          $('#max_bid').val(config.max_bid);
+          $('#max_bid_wl').val(config.max_bid_wl);
           $('#min_bid_steem').val(config.min_bid_steem);
           $('#bid_window').val(config.bid_window);
           $('#allows_comments').prop('checked', config.comments);
@@ -355,6 +371,8 @@
         json_metadata.config = {
           'min_bid_sbd': parseFloat($('#min_bid').val()),
           'min_bid_steem': parseFloat($('#min_bid_steem').val()),
+          'max_bid': parseFloat($('#max_bid').val()),
+          'max_bid_wl': parseFloat($('#max_bid_wl').val()),
           'bid_window': parseFloat($('#bid_window').val()),
           'comments': $('#allows_comments')[0].checked,
           'posts_comment': $('#posts_comment')[0].checked,

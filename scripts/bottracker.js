@@ -18,17 +18,16 @@ $(function () {
 	startup();
 
 	function startup() {
-		loadPrices();
+		loadPrices(loadBidBots);
 		setInterval(loadPrices, 30 * 1000);
 
 		loadOtherBots();
 		setInterval(loadOtherBots, 10 * 60 * 1000);
 
-		loadBidBots();
-		setInterval(loadBidBots, 30 * 1000);
-
 		updateSteemVariables(loadPromotionServices);
-		setInterval(loadPromotionServices, 10 * 60 * 1000);
+    setInterval(loadPromotionServices, 10 * 60 * 1000);
+    
+    setInterval(loadBidBots, 30 * 1000);
 
 		setInterval(updateTimers, 1000);
 
@@ -51,19 +50,27 @@ $(function () {
 		} catch (err) { }
 	}
 
-	function loadPrices() {
+	function loadPrices(callback) {
+    var loaded = 0;
+
 		// Load the current prices of STEEM and SBD
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) {
 			steem_price = parseFloat(data[0].price_usd);
 			$('#steem_price').text(steem_price.formatMoney());
-			$('#steem_price_container').css('color', (parseFloat(data[0].percent_change_24h) < 0) ? 'red' : 'green');
+      $('#steem_price_container').css('color', (parseFloat(data[0].percent_change_24h) < 0) ? 'red' : 'green');
+      
+      if(++loaded == 2 && callback)
+        callback();
 		});
 
 		// Load the current prices of STEEM and SBD
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) {
 			sbd_price = parseFloat(data[0].price_usd);
 			$('#sbd_price').text(sbd_price.formatMoney());
-			$('#sbd_price_container').css('color', (parseFloat(data[0].percent_change_24h) < 0) ? 'red' : 'green');
+      $('#sbd_price_container').css('color', (parseFloat(data[0].percent_change_24h) < 0) ? 'red' : 'green');
+      
+      if(++loaded == 2 && callback)
+        callback();
 		});
 	}
 
@@ -270,16 +277,16 @@ $(function () {
 		td.text(formatCurrencyVote(bot));
 		row.append(td);
 
-		var steem_bid = '';
-		if(bot.accepts_steem){
-		  if(bot.min_bid_steem && bot.min_bid_steem != bot.min_bid)
-			steem_bid = ' or ' + bot.min_bid_steem.formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
-		  else
-			steem_bid = ' or <img src="img/steem.png" style="width: 17px; vertical-align: top;"/>';
+		td = $(document.createElement('td'));
+		var span = $('<span>');
+		if(bot.max_bid && bot.max_bid_wl && parseFloat(bot.max_bid_wl) > parseFloat(bot.max_bid)) {
+      span.attr('data-toggle', 'tooltip');
+      span.attr('data-placement', 'top');
+      span.attr('title', 'This bot has a higher max bid for whitelisted accounts.');
 		}
 
-		td = $(document.createElement('td'));
-		td.html(bot.min_bid.formatMoney() + ' SBD' + steem_bid);
+		span.html(bot.min_bid.toFixed(2) + (bot.max_bid ? ' / ' + bot.max_bid.toFixed(2) : '') + (bot.max_bid_wl ? '*' : ''));
+		td.append(span);
 		row.append(td);
 
 		td = $(document.createElement('td'));
