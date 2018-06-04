@@ -52,7 +52,7 @@ $(function () {
 
 	function loadPrices(callback) {
     var loaded = 0;
-
+    /*
 		// Load the current prices of STEEM and SBD
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem/', function (data) {
 			steem_price = parseFloat(data[0].price_usd);
@@ -63,7 +63,7 @@ $(function () {
         callback();
 		});
 
-		// Load the current prices of STEEM and SBD
+    // Load the current prices of STEEM and SBD
 		$.get('https://api.coinmarketcap.com/v1/ticker/steem-dollars/', function (data) {
 			sbd_price = parseFloat(data[0].price_usd);
 			$('#sbd_price').text(sbd_price.formatMoney());
@@ -71,8 +71,19 @@ $(function () {
       
       if(++loaded == 2 && callback)
         callback();
-		});
-	}
+    });*/
+
+    $.get('http://postpromoter.net/api/prices', function (data) {
+      steem_price = parseFloat(data.steem_price);
+      sbd_price = parseFloat(data.sbd_price);
+
+      $('#steem_price').text(steem_price.formatMoney());
+      $('#sbd_price').text(sbd_price.formatMoney());
+
+      if(callback)
+        callback();
+    })
+  }
 
 	function loadOtherBots() {
       $.get(api_url + '/other_bots', function (data) {
