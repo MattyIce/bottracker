@@ -73,7 +73,7 @@ $(function () {
         callback();
     });*/
 
-    $.get('http://postpromoter.net/api/prices', function (data) {
+    $.get('https://postpromoter.net/api/prices', function (data) {
       steem_price = parseFloat(data.steem_price);
       sbd_price = parseFloat(data.sbd_price);
 
