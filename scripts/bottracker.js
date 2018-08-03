@@ -125,7 +125,7 @@ $(function () {
 	}
 
 	function loadPromotionServices() {
-		steem.api.getAccounts(['smartsteem', 'randowhale', 'minnowbooster'], function (err, result) {
+		steem.api.getAccounts(['smartsteem', 'booster', 'minnowbooster', 'tipu'], function (err, result) {
 			try {
 				var account = result[0];
 				var bar = $('#smartsteem-progress div');
@@ -138,32 +138,15 @@ $(function () {
 
 				account = result[1];
 				var metadata = JSON.parse(account.json_metadata);
-				$('#randowhale-desc').text(metadata.profile.about);
+				//$('#booster-desc').text(metadata.profile.about);
 
-				var config = metadata.config;
-				var status = $('#randowhale-status');
-				status.text(config.sleep ? 'Sleeping' : 'Awake!');
-
-				if(config.sleep)
-				{
-					status.removeClass('label-success')
-					status.addClass('label-default');
-					$('#randowhale-submit').attr('disabled', 'disabled');
-				} else {
-					status.removeClass('label-default')
-					status.addClass('label-success');
-					$('#randowhale-submit').removeAttr('disabled');
-				}
-
-				$('#randowhale-fee').text(config.fee_sbd.formatMoney() + ' SBD');
-
-				var bar = $('#randowhale-progress div');
+				var bar = $('#booster-progress div');
 				var power = getVotingPower(account) / 100;
 				bar.attr('aria-valuenow', power);
 				bar.css('width', power + '%');
 				bar.text(power + '%');
-				$('#randowhale-vote').text('$' + getVoteValue(100, account).formatMoney());
-				$('#rw_bot_error').css('display', 'none');
+				$('#booster-vote').text('$' + getVoteValue(100, account).formatMoney());
+				$('#booster_bot_error').css('display', 'none');
 
 				account = result[2];
 				var bar = $('#minnowbooster-progress div');
@@ -173,6 +156,18 @@ $(function () {
 				bar.text(power + '%');
 				$('#minnowbooster-vote').text('$' + getVoteValue(100, account).formatMoney());
 				$('#mb_bot_error').css('display', 'none');
+
+				account = result[3];
+				var metadata = JSON.parse(account.json_metadata);
+				$('#tipu-desc').text(metadata.profile.about);
+
+				var bar = $('#tipu-progress div');
+				var power = getVotingPower(account) / 100;
+				bar.attr('aria-valuenow', power);
+				bar.css('width', power + '%');
+				bar.text(power + '%');
+				$('#tipu-vote').text('$' + getVoteValue(100, account).formatMoney());
+				$('#tipu_bot_error').css('display', 'none');
 			} catch (err) {
 				console.log(err);
 				$('#ss_bot_error').css('display', 'block');
@@ -819,8 +814,9 @@ $(function () {
     }
 
     $('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
-    $('#randowhale-submit').click(function () { sendBid({ name: 'randowhale', min_bid: 1, max_post_age: 3.5 }); });
-    $('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
+    $('#booster-submit').click(function () { sendBid({ name: 'booster', min_bid: 1, max_post_age: 3.5 }); });
+		$('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
+		$('#tipu-submit').click(function () { sendBid({ name: 'tipu', min_bid: 0.5, max_post_age: 6 }); });
 
     // Initialize and try to log in with SteemConnect V2
     var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
