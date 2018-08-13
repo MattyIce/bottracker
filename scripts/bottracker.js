@@ -574,7 +574,7 @@ $(function () {
 			div.css('height', '23px');
 
 			var link = $(document.createElement('a'));
-			link.attr('href', 'https://steemit.com' + bid.url);
+			link.attr('href', (bid.url.startsWith('http') ? bid.url : ('https://steemit.com' + bid.url)));
 			link.attr('target', '_blank');
 			link.text(bid.url);
 			div.append(link);
