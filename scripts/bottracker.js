@@ -114,12 +114,13 @@ $(function () {
 
 	function loadBidBots() {
 		$.get(api_url + '/bid_bots', function (data) {
+			bots = data.filter(d => d.vote_usd > 0.1 && d.last < 10 * 60 * 60 * 1000);
+			
 			// Populate the drop down list of bots for the vote value calculator
-			data.map(function(b) { return b.name }).sort().forEach(function(name) {
+			bots.map(function(b) { return b.name }).sort().forEach(function(name) {
 				$('#bot_list').append('<option value="' + name + '">' + name + '</option>');
 			});
 
-			bots = data;
 			showBidBots();
 		});
 	}
