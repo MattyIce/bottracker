@@ -449,18 +449,18 @@
     //Functions for Approx SQRT (see https://github.com/steemit/steem/blob/5c787c5baa651858658caa2bd47473846b099c0a/doc/sqrt.md)
     function approx_sqrt(x){
       if(x == 0) return 0;
-      msb_x = find_msb(x);
-      msb_z = msb_x >> 1;
+      var msb_x = find_msb(x);
+      var msb_z = msb_x >> 1;
   
-      msb_x_bit = shiftleft64(1,msb_x);
-      msb_z_bit = shiftleft64(1,msb_z);
+      var msb_x_bit = shiftleft64(1,msb_x);
+      var msb_z_bit = shiftleft64(1,msb_z);
   
-      mantissa_mask = msb_x_bit - 1;
-      mantissa_x = and64(x,mantissa_mask);
-      mantissa_z_hi = and64(msb_x,1) ? msb_z_bit : 0;
-      mantissa_z_lo = shiftright64(mantissa_x , msb_x - msb_z);
-      mantissa_z = shiftright64(or64(mantissa_z_hi , mantissa_z_lo) , 1);
-      result = or64(msb_z_bit , mantissa_z);
+      var mantissa_mask = msb_x_bit - 1;
+      var mantissa_x = and64(x,mantissa_mask);
+      var mantissa_z_hi = and64(msb_x,1) ? msb_z_bit : 0;
+      var mantissa_z_lo = shiftright64(mantissa_x , msb_x - msb_z);
+      var mantissa_z = shiftright64(or64(mantissa_z_hi , mantissa_z_lo) , 1);
+      var result = or64(msb_z_bit , mantissa_z);
       
       return result;
     }
@@ -473,7 +473,7 @@
     const BIT64_LIMIT = Math.pow(2,64);
 
     function hi_lo(x){
-      r = {};
+      var r = {};
       r.hi = Math.floor(x / BIT32_LIMIT);
       r.lo = x % BIT32_LIMIT;
       return r;  
@@ -482,16 +482,16 @@
     function and64(x,y){
       x = hi_lo(x);
       y = hi_lo(y);
-      hi = (x.hi & y.hi) >>> 0;
-      lo = (x.lo & y.lo) >>> 0;
+      var hi = (x.hi & y.hi) >>> 0;
+      var lo = (x.lo & y.lo) >>> 0;
       return hi*BIT32_LIMIT + lo;
     }
 
     function or64(x,y){
       x = hi_lo(x);
       y = hi_lo(y);
-      hi = (x.hi | y.hi) >>> 0;
-      lo = (x.lo | y.lo) >>> 0;
+      var hi = (x.hi | y.hi) >>> 0;
+      var lo = (x.lo | y.lo) >>> 0;
       return hi*BIT32_LIMIT + lo;
     }
 
