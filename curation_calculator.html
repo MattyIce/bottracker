@@ -469,10 +469,13 @@
       return Math.floor(Math.log(x)/Math.log(2));
     }
 
+    const BIT32_LIMIT = Math.pow(2,32);
+    const BIT64_LIMIT = Math.pow(2,64);
+
     function hi_lo(x){
       r = {};
-      r.hi = Math.floor(x / Math.pow(2,32));
-      r.lo = x % Math.pow(2,32);
+      r.hi = Math.floor(x / BIT32_LIMIT);
+      r.lo = x % BIT32_LIMIT;
       return r;  
     }
 
@@ -481,7 +484,7 @@
       y = hi_lo(y);
       hi = (x.hi & y.hi) >>> 0;
       lo = (x.lo & y.lo) >>> 0;
-      return hi*Math.pow(2,32) + lo;
+      return hi*BIT32_LIMIT + lo;
     }
 
     function or64(x,y){
@@ -489,11 +492,11 @@
       y = hi_lo(y);
       hi = (x.hi | y.hi) >>> 0;
       lo = (x.lo | y.lo) >>> 0;
-      return hi*Math.pow(2,32) + lo;
+      return hi*BIT32_LIMIT + lo;
     }
 
     function shiftleft64(x,y){
-      return (x * Math.pow(2,y)) % Math.pow(2,64); // mod64 as a safeguard against 'val' exceeding 64bit integer range
+      return (x * Math.pow(2,y)) % BIT64_LIMIT; // mod64 as a safeguard against 'val' exceeding 64bit integer range
     }
 
     function shiftright64(x,y){
