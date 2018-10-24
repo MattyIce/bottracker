@@ -448,7 +448,9 @@
     
     //Functions for Approx SQRT (see https://github.com/steemit/steem/blob/5c787c5baa651858658caa2bd47473846b099c0a/doc/sqrt.md)
     function approx_sqrt(x){
-      if(x == 0) return 0;
+      // we don't want to let the code aproximate sqrts from negative inputs..
+      if(x <= 0) return 0;
+
       var msb_x = find_msb(x);
       var msb_z = msb_x >> 1;
   
