@@ -507,5 +507,176 @@
       return hi*Math.pow(2,32) + lo;
     }   
   </script>
+
+  <script type="text/javascript">
+    // some simple tests for bitwise ops
+    var Tests = {};
+
+    Tests.hi_lo = {
+      low: () => {
+        var hl = hi_lo(1078);
+        if(bin64(hl.hi) != '0000000000000000000000000000000000000000000000000000000000000000') return "failed: hi";
+        if(bin64(hl.lo) != '0000000000000000000000000000000000000000000000000000010000110110') return "failed: lo";
+        return true;
+      },
+      high: () => {
+        var hl = hi_lo(17179869182);
+        if(bin64(hl.hi) != '0000000000000000000000000000000000000000000000000000000000000011') return "failed: hi";
+        if(bin64(hl.lo) != '0000000000000000000000000000000011111111111111111111111111111110') return "failed: lo";
+        return true;
+      },
+    };
+
+    Tests.and64 = {
+      low: () => {
+        // 2nd arg: 32bitmask, all '1', bitvalue shouldn't change
+        var val = and64(1078,4294967295);
+        if(bin64(val) != '0000000000000000000000000000000000000000000000000000010000110110') return "failed";
+        return true;
+      },
+      high: () => {
+        // 2nd arg: 36bitmask, all '1', bitvalue shouldn't change
+        var val = and64(17179869182,4294967295*16+15);
+        if(bin64(val) != '0000000000000000000000000000001111111111111111111111111111111110') return "failed";
+        return true;
+      },
+    };
+
+    Tests.or64 = {
+      low: () => {
+        // 2nd arg: all '0', bitvalue shouldn't change
+        var val = or64(1078,0);
+        if(bin64(val) != '0000000000000000000000000000000000000000000000000000010000110110') return "failed";
+        return true;
+      },
+      high: () => {
+        // 2nd arg: all '0', bitvalue shouldn't change
+        var val = or64(17179869182,0);
+        if(bin64(val) != '0000000000000000000000000000001111111111111111111111111111111110') return "failed";
+        return true;
+      },
+    };
+
+    Tests.shiftleft64 = {
+      low: () => {
+        var val = shiftleft64(1078,16);
+        if(bin64(val) != '0000000000000000000000000000000000000100001101100000000000000000') return "failed";
+        return true;
+      },
+      low_almostlastbit: () => {
+        var val = shiftleft64(1078,52);
+        if(bin64(val) != '0100001101100000000000000000000000000000000000000000000000000000') return "failed";
+        return true;
+      },
+      low_lastbit: () => {
+        var val = shiftleft64(1078,53);
+        if(bin64(val) != '1000011011000000000000000000000000000000000000000000000000000000') return "failed";
+        return true;
+      },
+      low_overflow: () => {
+        var val = shiftleft64(1078,54);
+        if(bin64(val) != '0000110110000000000000000000000000000000000000000000000000000000') return "failed";
+        return true;
+      },
+
+      high: () => {
+        var val = shiftleft64(17179869182,16);
+        if(bin64(val) != '0000000000000011111111111111111111111111111111100000000000000000') return "failed";
+        return true;
+      },
+      high_almostlastbit: () => {
+        var val = shiftleft64(17179869182,29);
+        if(bin64(val) != '0111111111111111111111111111111111000000000000000000000000000000') return "failed";
+        return true;
+      },
+      high_lastbit: () => {
+        var val = shiftleft64(17179869182,30);
+        if(bin64(val) != '1111111111111111111111111111111110000000000000000000000000000000') return "failed";
+        return true;
+      },
+      high_overflow: () => {
+        var val = shiftleft64(17179869182,31);
+        if(bin64(val) != '1111111111111111111111111111111100000000000000000000000000000000') return "failed";
+        return true;
+      },
+    };
+
+    Tests.shiftright64 = {
+      // shiftright64 should be inverse of shiftleft64, except for cases when shiftleft64 overflows
+      low: () => {
+        var val = shiftright64(parseInt('0000000000000000000000000000000000000100001101100000000000000000',2),16);
+        if(val != 1078) return "failed";
+        return true;
+      },
+      low_almostlastbit: () => {
+        var val = shiftright64(parseInt('0100001101100000000000000000000000000000000000000000000000000000',2),52);
+        if(val != 1078) return "failed";
+        return true;
+      },
+      // in our case, shiftright64 should never return negatives,
+      // even if MSB of the input is set and input value could look like a negative
+      low_lastbit: () => {
+        var val = shiftright64(parseInt('1000011011000000000000000000000000000000000000000000000000000000',2),53);
+        if(val != 1078) return "failed";
+        return true;
+      },
+
+      high: () => {
+        var val = shiftright64(parseInt('0000000000000011111111111111111111111111111111100000000000000000',2),16);
+        if(val != 17179869182) return "failed";
+        return true;
+      },
+      high_almostlastbit: () => {
+        var val = shiftright64(parseInt('0111111111111111111111111111111111000000000000000000000000000000',2),29);
+        if(val != 17179869182) return "failed";
+        return true;
+      },
+      // in our case, shiftright64 should never return negatives,
+      // even if MSB of the input is set and input value could look like a negative
+      high_lastbit: () => {
+        var val = shiftright64(parseInt('1111111111111111111111111111111110000000000000000000000000000000',2),30);
+        if(val != 17179869182) return "failed";
+        return true;
+      },
+    };
+
+    /*
+      results before patch, original code gitrev:514d9bb6ed6c9a07c4e595947ab71fe424a49845
+      On: Google Chrome 69.0.3497.100, Windows 10 x64
+        and64: high: failed
+        or64: high: failed
+        shiftleft64: low: failed
+        shiftleft64: low_overflow: failed
+        shiftleft64: high_overflow: failed
+        shiftright64: low: failed
+        Failed 6/20 tests
+    */
+
+    // FYI: doing that this way will have funny effects if 'n' is negative (i.e. -7 = '0000000000-111')
+    // but we don't care - 'n' should be positive and any funny effects will fail the test so it's OK
+    function bin64(n) {
+      return n.toString(2).padStart(64,'0');
+    }
+
+    // right now, I don't want to make fuss and install Jasmine/etc, so here's my quick'n'dirty test runner
+    function runTests(suite) {
+      var testlist = Object.keys(Tests).map(k => Object.keys(Tests[k]).map(k2 => ({outer:k,inner:k2})));
+      testlist = testlist.flat();
+      var results = testlist.map(what => {
+        var result = suite[what.outer][what.inner]();
+        if(result === true) return [true, what.outer, what.inner, null];
+        console.log(what.outer + ": " + what.inner + ": " + result);
+        return [false, what.outer, what.inner, result];
+      });
+      var countfailed = results.filter(arr => !arr[0]).length;
+      if(countfailed > 0) {
+        console.log("Failed " + countfailed + "/" + results.length + " tests");
+        return false;
+      }
+      else
+        return true;
+    }
+
+    </script>
 </body>
 </html>
