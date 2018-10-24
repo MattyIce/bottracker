@@ -493,19 +493,12 @@
     }
 
     function shiftleft64(x,y){
-      x = hi_lo(x);  
-      hi = x.hi * Math.pow(2,y);
-      lo = x.lo * Math.pow(2,y);
-      return hi*Math.pow(2,32) + lo;
+      return (x * Math.pow(2,y)) % Math.pow(2,64); // mod64 as a safeguard against 'val' exceeding 64bit integer range
     }
 
     function shiftright64(x,y){
-      x = hi_lo(x);
-      hi = Math.floor(x.hi / Math.pow(2,y));
-      aux = x.hi % Math.pow(2,y);
-      lo = Math.floor(x.lo / Math.pow(2,y)) + aux * Math.pow(2,32-y);
-      return hi*Math.pow(2,32) + lo;
-    }   
+      return Math.floor(x / Math.pow(2,y));
+    }
   </script>
 
   <script type="text/javascript">
