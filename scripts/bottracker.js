@@ -6,7 +6,7 @@ $(function () {
 	var bots = [];
 	var other_bots = [];
 	var FULL_CURATION_TIME = 30 * 60 * 1000;
-	var api_url = 'http://localhost:3000';
+	var api_url = 'https://steembottracker.net';
 	var _filter = {};
 	var user = null;
 	var _dialog = null;
