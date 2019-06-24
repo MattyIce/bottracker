@@ -104,9 +104,7 @@
 
               <ul class="dropdown-menu">
                 <li><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
-                <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
                 <li><a href="delegation.html"><i class="fa fa-retweet mr10"></i> Delegation Manager</a></li>
-                <li><a href="javascript:void(0);" id="btn_front_run"><img src="img/frontrunner.png" style="height: 20px;margin-right: 7px;"/> Front Run the Bots</a></li>
               </ul>
             </li>
 
@@ -114,6 +112,7 @@
             <li><a href="javascript:void(0);" style="font-size: 1.5em;"><div id="sbd_price_container">SBD - $<span id="sbd_price">loading...</span></div></a></li>
           </ul>
 
+					<!--
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown" id="user_info">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -129,7 +128,8 @@
             <li id="btn_login">
               <button type="button" class="btn btn-default navbar-btn" onclick="window.location.href=sc2.getLoginURL();">Log in</button>
             </li>
-          </ul>
+					</ul>
+					-->
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
@@ -154,16 +154,22 @@
           </p>
         </div>
       </div>
-      
-      <div class="panel panel-success" onclick="window.open('https://steemmonsters.com');" style="border-radius: 30px; cursor: pointer; margin-top: 10px; font-size: 2.3rem; text-align: center; background-image: url(https://steemmonsters.com/images/bg.png);">
-        <div class="panel-body">
-          <a href="https://steemmonsters.com" target="_blank"><img src="https://i.imgur.com/XOrOJbG.png" style="width: 300px; float:left;"/></a>
-          <div style="margin-top: 40px; font-family: 'IM Fell English SC', serif; font-size: 2.8rem; color: #FBAC25;">
-            Need something to do while waiting for the bots to vote? Check out Steem Monsters, a new collectible card game built on the Steem blockchain!<br/><br/>
-            Buy packs, buy/sell/trade on the decentralized Monster Market, complete your collection, and get ready for when the battles begin!
-          </div>
-        </div>
-      </div>
+			
+			<div style="display: flex;">
+				<div class="panel panel-success" onclick="window.open('https://steemmonsters.com');" style="width: 50%; border-radius: 30px; cursor: pointer; margin-top: 10px; font-size: 2.3rem; text-align: center; background-image: url(https://steemmonsters.com/images/bg.png);">
+					<div class="panel-body">
+						<a href="https://steemmonsters.com" target="_blank"><img src="https://i.imgur.com/XOrOJbG.png" style="width: 300px; float:left;"/></a>
+						<div style="margin-top: 40px; font-family: 'IM Fell English SC', serif; font-size: 2rem; color: #FBAC25;">
+							Check out Steem Monsters, a new collectible card game built on the Steem blockchain!<br/><br/>
+							Buy/sell/trade on the decentralized Market, and battle with thousands of other players in live PvP combat!
+						</div>
+					</div>
+				</div>
+
+				<div style="width: 50%; padding-top: 10px; text-align: center;">
+					<a href="https://kryptogamers.com/blackjack?ref=steembottracker" target="_blank"><img src="img/kryptogamers.png" style="height: 300px; border-radius: 30px;"/></a>
+				</div>
+			</div>
 
       <!--
       <div class="panel panel-default">
@@ -379,7 +385,7 @@
                     <img id="filter_refund" src="img/refund.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that automatically refund invalid bids." />
                     <img id="filter_steem" src="img/steem.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that accept STEEM bids." />
                     <img id="filter_nocomment" src="img/no_comment.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that do not post a comment when they vote on a post." />
-                    <img id="filter_funding" src="img/funding.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that use a portion of earnings to fund projects." />
+                    <img id="filter_se" src="img/steem_engine_logo_32.png" style="cursor: pointer; height: 30px; margin-left: 10px;" data-toggle="tooltip" data-placement="top" title="Only show bots that accept a Steem Engine token." />
                   </label>
 
 
@@ -388,7 +394,7 @@
                     <label class="control-label text-left" style="float: left; margin-right: 20px;">Vote Value: </label>
                     <div>
                       <b>$0&nbsp;&nbsp;</b>
-                      <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="20" />
+                      <input id="min_vote_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="5" />
                       <b>&nbsp;&nbsp;$200</b>
                     </div>
                   </div>

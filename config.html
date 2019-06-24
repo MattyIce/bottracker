@@ -82,12 +82,12 @@
 
               <ul class="dropdown-menu">
                 <li><a href="config.html"><i class="fa fa-code mr10"></i> Bot Owner Config</a></li>
-                <li><a href="curation_calculator.html"><i class="fa fa-calculator mr10"></i> Curation Estimator</a></li>
                 <li><a href="delegation.html"><i class="fa fa-retweet mr10"></i> Delegation Manager</a></li>
               </ul>
             </li>
           </ul>
 
+					<!--
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown" id="user_info">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -102,7 +102,8 @@
             <li id="btn_login">
               <button type="button" class="btn btn-default navbar-btn" onclick="window.location.href=sc2.getLoginURL();">Log in</button>
             </li>
-          </ul>
+					</ul>
+					-->
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
@@ -207,11 +208,25 @@
 
             <div class="form-group">
               <label class="col-lg-2 col-md-3 control-label" for="bid_window" >Bid Window</label>
-              <div class="col-lg-10 col-md-9">
+              <div class="col-lg-2 col-md-2">
                <select id="bid_window" class="form-control input-large">
                   <option value="2.4">2.4 Hours (100% Vote)</option>
                   <option value="1.2">1.2 Hours (50% Vote)</option>
                 </select>
+							</div>
+							
+							<label class="col-lg-2 col-md-3 control-label" for="max_roi">Steem Engine Token</label>
+              <div class="col-lg-2 col-md-2">
+                <input type="text" class="form-control input" id="se_token" placeholder="">
+                <span class="help-block text-info">Does this bot use a Steem Engine token?</span>
+              </div>
+						</div>
+						
+						<div class="form-group">
+              <label class="col-lg-2 col-md-3 control-label" for="payment_acct">Payment Account</label>
+              <div class="col-lg-5 col-md-5">
+                <input type="url" class="form-control" id="payment_acct" placeholder="Name of Separate Payment Account">
+                <div style="font-size: 80%; color: #888888;">Specify if bid payments should be sent to a different account than the one used for voting.</div>
               </div>
             </div>
 
@@ -345,7 +360,9 @@
           $('#min_post_age').val(config.min_post_age);
           $('#is_disabled').prop('checked', config.is_disabled);
           $('#fill_limit').val(config.fill_limit);
-          $('#max_roi').val(config.max_roi);
+					$('#max_roi').val(config.max_roi);
+					$('#se_token').val(config.se_token);
+					$('#payment_acct').val(config.payment_acct);
         }
       });
     }
@@ -386,7 +403,9 @@
           'min_post_age': $('#min_post_age').val(),
           'is_disabled': $('#is_disabled')[0].checked,
           'fill_limit': $('#fill_limit').val(),
-          'max_roi': $('#max_roi').val()
+					'max_roi': $('#max_roi').val(),
+					'se_token': $('#se_token').val(),
+					'payment_acct': $('#payment_acct').val()
         };
 
         steem.broadcast.accountUpdate($('#active_wif').val(), account.name, account.memo_key, json_metadata, function(err, result) {

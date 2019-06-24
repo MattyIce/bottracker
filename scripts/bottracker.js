@@ -1,12 +1,12 @@
 $(function () {
 	var RETURN = 1;
 	var AUTHOR_REWARDS = 0.75;
-	var MIN_VOTE = 20;
+	var MIN_VOTE = 5;
 	var CURRENCY = 'USD';
 	var bots = [];
 	var other_bots = [];
 	var FULL_CURATION_TIME = 30 * 60 * 1000;
-	var api_url = 'https://steembottracker.net';
+	var api_url = 'http://localhost:3000';
 	var _filter = {};
 	var user = null;
 	var _dialog = null;
@@ -75,7 +75,8 @@ $(function () {
 
     $.get('https://postpromoter.net/api/prices', function (data) {
       steem_price = parseFloat(data.steem_price);
-      sbd_price = parseFloat(data.sbd_price);
+			sbd_price = parseFloat(data.sbd_price);
+			token_prices = data.se_token_prices;
 
       $('#steem_price').text(steem_price.formatMoney());
       $('#sbd_price').text(sbd_price.formatMoney());
@@ -233,11 +234,15 @@ $(function () {
 		var isFavorite = favorites.indexOf(bot.name) >= 0;
 
 		// Don't show bots that are filtered out
-		if (!isFavorite && (hidden.indexOf(bot.name) >= 0 || bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.funding && !bot.funding_url) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment))))
+		if (!isFavorite && (hidden.indexOf(bot.name) >= 0 || bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.se && !bot.se_token) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment))))
 		  return;
 
+		let max_suggested_bid = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd);
 		var bid_sbd = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / sbd_price;
 		var bid_steem = bot.accepts_steem ? (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / steem_price : 0;
+
+		if(bot.se_token && token_prices[bot.se_token])
+			max_suggested_bid = max_suggested_bid / (token_prices[bot.se_token] * steem_price);
 
 		var row = $(document.createElement('tr'));
 
@@ -268,14 +273,14 @@ $(function () {
 		  td.append(icon);
 		}
 
+		if (bot.se_token) {
+		  var icon = $('<img src="img/steem_engine_logo_32.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot only accepts the ' + bot.se_token + ' Steem Engine token." />');
+		  td.append(icon);
+		}
+
 		if(bot.refunds) {
 			var icon = $('<img src="img/refund.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot automatically refunds invalid bids!" />');
 			td.append(icon);
-		}
-
-		if (bot.funding_url) {
-		  var icon = $('<a href="' + bot.funding_url + '" target="_blank"><img src="img/funding.png" style="width: 20px; margin-left: 5px;" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="This bot uses a portion of its earnings to fund other projects and initiatives - Click for Details"/></a>');
-		  td.append(icon);
 		}
 
 		row.append(td);
@@ -311,7 +316,9 @@ $(function () {
 		td = $(document.createElement('td'));
 		if(isNaN(bot.total_usd)) {
 			td.text('unknown');
-		} else if (bot.accepts_steem)
+		} else if(bot.se_token)
+			td.text(Math.max(max_suggested_bid, 0).formatMoney() + ' ' + bot.se_token); 
+		else if (bot.accepts_steem)
 		  td.html(Math.max(bid_steem, 0).formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/> or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
 		else
 		  td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
@@ -471,7 +478,12 @@ $(function () {
 				populateRoundDetailTable(cur_table, bot, data.current_round);
 
 				$('#cur_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
-				$('#cur_round_bids').text(sumBids(data.current_round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(data.current_round, 'STEEM').formatMoney() + ' STEEM' : ''));
+
+				if(bot.se_token)
+					$('#cur_round_bids').text(sumBids(data.current_round, bot.se_token).formatMoney() + ' ' + bot.se_token);
+				else
+					$('#cur_round_bids').text(sumBids(data.current_round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(data.current_round, 'STEEM').formatMoney() + ' STEEM' : ''));
+
 				$('#cur_round_value').text('$' + bot.total_usd.formatMoney());
 
 				var roi = (((bot.vote_usd * AUTHOR_REWARDS / data.current_round.round_total) - 1) * 100);
@@ -486,7 +498,12 @@ $(function () {
 				populateRoundDetailTable(last_table, bot, data.last_round);
 
 				$('#last_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+
+				if(bot.se_token)
+					$('#last_round_bids').text(sumBids(data.last_round, bot.se_token).formatMoney() + ' ' + bot.se_token);
+				else
 				$('#last_round_bids').text(sumBids(data.last_round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(data.last_round, 'STEEM').formatMoney() + ' STEEM' : ''));
+
 				$('#last_round_value').text('$' + data.last_round.round_total.formatMoney());
 
 				var roi = (((bot.vote_usd * AUTHOR_REWARDS / data.last_round.round_total) - 1) * 100);
@@ -589,6 +606,7 @@ $(function () {
 	function sendBid(bot) {
 		$('#bid_details_dialog_bot_name').text(bot.name);
 		$('#bid_details_error').hide();
+		$('#bid_details_btn_submit').off('click');
 		$('#bid_details_btn_submit').click(submitBid);
 		$('#bid_details_post_url').val('');
 		$('#bid_details_bid_amount').val(bot.min_bid)
@@ -596,6 +614,14 @@ $(function () {
 		_dialog = $('#bid_details_dialog').modal();
 		_dialog.off('hidden.bs.modal');
 		_dialog.bot = bot;
+
+		$('#bid_details_bid_currency').empty();
+		if(bot.se_token)
+			$('#bid_details_bid_currency').append('<option value="' + bot.se_token + '">' + bot.se_token + '</option>');
+		else {
+			$('#bid_details_bid_currency').append('<option value="SBD">SBD</option>');
+			$('#bid_details_bid_currency').append('<option value="STEEM">STEEM</option>');
+		}
 
 		var account_name = user ? user.name : localStorage.getItem('bid_details_account_name');
 		if (account_name) {
@@ -605,23 +631,50 @@ $(function () {
 	}
 
 	function submitBid() {
-		var to = $('#bid_details_dialog_bot_name').text();
+		var to = _dialog.bot.payment_acct ? _dialog.bot.payment_acct : $('#bid_details_dialog_bot_name').text();
 		var from = $('#bid_details_account_name').val();
 		var amount = $('#bid_details_bid_amount').val();
 		var currency = $('#bid_details_bid_currency').val();
 		var url = $('#bid_details_post_url').val();
 
-		var win = popupCenter('https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url, 'sc2-pay', 500, 560);
-
 		checkPost(_dialog.bot, url, amount, currency, function (error) {
 			if (error) {
 				$('#bid_details_error').html('<b>Error:</b> ' + error);
 				$('#bid_details_error').show();
-				win.close();
 			} else {
+				console.log(1);
+				submitBidPayment(to, from, amount, currency, url);
 				_dialog.modal('hide');
 			}
-		});
+		});		
+	}
+
+	function submitBidPayment(to, from, amount, currency, url) {
+		if(['SBD', 'STEEM'].includes(currency)) {
+			if(window.steem_keychain)
+				steem_keychain.requestTransfer(from, to, parseFloat(amount).toFixed(3), url, currency, r => console.log(r));
+			else
+				popupCenter('https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url, 'sc2-pay', 500, 560);
+		} else {
+			var transaction_data = {
+				"contractName": "tokens",
+				"contractAction": "transfer",
+				"contractPayload": {
+					"symbol": currency,
+					"to": to,
+					"quantity": amount + '',
+					"memo": url
+				}
+			};
+
+			if(window.steem_keychain)
+				steem_keychain.requestCustomJson(from, 'ssc-mainnet1', 'Active', JSON.stringify(transaction_data), 'Token Transfer: ' + currency);
+			else {
+				var sc_url = 'https://steemconnect.com/sign/custom-json?required_posting_auths=' + encodeURI('[]') + '&required_auths=' + encodeURI('["' + from + '"]&id=ssc-mainnet1&json=' + encodeURI(JSON.stringify(transaction_data)));
+				popupCenter(sc_url, 'sc2-pay', 500, 560);
+			}
+
+		}
 	}
 
 	function checkPost(bot, memo, amount, currency, callback) {
@@ -805,7 +858,7 @@ $(function () {
     $('#filter_verified').click(function () { toggleFilter('verified'); });
     $('#filter_refund').click(function () { toggleFilter('refund'); });
     $('#filter_steem').click(function () { toggleFilter('steem'); });
-    $('#filter_funding').click(function () { toggleFilter('funding'); });
+    $('#filter_se').click(function () { toggleFilter('se'); });
     $('#filter_nocomment').click(function () { toggleFilter('nocomment'); });
 
     function toggleFilter(filter) {
@@ -817,7 +870,7 @@ $(function () {
     $('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
     $('#booster-submit').click(function () { sendBid({ name: 'booster', min_bid: 1, max_post_age: 3.5 }); });
 		$('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
-		$('#tipu-submit').click(function () { sendBid({ name: 'tipu', min_bid: 0.5, max_post_age: 6 }); });
+		$('#tipu-submit').click(function () { sendBid({ name: 'tipu', min_bid: 0.5, max_post_age: 6, accepts_steem: true }); });
 
     // Initialize and try to log in with SteemConnect V2
     var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
