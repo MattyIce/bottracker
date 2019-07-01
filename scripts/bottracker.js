@@ -670,7 +670,7 @@ $(function () {
 			if(window.steem_keychain)
 				steem_keychain.requestCustomJson(from, 'ssc-mainnet1', 'Active', JSON.stringify(transaction_data), 'Token Transfer: ' + currency);
 			else {
-				var sc_url = 'https://steemconnect.com/sign/custom-json?required_posting_auths=' + encodeURI('[]') + '&required_auths=' + encodeURI('["' + from + '"]&id=ssc-mainnet1&json=' + encodeURI(JSON.stringify(transaction_data)));
+				var sc_url = 'https://steemconnect.com/sign/custom-json?required_posting_auths=' + encodeURI('[]') + '&required_auths=' + encodeURI('["' + from + '"]&id=ssc-mainnet1&json=' + JSON.stringify(transaction_data));
 				popupCenter(sc_url, 'sc2-pay', 500, 560);
 			}
 
