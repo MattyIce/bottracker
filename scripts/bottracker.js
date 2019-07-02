@@ -654,7 +654,7 @@ $(function () {
 			if(window.steem_keychain)
 				steem_keychain.requestTransfer(from, to, parseFloat(amount).toFixed(3), url, currency, r => console.log(r));
 			else
-				popupCenter('https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url, 'sc2-pay', 500, 560);
+				popupCenter('https://v2.steemconnect.com/sign/transfer?from=' + from + '&to=' + to + '&amount=' + amount + ' ' + currency + '&memo=' + url, 'sc2-pay', 600, 800);
 		} else {
 			var transaction_data = {
 				"contractName": "tokens",
@@ -670,8 +670,8 @@ $(function () {
 			if(window.steem_keychain)
 				steem_keychain.requestCustomJson(from, 'ssc-mainnet1', 'Active', JSON.stringify(transaction_data), 'Token Transfer: ' + currency);
 			else {
-				var sc_url = 'https://steemconnect.com/sign/custom-json?required_posting_auths=' + encodeURI('[]') + '&required_auths=' + encodeURI('["' + from + '"]&id=ssc-mainnet1&json=' + JSON.stringify(transaction_data));
-				popupCenter(sc_url, 'sc2-pay', 500, 560);
+				var sc_url = 'https://steemconnect.com/sign/custom-json?authority=active&required_posting_auths=' + encodeURI('[]') + '&required_auths=' + encodeURI('["' + from + '"]&id=ssc-mainnet1&json=' + JSON.stringify(transaction_data));
+				popupCenter(sc_url, 'sc2-pay', 600, 800);
 			}
 
 		}
