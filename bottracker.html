@@ -31,7 +31,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script src="scripts/bootstrap-slider.min.js"></script>
-		<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+		<script src="scripts/steem.min.js"></script>
     <script src="scripts/sc2.min.js"></script>
 
 		<script src="scripts/utils.js"></script>
@@ -264,7 +264,7 @@
                     Take the following example: With a 2.4 hour bidding period user A sends $1 to a voting bot and user B sends $3. The total bid is $4 so that means that user A will get a 25% upvote on their post and user B will get a 75% upvote. If the bot's 100% upvote is worth more than $4 then both user A and B will receive an upvote worth more than they have spent.
                   </p>
                   <p>
-                    Please note that vote values are based on the current value of STEEM. As STEEM prices rise or fall the value of votes will too. Additionally 25% of the value of votes cast more than 30 minutes after a post has been made go to the curation rewards, so for a $0.75 payment you would need at least a $1.00 upvote to be profitable if you are taking curation rewards into account.
+                    Please note that vote values are based on the current value of STEEM. As STEEM prices rise or fall the value of votes will too. Additionally 50% of the value of votes cast more than 5 minutes after a post has been made go to the curation rewards, so for a $0.50 payment you would need at least a $1.00 upvote to be profitable if you are taking curation rewards into account.
                   </p>
                   <p>
                     Each voting bot has their own quirks and rules and those can change at any time. I do the best I can to keep this site up to date however <strong>it is your responsibility to check each voting bot before you use it</strong>. You can click on the links in the table below to go to the SteemIt profile page for each bot.
@@ -302,7 +302,7 @@
                         <dd><span class="value" id="bid_value">$0.00</span></dd>
                         <dt>Total Vote Value:</dt>
                         <dd><span class="value" id="vote_value">$0.00</span></dd>
-                        <dt>After 25% Curation:</dt>
+                        <dt>After 50% Curation:</dt>
                         <dd><span class="value" id="vote_value_net">$0.00</span></dd>
                       </dl>
                     </div>
@@ -354,7 +354,7 @@
                     </select>
                   </div>
 
-                  <label class="col-lg-2 col-md-2 control-label" style="margin-top: 5px; text-align: right;">Include 25% curation:</label>
+                  <label class="col-lg-2 col-md-2 control-label" style="margin-top: 5px; text-align: right;">Include 50% curation:</label>
                   <div class="col-lg-1 col-md-1">
                     <div class="toggle-custom">
                       <label class="toggle" data-on="ON" data-off="OFF">

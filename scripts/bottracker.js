@@ -1,6 +1,6 @@
 $(function () {
 	var RETURN = 1;
-	var AUTHOR_REWARDS = 0.75;
+	var AUTHOR_REWARDS = 0.5;
 	var MIN_VOTE = 5;
 	var CURRENCY = 'USD';
 	var bots = [];
@@ -231,187 +231,189 @@ $(function () {
 	}
 
 	function showBot(bot) {
-		var isFavorite = favorites.indexOf(bot.name) >= 0;
+		try {
+			var isFavorite = favorites.indexOf(bot.name) >= 0;
 
-		// Don't show bots that are filtered out
-		if (!isFavorite && (hidden.indexOf(bot.name) >= 0 || bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.se && !bot.se_token) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment))))
-		  return;
+			// Don't show bots that are filtered out
+			if (!isFavorite && (hidden.indexOf(bot.name) >= 0 || bot.vote_usd < MIN_VOTE || (_filter.verified && !bot.api_url) || (_filter.refund && !bot.refunds) || (_filter.steem && !bot.accepts_steem) || (_filter.se && !bot.se_token) || (_filter.nocomment && (bot.posts_comment == undefined || bot.posts_comment))))
+				return;
 
-		let max_suggested_bid = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd);
-		var bid_sbd = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / sbd_price;
-		var bid_steem = bot.accepts_steem ? (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / steem_price : 0;
+			let max_suggested_bid = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd);
+			var bid_sbd = (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / sbd_price;
+			var bid_steem = bot.accepts_steem ? (AUTHOR_REWARDS * bot.vote_usd - RETURN * bot.total_usd) / steem_price : 0;
 
-		if(bot.se_token && token_prices[bot.se_token])
-			max_suggested_bid = max_suggested_bid / (token_prices[bot.se_token] * steem_price);
+			if(bot.se_token && token_prices[bot.se_token])
+				max_suggested_bid = max_suggested_bid / (token_prices[bot.se_token] * steem_price);
 
-		var row = $(document.createElement('tr'));
+			var row = $(document.createElement('tr'));
 
-		var td = $(document.createElement('td'));
-		var link = $(document.createElement('a'));
-		link.attr('href', 'http://www.steemit.com/@' + bot.name);
-		link.attr('target', '_blank');
-		var text = '@' + bot.name;
+			var td = $(document.createElement('td'));
+			var link = $(document.createElement('a'));
+			link.attr('href', 'http://www.steemit.com/@' + bot.name);
+			link.attr('target', '_blank');
+			var text = '@' + bot.name;
 
-		if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
-		  text += ' (DOWN)';
+			if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
+				text += ' (DOWN)';
 
-		link.html("<img class='userpic' src='https://steemitimages.com/u/" + bot.name + "/avatar'></img>" + text);
-		td.append(link);
+			link.html("<img class='userpic' src='https://steemitimages.com/u/" + bot.name + "/avatar'></img>" + text);
+			td.append(link);
 
-		if(bot.comments) {
-			var icon = $('<span class="fa fa-comment-o ml5" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
-			td.append(icon);
-		}
-
-		if (bot.posts_comment != undefined && !bot.posts_comment) {
-		  var icon = $('<img src="img/no_comment.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot does not post a comment when it votes on a post." />');
-		  td.append(icon);
-		}
-
-		if(bot.accepts_steem) {
-		  var icon = $('<img src="img/steem.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot accepts STEEM bids!" />');
-		  td.append(icon);
-		}
-
-		if (bot.se_token) {
-		  var icon = $('<img src="img/steem_engine_logo_32.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot only accepts the ' + bot.se_token + ' Steem Engine token." />');
-		  td.append(icon);
-		}
-
-		if(bot.refunds) {
-			var icon = $('<img src="img/refund.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot automatically refunds invalid bids!" />');
-			td.append(icon);
-		}
-
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		td.text(formatCurrencyVote(bot));
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		var span = $('<span>');
-		if(bot.max_bid && bot.max_bid_wl && parseFloat(bot.max_bid_wl) > parseFloat(bot.max_bid)) {
-      span.attr('data-toggle', 'tooltip');
-      span.attr('data-placement', 'top');
-      span.attr('title', 'This bot has a higher max bid for whitelisted accounts.');
-		}
-
-		span.html(bot.min_bid.toFixed(2) + (bot.max_bid ? ' / ' + bot.max_bid.toFixed(2) : '') + (bot.max_bid_wl ? '*' : ''));
-		td.append(span);
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		td.text((bot.fill_limit ? ((1 - bot.fill_limit) * 100).toFixed() + '%' : 'none') + ' / ' + (bot.max_roi ? bot.max_roi + '%' : 'none'));
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		td.text((bot.min_post_age ? bot.min_post_age : 0) + ' mins / ' + (bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		td.text(!isNaN(bot.total_usd) ? formatCurrencyTotal(bot) : '--');
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		if(isNaN(bot.total_usd)) {
-			td.text('unknown');
-		} else if(bot.se_token)
-			td.text(Math.max(max_suggested_bid, 0).formatMoney() + ' ' + bot.se_token); 
-		else if (bot.accepts_steem)
-		  td.html(Math.max(bid_steem, 0).formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/> or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
-		else
-		  td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
-
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		td.addClass('timer');
-		td.attr('dir', 'up');
-		td.attr('time', bot.last);
-		td.text(toTimer(bot.last));
-		row.append(td);
-
-		td = $(document.createElement('td'));
-		td.addClass('timer');
-		td.attr('time', bot.next);
-		td.text(toTimer(bot.next));
-		row.append(td);
-
-		td = $(document.createElement('td'));
-
-		var dropdown_container = $('<div class="dropdown"><button class="btn btn-xs btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Actions&nbsp;<span class="caret"></span></button></div>')
-		var dropdown = $('<ul class="actions dropdown-menu dropdown-menu-right" aria-labelledby="dLabel"></ul>');
-
-		if(!isNaN(bot.total_usd)) {
-			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a></li>');
-			link.click(function (e) { showBotDetails(bot); });
-			dropdown.append(link);
-		}
-
-		var link = $('<li><a href="javascript:void(0);"><i class="fa fa-upload mr5"></i>Send Bid</a></li>');
-		link.click(function (e) { sendBid(bot); });
-		dropdown.append(link);
-
-		if(isFavorite) {
-			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-heart mr5" style="color: red;"></i>Un-Favorite</a></li>');
-			link.click(function (e) {
-				favorites.splice(favorites.indexOf(bot.name), 1);
-				localStorage.setItem('favorites', favorites.join());
-				showBidBots();
-			});
-			dropdown.append(link);
-		} else {
-			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-heart mr5" style="color: red;"></i>Favorite</a></li>');
-			link.click(function (e) {
-				favorites.push(bot.name);
-				localStorage.setItem('favorites', favorites.join());
-				showBidBots();
-			});
-			dropdown.append(link);
-		}
-
-		if(hidden.indexOf(bot.name) >= 0) {
-			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-remove mr5"></i>Un-Hide</a></li>');
-			link.click(function (e) {
-				hidden.splice(hidden.indexOf(bot.name), 1);
-				localStorage.setItem('hidden', hidden.join());
-				showBidBots();
-			});
-			dropdown.append(link);
-		} else {
-			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-remove mr5"></i>Hide</a></li>');
-			link.click(function (e) {
-				hidden.push(bot.name);
-				localStorage.setItem('hidden', hidden.join());
-				showBidBots();
-			});
-			dropdown.append(link);
-		}
-
-		if(bot.rules_url && bot.rules_url != '') {
-			var link = $('<li><a href="' + bot.rules_url + '" target="_blank"><i class="fa fa-list-alt mr5"></i>Terms of Service</a></li>');
-			dropdown.append(link);
-		}
-
-		dropdown_container.append(dropdown);
-		td.append(dropdown_container);
-		row.append(td);
-
-		if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
-			row.addClass('green-bg');
-
-			if (!notifications[bot.name]) {
-				sendNotification(bot.name, bid_sbd);
-				notifications[bot.name] = true;
+			if(bot.comments) {
+				var icon = $('<span class="fa fa-comment-o ml5" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows Comments"></span>');
+				td.append(icon);
 			}
-		} else
-			notifications[bot.name] = false;
 
-		if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
-		  row.addClass('red-light-bg');
+			if (bot.posts_comment != undefined && !bot.posts_comment) {
+				var icon = $('<img src="img/no_comment.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot does not post a comment when it votes on a post." />');
+				td.append(icon);
+			}
 
-		$('#bots_table tbody').append(row);
+			if(bot.accepts_steem) {
+				var icon = $('<img src="img/steem.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot accepts STEEM bids!" />');
+				td.append(icon);
+			}
+
+			if (bot.se_token) {
+				var icon = $('<img src="img/steem_engine_logo_32.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot only accepts the ' + bot.se_token + ' Steem Engine token." />');
+				td.append(icon);
+			}
+
+			if(bot.refunds) {
+				var icon = $('<img src="img/refund.png" style="width: 20px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="This bot automatically refunds invalid bids!" />');
+				td.append(icon);
+			}
+
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			td.text(formatCurrencyVote(bot));
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			var span = $('<span>');
+			if(bot.max_bid && bot.max_bid_wl && parseFloat(bot.max_bid_wl) > parseFloat(bot.max_bid)) {
+				span.attr('data-toggle', 'tooltip');
+				span.attr('data-placement', 'top');
+				span.attr('title', 'This bot has a higher max bid for whitelisted accounts.');
+			}
+
+			span.html((bot.min_bid ? bot.min_bid.toFixed(2) : '--') + (bot.max_bid ? ' / ' + bot.max_bid.toFixed(2) : '') + (bot.max_bid_wl ? '*' : ''));
+			td.append(span);
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			td.text((bot.fill_limit ? ((1 - bot.fill_limit) * 100).toFixed() + '%' : 'none') + ' / ' + (bot.max_roi ? bot.max_roi + '%' : 'none'));
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			td.text((bot.min_post_age ? bot.min_post_age : 0) + ' mins / ' + (bot.max_post_age ? bot.max_post_age + ' days' : 'unknown'));
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			td.text(!isNaN(bot.total_usd) ? formatCurrencyTotal(bot) : '--');
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			if(isNaN(bot.total_usd)) {
+				td.text('unknown');
+			} else if(bot.se_token)
+				td.text(Math.max(max_suggested_bid, 0).formatMoney() + ' ' + bot.se_token); 
+			else if (bot.accepts_steem)
+				td.html(Math.max(bid_steem, 0).formatMoney() + ' <img src="img/steem.png" style="width: 17px; vertical-align: top;"/> or ' + Math.max(bid_sbd, 0).formatMoney() + ' SBD');
+			else
+				td.text(Math.max(bid_sbd, 0).formatMoney() + ' SBD');
+
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			td.addClass('timer');
+			td.attr('dir', 'up');
+			td.attr('time', bot.last);
+			td.text(toTimer(bot.last));
+			row.append(td);
+
+			td = $(document.createElement('td'));
+			td.addClass('timer');
+			td.attr('time', bot.next);
+			td.text(toTimer(bot.next));
+			row.append(td);
+
+			td = $(document.createElement('td'));
+
+			var dropdown_container = $('<div class="dropdown"><button class="btn btn-xs btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Actions&nbsp;<span class="caret"></span></button></div>')
+			var dropdown = $('<ul class="actions dropdown-menu dropdown-menu-right" aria-labelledby="dLabel"></ul>');
+
+			if(!isNaN(bot.total_usd)) {
+				var link = $('<li><a href="javascript:void(0);"><i class="fa fa-eye mr5"></i>Details</a></li>');
+				link.click(function (e) { showBotDetails(bot); });
+				dropdown.append(link);
+			}
+
+			var link = $('<li><a href="javascript:void(0);"><i class="fa fa-upload mr5"></i>Send Bid</a></li>');
+			link.click(function (e) { sendBid(bot); });
+			dropdown.append(link);
+
+			if(isFavorite) {
+				var link = $('<li><a href="javascript:void(0);"><i class="fa fa-heart mr5" style="color: red;"></i>Un-Favorite</a></li>');
+				link.click(function (e) {
+					favorites.splice(favorites.indexOf(bot.name), 1);
+					localStorage.setItem('favorites', favorites.join());
+					showBidBots();
+				});
+				dropdown.append(link);
+			} else {
+				var link = $('<li><a href="javascript:void(0);"><i class="fa fa-heart mr5" style="color: red;"></i>Favorite</a></li>');
+				link.click(function (e) {
+					favorites.push(bot.name);
+					localStorage.setItem('favorites', favorites.join());
+					showBidBots();
+				});
+				dropdown.append(link);
+			}
+
+			if(hidden.indexOf(bot.name) >= 0) {
+				var link = $('<li><a href="javascript:void(0);"><i class="fa fa-remove mr5"></i>Un-Hide</a></li>');
+				link.click(function (e) {
+					hidden.splice(hidden.indexOf(bot.name), 1);
+					localStorage.setItem('hidden', hidden.join());
+					showBidBots();
+				});
+				dropdown.append(link);
+			} else {
+				var link = $('<li><a href="javascript:void(0);"><i class="fa fa-remove mr5"></i>Hide</a></li>');
+				link.click(function (e) {
+					hidden.push(bot.name);
+					localStorage.setItem('hidden', hidden.join());
+					showBidBots();
+				});
+				dropdown.append(link);
+			}
+
+			if(bot.rules_url && bot.rules_url != '') {
+				var link = $('<li><a href="' + bot.rules_url + '" target="_blank"><i class="fa fa-list-alt mr5"></i>Terms of Service</a></li>');
+				dropdown.append(link);
+			}
+
+			dropdown_container.append(dropdown);
+			td.append(dropdown_container);
+			row.append(td);
+
+			if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
+				row.addClass('green-bg');
+
+				if (!notifications[bot.name]) {
+					sendNotification(bot.name, bid_sbd);
+					notifications[bot.name] = true;
+				}
+			} else
+				notifications[bot.name] = false;
+
+			if(bot.power == 100 && bot.last > 4 * HOURS || bot.power < 90)
+				row.addClass('red-light-bg');
+
+			$('#bots_table tbody').append(row);
+		} catch(err) { console.log('Error loading bot @' + bot.name + ', Error: ' + err); }
 	}
 
 	function formatCurrencyVote(bot) {
@@ -742,7 +744,7 @@ $(function () {
 	function startupDom() {
     $('#curation_option').on('change', function () {
         if(this.checked) {
-            AUTHOR_REWARDS = 0.75;
+            AUTHOR_REWARDS = 0.5;
         } else {
             AUTHOR_REWARDS = 1;
         }
@@ -831,10 +833,10 @@ $(function () {
 
       $('#bid_value').text('$' + bid_value.formatMoney());
       $('#vote_value').text('$' + value.formatMoney() + ' = ' + value_sbd.formatMoney() + ' SBD + ' + value_steem.formatMoney() + ' STEEM');
-      $('#vote_value_net').text('$' + (value * 0.75).formatMoney() + ' = ' + (value_sbd * 0.75).formatMoney() + ' SBD + ' + (value_steem * 0.75).formatMoney() + ' STEEM');
+      $('#vote_value_net').text('$' + (value * AUTHOR_REWARDS).formatMoney() + ' = ' + (value_sbd * AUTHOR_REWARDS).formatMoney() + ' SBD + ' + (value_steem * AUTHOR_REWARDS).formatMoney() + ' STEEM');
 
       $('#vote_value').css('color', (value >= bid_value) ? '#008800' : '#FF0000');
-      $('#vote_value_net').css('color', ((value * 0.75) >= bid_value) ? '#008800' : '#FF0000');
+      $('#vote_value_net').css('color', ((value * AUTHOR_REWARDS) >= bid_value) ? '#008800' : '#FF0000');
 
       return false;
     });
