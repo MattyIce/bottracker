@@ -127,7 +127,7 @@ $(function () {
 	}
 
 	function loadPromotionServices() {
-		steem.api.getAccounts(['smartsteem', 'booster', 'minnowbooster', 'tipu'], function (err, result) {
+		steem.api.getAccounts(['smartsteem', 'booster', 'minnowbooster', 'tipu', 'therising'], function (err, result) {
 			try {
 				var account = result[0];
 				var bar = $('#smartsteem-progress div');
@@ -170,6 +170,17 @@ $(function () {
 				bar.text(power + '%');
 				$('#tipu-vote').text('$' + getVoteValue(100, account).formatMoney());
 				$('#tipu_bot_error').css('display', 'none');
+
+				account = result[4];
+				var metadata = JSON.parse(account.json_metadata);
+
+				var bar = $('#therising-progress div');
+				var power = getVotingPower(account) / 100;
+				bar.attr('aria-valuenow', power);
+				bar.css('width', power + '%');
+				bar.text(power + '%');
+				$('#therising-vote').text('$' + getVoteValue(100, account).formatMoney());
+				$('#therising_bot_error').css('display', 'none');
 			} catch (err) {
 				console.log(err);
 				$('#ss_bot_error').css('display', 'block');
@@ -873,6 +884,7 @@ $(function () {
     $('#booster-submit').click(function () { sendBid({ name: 'booster', min_bid: 1, max_post_age: 3.5 }); });
 		$('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
 		$('#tipu-submit').click(function () { sendBid({ name: 'tipu', min_bid: 0.5, max_post_age: 6, accepts_steem: true }); });
+		$('#therising-submit').click(function () { sendBid({ name: 'therising', min_bid: 0.5, max_post_age: 3.5, accepts_steem: true }); });
 
     // Initialize and try to log in with SteemConnect V2
     var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
