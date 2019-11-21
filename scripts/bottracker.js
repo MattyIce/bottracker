@@ -127,18 +127,10 @@ $(function () {
 	}
 
 	function loadPromotionServices() {
-		steem.api.getAccounts(['smartsteem', 'booster', 'minnowbooster', 'tipu', 'therising'], function (err, result) {
+		steem.api.getAccounts(['booster', 'minnowbooster', 'tipu', 'therising'], function (err, result) {
 			try {
-				var account = result[0];
-				var bar = $('#smartsteem-progress div');
-				var power = getVotingPower(account) / 100;
-				bar.attr('aria-valuenow', power);
-				bar.css('width', power + '%');
-				bar.text(power + '%');
-				$('#smartsteem-vote').text('$' + getVoteValue(100, account).formatMoney());
-				$('#ss_bot_error').css('display', 'none');
 
-				account = result[1];
+				var account = result[0];
 				var metadata = JSON.parse(account.json_metadata);
 				//$('#booster-desc').text(metadata.profile.about);
 
@@ -150,7 +142,7 @@ $(function () {
 				$('#booster-vote').text('$' + getVoteValue(100, account).formatMoney());
 				$('#booster_bot_error').css('display', 'none');
 
-				account = result[2];
+				account = result[1];
 				var bar = $('#minnowbooster-progress div');
 				var power = getVotingPower(account) / 100;
 				bar.attr('aria-valuenow', power);
@@ -159,7 +151,7 @@ $(function () {
 				$('#minnowbooster-vote').text('$' + getVoteValue(100, account).formatMoney());
 				$('#mb_bot_error').css('display', 'none');
 
-				account = result[3];
+				account = result[2];
 				var metadata = JSON.parse(account.json_metadata);
 				$('#tipu-desc').text(metadata.profile.about);
 
@@ -171,7 +163,7 @@ $(function () {
 				$('#tipu-vote').text('$' + getVoteValue(100, account).formatMoney());
 				$('#tipu_bot_error').css('display', 'none');
 
-				account = result[4];
+				account = result[3];
 				var metadata = JSON.parse(account.json_metadata);
 
 				var bar = $('#therising-progress div');
@@ -185,20 +177,6 @@ $(function () {
 				console.log(err);
 				$('#ss_bot_error').css('display', 'block');
 			}
-		});
-
-		$.get('https://smartsteem.com/api/general/bot_tracker', function (data) {
-			$('#smartsteem-desc').text(data.description);
-			$('#smartsteem-profit').text(data.profit);
-			$('#smartsteem-payment').text(data.payment);
-			$('#smartsteem-daily').text(data.daily_limit);
-			$('#smartsteem-weekly').text(data.weekly_limit);
-			$('#smartsteem-features').text(data.additional_features);
-			$('#smartsteem-howto').empty();
-
-			data.how_to.forEach(function (item) {
-				$('#smartsteem-howto').append($('<li>' + item + '</li>'));
-			});
 		});
 	}
 
@@ -882,7 +860,6 @@ $(function () {
 
     $('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
     $('#booster-submit').click(function () { sendBid({ name: 'booster', min_bid: 1, max_post_age: 3.5 }); });
-		$('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
 		$('#tipu-submit').click(function () { sendBid({ name: 'tipu', min_bid: 0.5, max_post_age: 6, accepts_steem: true }); });
 		$('#therising-submit').click(function () { sendBid({ name: 'therising', min_bid: 0.5, max_post_age: 3.5, accepts_steem: true }); });
 
